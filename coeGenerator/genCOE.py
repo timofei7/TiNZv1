@@ -77,7 +77,8 @@ def encodePositional(char):
 def encodeColoral(char):
 	global output, col
 	if char in COLORMAP.keys():
-		output.append(COLORS[COLORMAP[char]])
+		output.append(COLORS[COLORMAP[char]] + comma())
+		#output.append(COLORS[COLORMAP[char]] ) #can renable old style one line output
 
 #main
 countframes()
@@ -85,7 +86,7 @@ countframes()
 for line in lines:
 	if re.search("frame", line):
 		if DEBUG: output.append(" #frame: %s " % frame)
-		if mode=="coloral": #add the commas between frames rather than between rows 
+		if mode=="DISABLEDcoloral": #add the commas between frames rather than between rows 
 			if frame != 0:
 				output.append(",\n")
 		frame = frame+1	
@@ -102,10 +103,10 @@ for line in lines:
 #print it all to a .coe file
 newfile = open(file+".coe", "w")
 print >> newfile, PREFIX
-if mode=="positional":
+if mode=="positional" or mode =="coloral":
 	for line in output:
 		print >> newfile, line
-elif mode=="coloral":
+elif mode=="DISABLEDcoloral": #can reanble old style single line output here
 	tmp=""
 	for each in output:
 		tmp = tmp + each
