@@ -12,26 +12,40 @@
     <!-- Copyright (c) 1995-2009 Xilinx, Inc.  All rights reserved. -->
   </header>
 
-  <version xil_pn:ise_version="12.1" xil_pn:schema_version="2"/>
+  <version xil_pn:ise_version="11.2" xil_pn:schema_version="2"/>
 
   <files>
-</files>
+    <file xil_pn:name="ACCELDecoder.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
+      <association xil_pn:name="Implementation"/>
+    </file>
+    <file xil_pn:name="ACCELDecoder_TB.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
+      <association xil_pn:name="PostMapSimulation"/>
+      <association xil_pn:name="PostRouteSimulation"/>
+      <association xil_pn:name="PostTranslateSimulation"/>
+    </file>
+  </files>
 
   <properties>
-    <property xil_pn:name="Project Description" xil_pn:value=""/>
-    <property xil_pn:name="Device Family" xil_pn:value="Spartan3E"/>
+    <property xil_pn:name="Constraints Entry" xil_pn:value="Constraints Editor"/>
     <property xil_pn:name="Device" xil_pn:value="xc3s500e"/>
+    <property xil_pn:name="Device Family" xil_pn:value="Spartan3E"/>
+    <property xil_pn:name="FSM Encoding Algorithm" xil_pn:value="Compact"/>
+    <property xil_pn:name="Fitter Report Format" xil_pn:value="HTML"/>
+    <property xil_pn:name="Implementation Top" xil_pn:value="Architecture|ACCELDecoder|Behavioral"/>
+    <property xil_pn:name="Implementation Top Instance Path" xil_pn:value="/ACCELDecoder"/>
+    <property xil_pn:name="PROP_DesignName" xil_pn:value="cellHELP"/>
+    <property xil_pn:name="PROP_DevFamilyPMName" xil_pn:value="spartan3e"/>
     <property xil_pn:name="Package" xil_pn:value="fg320"/>
-    <property xil_pn:name="Speed Grade" xil_pn:value="-4"/>
-    <property xil_pn:name="Top-Level Source Type" xil_pn:value="HDL"/>
-    <property xil_pn:name="Synthesis Tool" xil_pn:value="XST (VHDL/Verilog)"/>
-    <property xil_pn:name="Simulator" xil_pn:value="ISim (VHDL/Verilog)"/>
     <property xil_pn:name="Preferred Language" xil_pn:value="VHDL"/>
     <property xil_pn:name="Property Specification in Project File" xil_pn:value="Store non-default values only"/>
-    <property xil_pn:name="Manual Compile Order" xil_pn:value="false"/>
-    <property xil_pn:name="Enable Enhanced Design Summary" xil_pn:value="true"/>
-    <property xil_pn:name="Enable Message Filtering" xil_pn:value="false"/>
-    <property xil_pn:name="Display Incremental Messages" xil_pn:value="false"/>
+    <property xil_pn:name="Safe Implementation" xil_pn:value="Yes"/>
+    <property xil_pn:name="Selected Simulation Root Source Node Behavioral" xil_pn:value="Architecture|ACCELDecoder_TB|behavior"/>
+    <property xil_pn:name="Simulator" xil_pn:value="ISim (VHDL/Verilog)"/>
+    <property xil_pn:name="Speed Grade" xil_pn:value="-4"/>
+    <property xil_pn:name="Synthesis Tool" xil_pn:value="XST (VHDL/Verilog)"/>
+    <property xil_pn:name="Top-Level Source Type" xil_pn:value="HDL"/>
   </properties>
 
   <bindings/>
@@ -39,6 +53,5 @@
   <libraries/>
 
   <partitions/>
-
 
 </project>
