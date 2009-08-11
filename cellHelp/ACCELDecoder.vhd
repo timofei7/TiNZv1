@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
 -- Company:    DARTMOUTH - ENGS31
--- Engineer:   Tim Tregubov
+-- Engineer:   Divya Gunasekaran and Tim Tregubov
 -- 
 -- Create Date:    23:08:00 08/09/2009 
 -- Design Name: 
@@ -34,7 +34,7 @@ entity ACCELDecoder is
 end ACCELDecoder;
 
 architecture Behavioral of ACCELDecoder is
-   type state_type is ( sWaitXup,sResetTimer, sWaitXdown,sWaitYup,sWaitYdown,
+   type state_type is ( sWaitXup,sResetTimer, sWaitXdown,sWaitFirstYdown, sWaitYup,sWaitYdown,
                         sSetTs);	-- state machine
 	signal curr_state, next_state: state_type;
    
@@ -96,14 +96,19 @@ process (curr_state, Xin, Yin, timer)
    case curr_state is
       when sWaitXup =>
          if Xin = '1' then
-            next_state <= sResetTimer;
+            timerReset <= '1'; --reset timer
+            next_state <= sWaitXdown;
          end if;
-      when sResetTimer =>
-         timerReset <= '1'; --reset timer
-         next_state <= sWaitXdown;
+--      when sResetTimer =>  --this takes an extra clock but isn't necessary
+--         timerReset <= '1'; --reset timer
+--         next_state <= sWaitXdown;
       when sWaitXdown =>
          if Xin = '0' then --record x time
             tbset <= '1';
+            next_state <= sWaitFirstYdown;
+         end if;
+      when sWaitFirstYdown =>
+         if Yin = '0' then -- move onto the waiting for the next up
             next_state <= sWaitYup;
          end if;
       when sWaitYup =>

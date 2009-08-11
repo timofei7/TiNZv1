@@ -91,9 +91,61 @@ BEGIN
    stim_proc: process
    begin		
 
-      wait for Clk_period*10;
+      wait for Clk_period*2.25;
+      
+      Yin <= '1';
+      wait for Clk_period*2;
+      
+      Xin <= '1';
+      wait for Clk_period*3;
+      
+      Xin <= '0';
+      wait for Clk_period*2;
+      
+      Yin <= '0';
+      
 
-      -- insert stimulus here 
+      wait for Clk_period*2.25;
+      
+      Yin <= '1';
+      wait for Clk_period*2;
+      
+      Xin <= '1';
+      wait for Clk_period*3;
+      
+      Xin <= '0';
+      wait for Clk_period*2;
+      
+      Yin <= '0';
+      
+      
+      wait for Clk_period*2.25;
+      
+      Yin <= '1';
+      wait for Clk_period*2;
+      
+      Xin <= '1';
+      wait for Clk_period*3;
+      
+      Xin <= '0';
+      wait for Clk_period*2;
+      
+      Yin <= '0';
+      
+      
+      wait for Clk_period*2.25;
+      
+      Yin <= '1';
+      wait for Clk_period*2;
+      
+      Xin <= '1';
+      wait for Clk_period*3;
+      
+      Xin <= '0';
+      wait for Clk_period*2;
+      
+      Yin <= '0';
+      
 
       wait;
    end process;
