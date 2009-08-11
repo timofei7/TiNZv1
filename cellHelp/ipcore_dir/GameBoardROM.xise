@@ -38,7 +38,7 @@
     <property xil_pn:name="Auto Implementation Top" xil_pn:value="false"/>
     <property xil_pn:name="Device" xil_pn:value="xc3s500e"/>
     <property xil_pn:name="Device Family" xil_pn:value="Spartan3E"/>
-    <property xil_pn:name="Implementation Stop View" xil_pn:value="Structural"/>
+    <property xil_pn:name="Implementation Stop View" xil_pn:value="PreSynthesis"/>
     <property xil_pn:name="Implementation Top" xil_pn:value="Module|GameBoardROM"/>
     <property xil_pn:name="Implementation Top Instance Path" xil_pn:value="/GameBoardROM"/>
     <property xil_pn:name="PROP_DesignName" xil_pn:value="GameBoardROM"/>

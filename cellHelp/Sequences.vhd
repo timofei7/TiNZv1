@@ -53,7 +53,7 @@ architecture Behavioral of Sequences is
    signal iout : std_logic_vector(7 downto 0);
    
    -- for clockdiv and frame counter
-   constant NCLKDIV: integer := 2; --sloowww 25
+   constant NCLKDIV: integer := 25; --sloowww 25
    constant MAXCLKDIV: integer := 2**NCLKDIV-1; -- max count of clock divider, 1...11
    signal clkdivcount:  unsigned(NCLKDIV-1 downto 0) := (others => '0'); -- clock divider count value
    signal CE:       std_logic := '0';                    -- slow clock enable
