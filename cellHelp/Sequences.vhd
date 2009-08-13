@@ -48,19 +48,26 @@ architecture Behavioral of Sequences is
    attribute syn_black_box of DeathROM: component is true;
    attribute syn_black_box of IntroROM: component is true;
 
+	COMPONENT ClockDivider
+   GENERIC (DIV : integer);
+	PORT(
+		Clk : IN std_logic;          
+		slowCE : OUT std_logic
+		);
+	END COMPONENT;
+
    signal addr : std_logic_vector(9 downto 0);
    signal dout : std_logic_vector(7 downto 0);
    signal iout : std_logic_vector(7 downto 0);
    
-   -- for clockdiv and frame counter
-   constant NCLKDIV: integer := 25; --sloowww 25
-   constant MAXCLKDIV: integer := 2**NCLKDIV-1; -- max count of clock divider, 1...11
-   signal clkdivcount:  unsigned(NCLKDIV-1 downto 0) := (others => '0'); -- clock divider count value
    signal CE:       std_logic := '0';                    -- slow clock enable
    signal frame : unsigned(3 downto 0) := (others => '0');
 
 begin
 
+clockdivs: ClockDivider
+   GENERIC MAP(Div => 2) -- the clock divider value DON"T FORGET TO SET THIS!
+   PORT MAP(Clk => Clk, slowCE => CE);
 deathseq : DeathROM
 		port map (
 			clka => Clk,
@@ -90,15 +97,5 @@ process(Clk)
 end process FrameCounter;
 seqDone <= '1' when frame = "1111" else '0'; --say when we finish a sequence
               
-            
-ClockDivider:
-process(Clk)
-   begin 
-      if rising_edge(Clk) then 
-         clkdivcount <= clkdivcount+1;
-      end if;
-end process ClockDivider; 
-CE <= '1' when clkdivcount = MAXCLKDIV else '0';
-
 end Behavioral;
 
