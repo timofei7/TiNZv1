@@ -2,7 +2,7 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   00:22:56 08/13/2009
+-- Create Date:   21:54:24 08/13/2009
 -- Design Name:   
 -- Module Name:   C:/engs31_cellHELP/cellHELP/GameBoard_TB.vhd
 -- Project Name:  cellHELP
@@ -29,7 +29,6 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.ALL;
---use ieee.numeric_std.all; 
  
 ENTITY GameBoard_TB IS
 END GameBoard_TB;
@@ -46,8 +45,7 @@ ARCHITECTURE behavior OF GameBoard_TB IS
          DisablePU : IN  std_logic;
          RowA : IN  std_logic_vector(2 downto 0);
          ColA : IN  std_logic_vector(2 downto 0);
-         Color : OUT  std_logic_vector(7 downto 0);
-         IsEnabled : OUT  std_logic;
+         ColorOUT : OUT  std_logic_vector(7 downto 0);
          RowB : IN  std_logic_vector(2 downto 0);
          ColB : IN  std_logic_vector(2 downto 0);
          CollisionData : OUT  std_logic_vector(1 downto 0)
@@ -66,8 +64,7 @@ ARCHITECTURE behavior OF GameBoard_TB IS
    signal ColB : std_logic_vector(2 downto 0) := (others => '0');
 
  	--Outputs
-   signal Color : std_logic_vector(7 downto 0);
-   signal IsEnabled : std_logic;
+   signal ColorOUT : std_logic_vector(7 downto 0);
    signal CollisionData : std_logic_vector(1 downto 0);
 
    -- Clock period definitions
@@ -83,8 +80,7 @@ BEGIN
           DisablePU => DisablePU,
           RowA => RowA,
           ColA => ColA,
-          Color => Color,
-          IsEnabled => IsEnabled,
+          ColorOUT => ColorOUT,
           RowB => RowB,
           ColB => ColB,
           CollisionData => CollisionData
@@ -103,7 +99,6 @@ BEGIN
    -- Stimulus process
    stim_proc: process
    begin		
-
       wait for Clk_period*2.25;
 
       SeqReset <= '1';
@@ -121,5 +116,18 @@ BEGIN
 
       wait;
    end process;
+   
+   stim2:
+   process
+      begin
+      wait for Clk_period*3.25;
+         for i in 0 to 7 loop
+            for j in 0 to 7 loop
+               RowB <= std_logic_vector(to_unsigned(i, 3));
+               ColB <= std_logic_vector(to_unsigned(j, 3));
+               wait for Clk_period*1;
+            end loop;
+         end loop;
+   end process stim2;
 
 END;

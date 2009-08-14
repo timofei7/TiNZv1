@@ -2,7 +2,7 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   21:23:33 08/10/2009
+-- Create Date:   19:45:03 08/13/2009
 -- Design Name:   
 -- Module Name:   C:/engs31_cellHELP/cellHELP/AttrLookup_TB.vhd
 -- Project Name:  cellHELP
@@ -40,24 +40,28 @@ ARCHITECTURE behavior OF AttrLookup_TB IS
     COMPONENT AttrLookup
     PORT(
          Clk : IN  std_logic;
-         Ident : IN  std_logic_vector(5 downto 0);
-         rstPU : IN  std_logic;
-         disablePU : IN  std_logic;
-         isEN : OUT  std_logic;
-         color : OUT  std_logic_vector(7 downto 0)
+         WriteAddr : IN  std_logic_vector(3 downto 0);
+         ReadAAddr : IN  std_logic_vector(3 downto 0);
+         ReadBAddr : IN  std_logic_vector(3 downto 0);
+         RstPU : IN  std_logic;
+         DisablePU : IN  std_logic;
+         DataA : OUT  std_logic_vector(8 downto 0);
+         DataB : OUT  std_logic_vector(8 downto 0)
         );
     END COMPONENT;
     
 
    --Inputs
    signal Clk : std_logic := '0';
-   signal Ident : std_logic_vector(5 downto 0) := (others => '0');
-   signal rstPU : std_logic := '0';
-   signal disablePU : std_logic := '0';
+   signal WriteAddr : std_logic_vector(3 downto 0) := (others => '0');
+   signal ReadAAddr : std_logic_vector(3 downto 0) := (others => '0');
+   signal ReadBAddr : std_logic_vector(3 downto 0) := (others => '0');
+   signal RstPU : std_logic := '0';
+   signal DisablePU : std_logic := '0';
 
  	--Outputs
-   signal isEN : std_logic;
-   signal color : std_logic_vector(7 downto 0);
+   signal DataA : std_logic_vector(8 downto 0);
+   signal DataB : std_logic_vector(8 downto 0);
 
    -- Clock period definitions
    constant Clk_period : time := 20ns;
@@ -67,11 +71,13 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: AttrLookup PORT MAP (
           Clk => Clk,
-          Ident => Ident,
-          rstPU => rstPU,
-          disablePU => disablePU,
-          isEN => isEN,
-          color => color
+          WriteAddr => WriteAddr,
+          ReadAAddr => ReadAAddr,
+          ReadBAddr => ReadBAddr,
+          RstPU => RstPU,
+          DisablePU => DisablePU,
+          DataA => DataA,
+          DataB => DataB
         );
 
    -- Clock process definitions
@@ -88,20 +94,11 @@ BEGIN
    stim_proc: process
    begin		
 
-      wait for Clk_period*2.25; --reset/set
-      rstPU <= '1';
-      wait for Clk_period;
-      rstPU <= '0';
+      wait for Clk_period*2.25;
       
-      wait for Clk_period;
-      Ident <= "000001";
-      
-      wait for Clk_period*2;
-      
-      Ident <= "000010";
-      wait for Clk_period*2;
-      Ident <= "001010";
-      
+      ReadAAddr <= "0010";
+
+      -- insert stimulus here 
 
       wait;
    end process;

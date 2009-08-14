@@ -28,14 +28,13 @@ entity GameBoard is
         ResetPUs : in  STD_LOGIC;  --reset the powerups to initial state, on
         DisablePU : in  STD_LOGIC;  --disable the current type per the row and col address
         --the following is to wire to display
-        RowA : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check
-        ColA : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check
-        Color : out  STD_LOGIC_VECTOR (7 downto 0); --color from attribute by type
-        IsEnabled : out  STD_LOGIC; --is the type we are looking at enabled, yes?
+        RowA : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check FOR DISPLAY
+        ColA : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check FOR DISPLAY
+        ColorOUT : out  STD_LOGIC_VECTOR (7 downto 0); --color from attribute by type
         --the following is to wire to game logic
-        RowB : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check
-        ColB : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check
-        CollisionData : out STD_LOGIC_VECTOR(1 downto 0) --msb=enabled? lsb=enemy or pup
+        RowB : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check FOR GAMELOGIC
+        ColB : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check FOR GAMELOGIC
+        CollisionData : out STD_LOGIC_VECTOR(1 downto 0) := (others => '0') --msb=enabled? lsb=enemy or pup
     );
 end GameBoard;
 
@@ -56,13 +55,13 @@ attribute syn_black_box of GameBoardROM: component is true;
 COMPONENT AttrLookup
 PORT(
    Clk : IN std_logic;
-   WriteAddr : IN std_logic_vector(5 downto 0);
-   ReadAAddr : IN std_logic_vector(5 downto 0);
-   ReadBAddr : IN std_logic_vector(5 downto 0);
+   WriteAddr : IN std_logic_vector(3 downto 0);
+   ReadColor : IN std_logic_vector(3 downto 0);
+   ReadEnabled : IN std_logic_vector(3 downto 0);
    RstPU : IN std_logic;
    DisablePU : IN std_logic;          
-   DataA : OUT std_logic_vector(8 downto 0);
-   DataB : OUT std_logic_vector(8 downto 0)
+   Color : OUT std_logic_vector(7 downto 0);
+   Enabled : OUT std_logic
    );
 END COMPONENT;
 
@@ -74,23 +73,23 @@ PORT(
    );
 END COMPONENT;
 
-signal addra: std_logic_VECTOR(9 downto 0); --gameboard rom read address a
-signal addrb: std_logic_VECTOR(9 downto 0); --gameboard rom read address b
-signal douta: std_logic_VECTOR(7 downto 0); --gameboard rom out a
-signal doutb: std_logic_VECTOR(7 downto 0); --gameboard rom out b
-signal writeaddr:  std_logic_vector(5 downto 0); --ident address to change type settings
-signal readAaddr:  std_logic_vector(5 downto 0); --ident address to lookup Color attribute lookup to type 
-signal readBaddr:  std_logic_vector(5 downto 0); --ident address to lookup Enable attribute lookup to type
-signal dataa: std_logic_vector(8 downto 0); --for color/en data a
-signal datab: std_logic_vector(8 downto 0); --for color/en data b
-signal frameCount: unsigned(3 downto 0); --the count of the frame we are on
+signal addra: std_logic_VECTOR(9 downto 0) := (others => '0'); --gameboard rom read address a
+signal addrb: std_logic_VECTOR(9 downto 0) := (others => '0'); --gameboard rom read address b
+signal douta: std_logic_VECTOR(7 downto 0) := (others => '0'); --gameboard rom out a
+signal doutb: std_logic_VECTOR(7 downto 0) := (others => '0'); --gameboard rom out b
+signal writeaddr:  std_logic_vector(3 downto 0) := (others => '0'); --ident address to change type settings --we throw out a couple bits
+signal readcolor:  std_logic_vector(3 downto 0) := (others => '0'); --ident address to lookup Color attribute lookup to type 
+signal readenabled:  std_logic_vector(3 downto 0) := (others => '0'); --ident address to lookup Enable attribute lookup to type
+signal color: std_logic_vector(7 downto 0) := (others => '0'); --for color
+signal enabled: std_logic := '0'; --for en data
+signal frameCount: unsigned(3 downto 0) := (others => '0'); --the count of the frame we are on
 signal frameDirection: std_logic := '1'; -- 1 means up 0 means down, for counting direction that is
-signal slowFrame: std_logic; --slow count enable for the frame counter
+signal slowFrame: std_logic := '0'; --slow count enable for the frame counter
 
 begin
 
 clockdivs: ClockDivider
-   GENERIC MAP(Div => 24) -- the clock divider value  DON"T FORGET TO SET THIS
+   GENERIC MAP(Div => 24) -- the clock divider value  DON"T FORGET TO SET THIS to something like 24!
    PORT MAP(Clk => Clk, slowCE => slowFrame);
 
 board : GameBoardROM
@@ -106,24 +105,23 @@ board : GameBoardROM
 attributes: AttrLookup PORT MAP(
    Clk => Clk,
    WriteAddr => writeaddr,
-   ReadAAddr => readAaddr,
-   ReadBAddr => readBaddr,
+   ReadColor => readcolor,
+   ReadEnabled => readenabled,
    RstPU => ResetPUs,
    DisablePU => DisablePU,
-   DataA => dataa,
-   DataB => datab
+   Color => color,
+   Enabled => enabled
 );
 
 --  just hooking up various wires
-addra <= std_logic_vector(frameCount) & RowA & ColA;
-addrb <= std_logic_vector(frameCount) & RowB & ColB;
-readAaddr <= douta(5 downto 0); --gets the type address from the main rom for color read
-readBaddr <= doutb(5 downto 0); --same but for enable read
-Color <= DataA(7 downto 0);
-IsEnabled <= DataA(8);
-CollisionData <= DataB(8) & doutb(7);  --grab the relevant collision bits the enable bit first and the enemy/pup bit second
-
-
+addra <= std_logic_vector(frameCount) & RowA & ColA; -- this is for DISPLAY
+addrb <= std_logic_vector(frameCount) & RowB & ColB; -- this is for GAMELOGIC
+readcolor <= douta(3 downto 0); --gets the type address from the main rom for color read --we throw out a couple bits
+readenabled <= doutb(3 downto 0); --same but for enable read --we throw out a couple bits
+writeaddr <= readcolor; -- could get rid of this distinction really
+colorOUT <= color;
+CollisionData <= enabled & doutb(7);  --grab the relevant collision bits the enable bit first and the enemy/pup bit second
+         
 
 FrameCounter: --animate the frames
 process(Clk)
