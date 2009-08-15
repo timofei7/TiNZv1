@@ -39,9 +39,9 @@ END COMPONENT;
 
 type colorArray is array(0 to 5) of std_logic_vector(7 downto 0);
 constant unshielded: colorArray := (
-   "00011100", "00011100", "00011100", "00011100", "00011100", "00011100");
+   "00000100", "00001000", "00001100", "00010000", "00010100", "00011100"); --dark to light green
 constant shielded: colorArray := (
-   "00000011", "00000011", "00000011", "00000011", "00000011", "00000011");
+   "00000001", "00000010", "00000011", "00100111", "01001011", "01101111"); --dark blue to.. light blue? with added colors?
 constant onenemy: std_logic_vector(7 downto 0) := "11100011"; --bright purple
 
 signal breathCounter: unsigned(3 downto 0) := "0000"; --for indexing into the color arrays
