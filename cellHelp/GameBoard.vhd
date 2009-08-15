@@ -28,13 +28,17 @@ entity GameBoard is
         ResetPUs : in  STD_LOGIC;  --reset the powerups to initial state, on
         DisablePU : in  STD_LOGIC;  --disable the current type per the row and col address
         --the following is to wire to display
+        ReadENColor: in STD_LOGIC; --a 1 clock cycle pulse to enable the read
         RowA : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check FOR DISPLAY
         ColA : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check FOR DISPLAY
         ColorOUT : out  STD_LOGIC_VECTOR (7 downto 0); --color from attribute by type
+        ColorDONE: out STD_LOGIC; --signal to send when the color is done
         --the following is to wire to game logic
+        ReadENCollision: in STD_LOGIC; --a 1 clock cycle pulse to enable the read
         RowB : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check FOR GAMELOGIC
         ColB : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check FOR GAMELOGIC
-        CollisionData : out STD_LOGIC_VECTOR(1 downto 0) := (others => '0') --msb=enabled? lsb=enemy or pup
+        CollisionData : out STD_LOGIC_VECTOR(1 downto 0) := (others => '0'); --msb=enabled? lsb=enemy or pup
+        CollisionDone: out STD_LOGIC --signal to send when the collision data is ready
     );
 end GameBoard;
 
@@ -85,8 +89,18 @@ signal enabled: std_logic := '0'; --for en data
 signal frameCount: unsigned(3 downto 0) := (others => '0'); --the count of the frame we are on
 signal frameDirection: std_logic := '1'; -- 1 means up 0 means down, for counting direction that is
 signal slowFrame: std_logic := '0'; --slow count enable for the frame counter
+-- do we really need all this counter stuff?
+-- this is so we can send after some preset number of cycles to make sure the memory ops are all done
+signal rcoloren: std_logic := '0'; --internal enable for the color done counter
+signal rcolorcount: unsigned(3 downto 0) := (others => '0'); --counter for color done
+signal rcolortc: std_logic := '0'; --terminal count signal for counter
+signal rcollisionen: std_logic := '0';--internal enable for the collision done counter
+signal rcollisioncount: unsigned(3 downto 0) := (others => '0'); --counter for collision done
+signal rcollisiontc: std_logic := '0'; --terminal count signal for counter
+constant donecount: unsigned(3 downto 0) := x"2"; --this is how many clock cycles to wait for (minus 1) so 2 really means 1 cycle
 
 begin
+      
 
 clockdivs: ClockDivider
    GENERIC MAP(Div => 24) -- the clock divider value  DON"T FORGET TO SET THIS to something like 24!
@@ -121,6 +135,8 @@ readenabled <= doutb(3 downto 0); --same but for enable read --we throw out a co
 writeaddr <= readcolor; -- could get rid of this distinction really
 colorOUT <= color;
 CollisionData <= enabled & doutb(7);  --grab the relevant collision bits the enable bit first and the enemy/pup bit second
+
+
          
 
 FrameCounter: --animate the frames
@@ -155,6 +171,42 @@ process(Clk)
       end if;
 end process direction;
       
+
+colorDoneProcess: --this counter sets color done after some number of clock cycles
+process(Clk)
+   begin
+      if rising_edge(Clk) then
+         if ReadENColor = '1' or rcoloren = '1' then
+            if rcolortc = '1' then
+               rcoloren <= '0';
+               rcolorcount <= x"0";
+            else 
+               rcoloren <= '1';
+               rcolorcount <= rcolorcount+1;
+            end if;
+         end if;
+      end if;
+end process colorDoneProcess;
+rcolortc <= '1' when rcolorcount = donecount else '0'; -- terminal count for counter
+ColorDone <= rcolortc;
+
+collisionDoneProcess: --this counter sets collision done after some number of clock cycles
+process(Clk)
+   begin
+      if rising_edge(Clk) then
+         if ReadENcollision = '1' or rcollisionen = '1' then
+            if rcollisiontc = '1' then
+               rcollisionen <= '0';
+               rcollisioncount <= x"0";
+            else 
+               rcollisionen <= '1';
+               rcollisioncount <= rcollisioncount+1;
+            end if;
+         end if;
+      end if;
+end process collisionDoneProcess;
+rcollisiontc <= '1' when rcollisioncount = donecount else '0'; -- terminal count for counter
+collisionDone <= rcollisiontc;      
       
 end Behavioral;
 
