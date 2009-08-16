@@ -102,8 +102,8 @@ BEGIN
 
       wait for Clk_period*2.25;
       GoDisplay <= '1';
-      wait for Clk_period;
-      GoDisplay <= '0';
+      --wait for Clk_period;
+      --GoDisplay <= '0';
 
 
       wait;

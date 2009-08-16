@@ -43,12 +43,13 @@ type state_type is (sIdle, sInit, sWaitS, sSendInit, sSendDown, sSendM, sSendUP,
 signal curr_state, next_state: state_type;
 
 --constant waitFinal: unsigned(14 downto 0) := "110000110101000"; -- 25,000 * 20ns = .5ms delay 
-constant waitFinal: unsigned(14 downto 0) := "000000000000100"; -- FOR TESTING
+constant waitFinal: unsigned(14 downto 0) := "000000000000100"; -- FOR TESTING - remember this counts from 0
 signal waitCount: unsigned(14 downto 0) := (others => '0'); --counts for the initial wait
 signal waitTC : std_logic:='0'; --terminal count
 signal waitReset : std_logic:='0'; --reset the wait counter
 
-constant slowFinal: unsigned(7 downto 0) := "11111010"; --count to 250 for a rate of 100khz in for down/up of SCLK
+--constant slowFinal: unsigned(7 downto 0) := "11111010"; --count to 250 for a rate of 100khz in for down/up of SCLK
+constant slowFinal: unsigned(7 downto 0) := "00000010"; --FOR TESTING
 signal slowCount: unsigned(7 downto 0) := (others => '0'); --counts for SCLK
 signal slowTC : std_logic:='0'; --terminal count
 signal slowReset : std_logic:='0'; --reset the wait counters
@@ -124,10 +125,9 @@ process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
          if GoDisplay = '1' then
             next_state <= sInit;
          end if;
-      when sInit => --resest counters to deassert cs and be ready for shifting
+      when sInit => --resest counters to deassert cs
          CS <= '1';
          waitReset <= '1';
-         shiftReset <= '1';
          next_state <= sWaitS;
       when sWaitS => --wait for .5ms after deasserting cs
          if waitTC = '1' then
@@ -141,13 +141,14 @@ process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
          if slowTC = '1' then
             next_state <= sSendM;
          end if;
-      when sSendM => --reset slow counter
+      when sSendM => --reset slow counter -- could get rid of this and init state
+         slowSCLK <= '1'; --start the up 
          slowReset <= '1';
          next_state <= sSendUP;
       when sSendUP =>
          slowSCLK <= '1'; --default is 0 so here's the rising edge for the slave!
          if slowTC = '1' then
-            if slowCount = slowFinal then --are we done shifting?
+            if shiftCount = shiftFinal then --are we done shifting?
                next_state <= sDeInit;
             else
                next_state <= sSendInit;
