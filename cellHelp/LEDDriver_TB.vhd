@@ -63,7 +63,7 @@ ARCHITECTURE behavior OF LEDDriver_TB IS
 
    -- Clock period definitions
    constant Clk_period : time := 20ns;
-   constant SCLK_period : time := 0.5ms;
+
  
 BEGIN
  
@@ -87,14 +87,9 @@ BEGIN
 		wait for Clk_period/2;
    end process;
  
-   SCLK_process :process
-   begin
-		SCLK <= '0';
-		wait for SCLK_period/2;
-		SCLK <= '1';
-		wait for SCLK_period/2;
-   end process;
+
  
+   MISO <= MOSI;
 
    -- Stimulus process
    stim_proc: process

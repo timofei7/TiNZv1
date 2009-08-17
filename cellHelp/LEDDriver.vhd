@@ -25,6 +25,7 @@ entity LEDDriver is
     Port ( Clk : in  STD_LOGIC;
            Data: in STD_LOGIC;
            GoDisplay : in  STD_LOGIC;
+           ShiftBitOut : out STD_LOGIC; --MAKE THIS WORK!
            MISO : in  STD_LOGIC;
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
@@ -33,9 +34,7 @@ end LEDDriver;
 
 architecture Behavioral of LEDDriver is
 
-constant teststring: std_logic_vector(511 downto 0) := ("00000000011011110100101011111111100000001110000001100011111000110001000000011100100100001111110000000001000000110000101000011111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-   );
-signal shiftreg: std_logic_vector(511 downto 0) := ("00000000011011110100101011111111100000001110000001100011111000110001000000011100100100001111110000000001000000110000101000011111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+signal shiftreg: std_logic_vector(511 downto 0) := ("00000000011011110100101011111111100000001110000001100011111000110001000000011100100100001111110000000001000000110000101000011111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001101010101010"
    );
    
 -- state machine for SPI bus
@@ -56,14 +55,11 @@ signal slowReset : std_logic:='0'; --reset the wait counters
 
 constant shiftFinal: unsigned(8 downto 0):= "111111111"; --final count 511
 signal shiftCount: unsigned(8 downto 0):= (others => '0'); --count shifts
-signal shiftReset: std_logic:='0'; --reset shift counter
 signal shiftBit: std_logic:='0'; --shift our bits out onto MOSIs
 
-signal slowSCLK : std_logic:='0'; --internal slow SCLK signal
    
 begin
 
-SCLK <= slowSCLK;
 MOSI <= shiftreg(0); --we shift out datas from this shift register
 
 waitCounter: --15bit up counter to enable .5ms pause
@@ -98,11 +94,8 @@ shiftCounter: --output shift register! --perhaps combine with DISPLAY output shi
 process(Clk)
    begin
       if rising_edge(Clk) then
-         if shiftReset = '1' then
-            shiftreg <= teststring;
-            shiftCount <= (others => '0');
-         elsif shiftBit = '1' then
-            shiftreg <=  DATA & shiftreg(511 downto 1); --what DATA?!? huh
+         if shiftBit = '1' then
+            shiftreg <=  MISO & shiftreg(511 downto 1); --what DATA?!? huh
             shiftCount <= shiftCount + 1;
          end if;
       end if;
@@ -116,8 +109,7 @@ process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
    shiftBit <= '0';
    waitReset <= '0';
    slowReset <= '0';
-   slowSCLK <= '0';
-   shiftReset <= '0';
+   SCLK <= '0';
    
    case curr_state is
       when sIdle => --base state - CS is high false
@@ -141,12 +133,12 @@ process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
          if slowTC = '1' then
             next_state <= sSendM;
          end if;
-      when sSendM => --reset slow counter -- could get rid of this and init state
-         slowSCLK <= '1'; --start the up 
+      when sSendM => --reset slow counter -- could get rid of this and init states
+         SCLK <= '1'; --start the up 
          slowReset <= '1';
          next_state <= sSendUP;
       when sSendUP =>
-         slowSCLK <= '1'; --default is 0 so here's the rising edge for the slave!
+         SCLK <= '1'; --default is 0 so here's the rising edge for the slave!
          if slowTC = '1' then
             if shiftCount = shiftFinal then --are we done shifting?
                next_state <= sDeInit;

@@ -22,14 +22,18 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 entity MoveDecoder is
-    Port ( Xin : in  STD_LOGIC_VECTOR (11 downto 0);
-           Yin : in  STD_LOGIC_VECTOR (11 downto 0);
+    Port ( Xin : in  STD_LOGIC_VECTOR (7 downto 0);
+           Yin : in  STD_LOGIC_VECTOR (7 downto 0);
            Xout : out  STD_LOGIC;
            Yout : out  STD_LOGIC;
            Clk : in  STD_LOGIC);
 end MoveDecoder;
 
 architecture Behavioral of MoveDecoder is
+
+constant THRESHOLD: integer := 10; --who knows! use oscilloscope
+
+
 
 begin
 

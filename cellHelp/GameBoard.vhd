@@ -34,11 +34,11 @@ entity GameBoard is
         ColorOUT : out  STD_LOGIC_VECTOR (7 downto 0); --color from attribute by type
         ColorDONE: out STD_LOGIC; --signal to send when the color is done
         --the following is to wire to game logic
-        ReadENCollision: in STD_LOGIC; --a 1 clock cycle pulse to enable the read
+        --ReadENCollision: in STD_LOGIC; --a 1 clock cycle pulse to enable the read
         RowB : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check FOR GAMELOGIC
         ColB : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check FOR GAMELOGIC
-        CollisionData : out STD_LOGIC_VECTOR(1 downto 0) := (others => '0'); --msb=enabled? lsb=enemy or pup
-        CollisionDone: out STD_LOGIC --signal to send when the collision data is ready
+        CollisionData : out STD_LOGIC_VECTOR(1 downto 0) := (others => '0') --msb=enabled? lsb=enemy or pup
+        --CollisionDone: out STD_LOGIC --signal to send when the collision data is ready
     );
 end GameBoard;
 
@@ -137,7 +137,6 @@ colorOUT <= color;
 CollisionData <= enabled & doutb(7);  --grab the relevant collision bits the enable bit first and the enemy/pup bit second
 
 
-         
 
 FrameCounter: --animate the frames
 process(Clk)
@@ -190,23 +189,23 @@ end process colorDoneProcess;
 rcolortc <= '1' when rcolorcount = donecount else '0'; -- terminal count for counter
 ColorDone <= rcolortc;
 
-collisionDoneProcess: --this counter sets collision done after some number of clock cycles
-process(Clk)
-   begin
-      if rising_edge(Clk) then
-         if ReadENcollision = '1' or rcollisionen = '1' then
-            if rcollisiontc = '1' then
-               rcollisionen <= '0';
-               rcollisioncount <= x"0";
-            else 
-               rcollisionen <= '1';
-               rcollisioncount <= rcollisioncount+1;
-            end if;
-         end if;
-      end if;
-end process collisionDoneProcess;
-rcollisiontc <= '1' when rcollisioncount = donecount else '0'; -- terminal count for counter
-collisionDone <= rcollisiontc;      
+--collisionDoneProcess: --this counter sets collision done after some number of clock cycles
+--process(Clk)
+--   begin
+--      if rising_edge(Clk) then
+--         if ReadENcollision = '1' or rcollisionen = '1' then
+--            if rcollisiontc = '1' then
+--               rcollisionen <= '0';
+--               rcollisioncount <= x"0";
+--            else 
+--               rcollisionen <= '1';
+--               rcollisioncount <= rcollisioncount+1;
+--            end if;
+--         end if;
+--      end if;
+--end process collisionDoneProcess;
+--rcollisiontc <= '1' when rcollisioncount = donecount else '0'; -- terminal count for counter
+--collisionDone <= rcollisiontc;      
       
 end Behavioral;
 

@@ -22,33 +22,19 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 
-entity ACCELDecoder is
+entity ACCELDecoderSimple is
     Port ( Xin : in  STD_LOGIC;
            Yin : in  STD_LOGIC;
            Clk : in  STD_LOGIC;
-           Xout : out STD_LOGIC_VECTOR (7 downto 0);
-           Yout : out STD_LOGIC_VECTOR (7 downto 0);
-           RATE : out  STD_LOGIC_VECTOR (7 downto 0);
+           --Xout : out STD_LOGIC_VECTOR (7 downto 0);
+           --Yout : out STD_LOGIC_VECTOR (7 downto 0);
            T2Out : out STD_LOGIC_VECTOR (7 downto 0);
            T1yOut : out STD_LOGIC_VECTOR (7 downto 0);
            T1xOut : out STD_LOGIC_VECTOR (7 downto 0)
            );
-end ACCELDecoder;
+end ACCELDecoderSimple;
 
-architecture Behavioral of ACCELDecoder is
-
-   component ACCELDivision
-      port (
-      clk: IN std_logic;
-      rfd: OUT std_logic;
-      dividend: IN std_logic_VECTOR(31 downto 0);
-      divisor: IN std_logic_VECTOR(7 downto 0);
-      quotient: OUT std_logic_VECTOR(31 downto 0);
-      fractional: OUT std_logic_VECTOR(7 downto 0));
-   end component;
-   -- Synplicity black box declaration
-   attribute syn_black_box : boolean;
-   attribute syn_black_box of ACCELDivision: component is true;
+architecture Behavioral of ACCELDecoderSimple is
 
    type state_type is ( sWaitXup,sResetTimer, sWaitXdown,sWaitFirstYdown, sWaitYup,sWaitYdown,
                         sSetTs);	-- state machine
@@ -60,42 +46,44 @@ architecture Behavioral of ACCELDecoder is
    signal timer : unsigned(7 downto 0); --timer
    signal timerReset : std_logic;
    
-   signal Zactual: unsigned(15 downto 0); 
-   --signal ZXactual: unsigned(15 downto 0);
-   signal X, Y : unsigned(7 downto 0); --internal signals for output after some maths
+   --signal Zactual: unsigned(15 downto 0); 
+   --signal X, Y : unsigned(7 downto 0); --internal signals for output after some maths
    
     --obtain these from oscillospope 
     -- we'll just measure this once since it should hold fairly steady for the device in general
     -- MAKE SURE THESE ARE THE SAME FOR X AND Y WHEN MEASURING AS THEY MAY BE DIFFERENT.
-   constant T2cal : unsigned(7 downto 0) := "00000100"; --this is from rising to rising of either x or y
-   constant Zcal: unsigned(7 downto 0) := "00000100";  --this is from rising to falling of either x or y AT level should just be 50% or T2cal
-   constant K: unsigned (7 downto 0):= (4 * (T2Cal * 180)) / T2Cal; 
+   --constant T2cal : unsigned(7 downto 0) := "00000100"; --this is from rising to rising of either x or y
+   --constant Zcal: unsigned(7 downto 0) := "00000100";  --this is from rising to falling of either x or y AT level should just be 50% or T2cal
+   --constant K: unsigned (7 downto 0):= (4 * (T2Cal * 256)) / T2Cal; 
    
-   
-   signal rfd: std_logic; --do we need this?
-   signal dividend: std_logic_VECTOR(31 downto 0);
-   signal divisor: std_logic_VECTOR(7 downto 0);
-   signal quotient: std_logic_VECTOR(31 downto 0);
-   signal fractional: std_logic_VECTOR(7 downto 0); --throw this out?
+--   signal msCount: unsigned(5 downto 0):= (others => '0');
+--   signal msTC: std_logic:='0';
+--   constant msFinal: unsigned(5 downto 0):= "110010";
     
 begin
 
-your_instance_name : ACCELDivision
-		port map (
-			clk => clk,
-			rfd => rfd,
-			dividend => dividend,
-			divisor => divisor,
-			quotient => quotient,
-			fractional => fractional);
+
+--msCounter: --this divedes our 50mghz signal to measure microsends (50 * 20ns = 1 microsecond)
+--process (Clk)
+--   begin
+--   if rising_edge(Clk) then
+--      if timerReset = '1' or msTC = '1' then
+--         msCount <= (others => '0');
+--      else
+--         msCount <= msCount + 1;
+--      end if;
+--   end if;
+--end process msCounter;
+--msTC <= '1' when msCount = msFinal else '0';
+
 
 TimerCounter:
 process (Clk)
    begin
-   if rising_edge(Clk) then
+   if rising_edge(Clk)then
       if timerReset = '1' then
          timer <= (others => '0');
-      else
+      else  --ONLY COUNT IN MICROSECONDS --THIS DOES NOT ACCOUNT FOR SAMPLING WE"RE STILL SAMPLING AT 50MGHZ
          timer <= timer + 1;
       end if;
    end if;
@@ -177,17 +165,8 @@ T2Out <= std_logic_vector(T2);
 T1xOut <= std_logic_vector(T1x);
 T1yOut <= std_logic_vector(T1y);
 
-Zactual <= (Zcal * T2) / T2Cal;
-
---X <= (K * (T1x - Zactual)) / T2;
---Y <= (K * (T1y - Zactual)) / T2;
-
-dividend <= std_logic_vector((K * (T1x - Zactual)));
-divisor <= std_logic_vector(T2);
 
 
-Xout <= std_logic_vector(X);
-Yout <= std_logic_vector(Y);
 
 
 StateSwitcher:
