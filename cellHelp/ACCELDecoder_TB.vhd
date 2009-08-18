@@ -2,7 +2,7 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   01:13:12 08/10/2009
+-- Create Date:   13:06:37 08/18/2009
 -- Design Name:   
 -- Module Name:   C:/engs31_cellHELP/cellHELP/ACCELDecoder_TB.vhd
 -- Project Name:  cellHELP
@@ -40,26 +40,22 @@ ARCHITECTURE behavior OF ACCELDecoder_TB IS
     COMPONENT ACCELDecoder
     PORT(
          Xin : IN  std_logic;
-         --Yin : IN  std_logic;
+         Yin : IN  std_logic;
          Clk : IN  std_logic;
-         --RATE : OUT  std_logic_vector(8 downto 0);
-         T2Out : OUT  std_logic_vector(7 downto 0)
-         --T1yOut : OUT  std_logic_vector(7 downto 0);
-         --T1xOut : OUT  std_logic_vector(7 downto 0)
+         Xout : OUT  std_logic_vector(7 downto 0);
+         Yout : OUT  std_logic_vector(7 downto 0)
         );
     END COMPONENT;
     
 
    --Inputs
    signal Xin : std_logic := '0';
-   --signal Yin : std_logic := '0';
+   signal Yin : std_logic := '0';
    signal Clk : std_logic := '0';
 
  	--Outputs
-   --signal RATE : std_logic_vector(8 downto 0);
-   signal T2Out : std_logic_vector(7 downto 0);
-   --signal T1yOut : std_logic_vector(11 downto 0);
-   --signal T1xOut : std_logic_vector(11 downto 0);
+   signal Xout : std_logic_vector(7 downto 0);
+   signal Yout : std_logic_vector(7 downto 0);
 
    -- Clock period definitions
    constant Clk_period : time := 20ns;
@@ -69,12 +65,10 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: ACCELDecoder PORT MAP (
           Xin => Xin,
-          --Yin => Yin,
+          Yin => Yin,
           Clk => Clk,
-          --RATE => RATE,
-          T2Out => T2Out
-          --T1yOut => T1yOut,
-          --T1xOut => T1xOut
+          Xout => Xout,
+          Yout => Yout
         );
 
    -- Clock process definitions
@@ -88,33 +82,49 @@ BEGIN
  
 
    -- Stimulus process
-   stim_proc: process
+   stim_procX: process
    begin		
-      
-      --Yin <= '0';
+   
       Xin <= '0';
       wait for 5ms;
-
-     -- in <= '1';
       Xin <= '1';
       wait for 5ms;
-      
-
-      --Yin <= '0';
       Xin <= '0';
       wait for 5ms;
-
-      --Yin <= '1';
       Xin <= '1';
       wait for 5ms;
-
-      --Yin <= '0';
       Xin <= '0';
       wait for 5ms;
-
-      --Yin <= '1';
       Xin <= '1';
       wait for 5ms;
+      Xin <= '0';
+      wait for 5ms;
+      Xin <= '1';
+      wait for 5ms;
+
+      wait;
+   end process;
+   
+      -- Stimulus process
+   stim_procY: process
+   begin		
+   
+      Yin <= '0';
+      wait for 7ms;
+      Yin <= '1';
+      wait for 3ms;
+      Yin <= '0';
+      wait for 7ms;
+      Yin <= '1';
+      wait for 3ms;
+      Yin <= '0';
+      wait for 7ms;
+      Yin <= '1';
+      wait for 3ms;
+      Yin <= '0';
+      wait for 7ms;
+      Yin <= '1';
+      wait for 3ms;
 
       wait;
    end process;

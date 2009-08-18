@@ -2,9 +2,9 @@
 -- Company:    DARTMOUTH COLLEGE - ENGS31
 -- Engineer:   Divya Gunasekaran and Tim Tregubov
 -- 
--- Create Date:    13:17:46 08/15/2009 
+-- Create Date:    14:53:46 08/18/2009 
 -- Design Name: 
--- Module Name:    LEDDriver - Behavioral 
+-- Module Name:    LEDTest - Behavioral 
 -- Project Name: 
 -- Target Devices: 
 -- Tool versions: 
@@ -21,25 +21,15 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
-entity LEDDriver is
+entity LEDTest is
     Port ( Clk : in  STD_LOGIC;
-           --DataTest: in STD_LOGIC_VECTOR(7 downto 0);
-           --Data: in STD_LOGIC;
-           --GoDisplay : in  STD_LOGIC;
-           --ShiftBitOut : out STD_LOGIC; --MAKE THIS WORK!
-           --MISO : in  STD_LOGIC;
+           Color : in  STD_LOGIC_VECTOR (7 downto 0);
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
            CS : out  STD_LOGIC);
-end LEDDriver;
+end LEDTest;
 
-architecture Behavioral of LEDDriver is
-
-signal shiftreg: std_logic_vector(511 downto 0) := ("00000000011011110100101011111111100000001110000001100011111000110001000000011100100100001111110000000001000000110000101000011111000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001101010101010"
-   );
---signal shiftreg: std_logic_vector(511 downto 0) := ("00000011111000000001110000000011111000000001110000000011111000000001110000000011111000000001110000000011111000000001110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
---   );
---signal shiftreg: std_logic_vector(511 downto 0);   
+architecture Behavioral of LEDTest is
    
 -- state machine for SPI bus
 type state_type is (sBogus, sIdle, sInit, sWaitS, sSendInit, sSendDown, sSendM, sSendUP, sDeInit, sWaitD);	-- state machine
@@ -47,33 +37,27 @@ signal curr_state: state_type := sIdle;
 signal next_state: state_type;
 
 constant waitFinal: unsigned(14 downto 0) := "110000110101000"; -- 25,000 * 20ns = .5ms delay 
---constant waitFinal: unsigned(14 downto 0) := "000000000000100"; -- FOR TESTING - remember this counts from 0
 signal waitCount: unsigned(14 downto 0) := (others => '0'); --counts for the initial wait
 signal waitTC : std_logic:='0'; --terminal count
 signal waitReset : std_logic:='0'; --reset the wait counter
 
 constant slowFinal: unsigned(7 downto 0) := "11111010"; --count to 250 for a rate of 100khz in for down/up of SCLK
---constant slowFinal: unsigned(7 downto 0) := "00000010"; --FOR TESTING
 signal slowCount: unsigned(7 downto 0) := (others => '0'); --counts for SCLK
 signal slowTC : std_logic:='0'; --terminal count
 signal slowReset : std_logic:='0'; --reset the wait counters
 
---constant shiftFinal: unsigned(8 downto 0):= "111111111"; --final count 511
---signal shiftCount: unsigned(8 downto 0):= (others => '0'); --count shifts
 constant shiftFinal: unsigned(9 downto 0):= "1000000000"; --final count 511
 signal shiftCount: unsigned(9 downto 0):= (others => '0'); --count shifts
 signal shiftBit: std_logic:='0'; --shift our bits out onto MOSIs
 
---constant testshiftFinal: unsigned(6 downto 0):= 64;
---signal testshiftCount: unsigned(6 downto 0);
---signal testshift: std_logic:='0';
-
-signal GoDisplay: std_logic:='1'; --TESTING
-
+constant testshiftFinal: unsigned(3 downto 0):= "1111";
+signal testshiftCount: unsigned(3 downto 0) := "0111";
+signal testTC: std_logic:='0';
+signal nextval: std_logic:='0';
    
 begin
-GoDisplay <= '1';
-MOSI <= shiftreg(0); --we shift out datas from this shift register
+
+MOSI <= nextval; --our datas are multiplex shifted into this register
 
 waitCounter: --15bit up counter to enable .5ms pause
 process(Clk)
@@ -103,30 +87,32 @@ end process slowCounter;
 slowTC <= '1' when slowCount = slowFinal else '0';
 
 
---testshiftCounter: --test shifter from pins
---process(Clk)
---   begin
---      if rising_edge(Clk) then
---         if testshift = '1' then
---            shiftreg <=  DataTest  & shiftreg(511 downto 8); 
---            testshiftcount <= testshiftcount + 1;
---         end if;
---      end if;
---end process testshiftCounter;
+testshiftCounter: --test shifter from pins
+process(Clk)
+   begin
+      if rising_edge(Clk) then
+         if testTC = '1' then
+            testshiftcount <= "0111";
+         elsif shiftBit = '1' then
+            testshiftcount <= testshiftcount - 1;
+         end if;
+      end if;
+end process testshiftCounter;
+testTC <= '1' when testshiftcount = testshiftfinal else '0';
 
-shiftCounter: --output shift register! --perhaps combine with DISPLAY output shift register
+shiftCounter: --not really shifting just multiplexing into a 1-bit register
 process(Clk)
    begin
       if rising_edge(Clk) then
          if shiftBit = '1' then
-            shiftreg <=  shiftreg(510 downto 0) & shiftreg(511); --what DATA?!? huh
+            nextval <= Color(to_integer(testshiftcount));
             shiftCount <= shiftCount + 1;
          end if;
       end if;
 end process shiftCounter;
 
 statemachine: --state machine to do all the work
-process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
+process(curr_state, waitTC, shiftCount, slowTC, slowCount)
    begin
    next_state <= curr_state;
    CS <= '0'; --opposite default - this is active low but we only set it high false during sIdle
@@ -138,9 +124,7 @@ process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
    case curr_state is
       when sIdle => --base state - CS is high false
          CS <= '1';
-         if GoDisplay = '1' then
-            next_state <= sInit;
-         end if;
+         next_state <= sInit;
       when sInit => --resest counters to deassert cs
          CS <= '1';
          waitReset <= '1';
