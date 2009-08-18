@@ -44,9 +44,9 @@ ARCHITECTURE behavior OF ACEELDecoder2_TB IS
          Clk : IN  std_logic;
          --Xout : OUT  std_logic_vector(7 downto 0);
          --Yout : OUT  std_logic_vector(7 downto 0);
-         T2Out : OUT  std_logic_vector(7 downto 0);
-         T1yOut : OUT  std_logic_vector(7 downto 0);
-         T1xOut : OUT  std_logic_vector(7 downto 0)
+         T2Out : OUT  std_logic_vector(7 downto 0)
+         --T1yOut : OUT  std_logic_vector(7 downto 0);
+         --T1xOut : OUT  std_logic_vector(7 downto 0)
         );
     END COMPONENT;
     
@@ -60,8 +60,8 @@ ARCHITECTURE behavior OF ACEELDecoder2_TB IS
    --signal Xout : std_logic_vector(7 downto 0);
    --signal Yout : std_logic_vector(7 downto 0);
    signal T2Out : std_logic_vector(7 downto 0);
-   signal T1yOut : std_logic_vector(7 downto 0);
-   signal T1xOut : std_logic_vector(7 downto 0);
+   --signal T1yOut : std_logic_vector(7 downto 0);
+   --signal T1xOut : std_logic_vector(7 downto 0);
 
    -- Clock period definitions
    constant Clk_period : time := 1us;
@@ -75,9 +75,9 @@ BEGIN
           Clk => Clk,
           --Xout => Xout,
           --Yout => Yout,
-          T2Out => T2Out,
-          T1yOut => T1yOut,
-          T1xOut => T1xOut
+          T2Out => T2Out
+          --T1yOut => T1yOut,
+          --T1xOut => T1xOut
         );
 
    -- Clock process definitions

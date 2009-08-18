@@ -24,179 +24,87 @@ use ieee.numeric_std.all;
 
 entity ACCELDecoder is
     Port ( Xin : in  STD_LOGIC;
-           Yin : in  STD_LOGIC;
+           --Yin : in  STD_LOGIC;
            Clk : in  STD_LOGIC;
-           Xout : out STD_LOGIC_VECTOR (7 downto 0);
-           Yout : out STD_LOGIC_VECTOR (7 downto 0);
-           RATE : out  STD_LOGIC_VECTOR (7 downto 0);
-           T2Out : out STD_LOGIC_VECTOR (7 downto 0);
-           T1yOut : out STD_LOGIC_VECTOR (7 downto 0);
-           T1xOut : out STD_LOGIC_VECTOR (7 downto 0)
+           --Xout : out STD_LOGIC_VECTOR (7 downto 0);
+           --Yout : out STD_LOGIC_VECTOR (7 downto 0);
+           T2Out : out STD_LOGIC_VECTOR (7 downto 0)
+           --T1yOut : out STD_LOGIC_VECTOR (7 downto 0);
+           --T1xOut : out STD_LOGIC_VECTOR (7 downto 0)
            );
 end ACCELDecoder;
 
 architecture Behavioral of ACCELDecoder is
 
-   component ACCELDivision
-      port (
-      clk: IN std_logic;
-      rfd: OUT std_logic;
-      dividend: IN std_logic_VECTOR(31 downto 0);
-      divisor: IN std_logic_VECTOR(7 downto 0);
-      quotient: OUT std_logic_VECTOR(31 downto 0);
-      fractional: OUT std_logic_VECTOR(7 downto 0));
-   end component;
-   -- Synplicity black box declaration
-   attribute syn_black_box : boolean;
-   attribute syn_black_box of ACCELDivision: component is true;
+--   component ACCELDivision
+--      port (
+--      clk: IN std_logic;
+--      rfd: OUT std_logic;
+--      dividend: IN std_logic_VECTOR(31 downto 0);
+--      divisor: IN std_logic_VECTOR(7 downto 0);
+--      quotient: OUT std_logic_VECTOR(31 downto 0);
+--      fractional: OUT std_logic_VECTOR(7 downto 0));
+--   end component;
+--   -- Synplicity black box declaration
+--   attribute syn_black_box : boolean;
+--   attribute syn_black_box of ACCELDivision: component is true;
 
-   type state_type is ( sWaitXup,sResetTimer, sWaitXdown,sWaitFirstYdown, sWaitYup,sWaitYdown,
-                        sSetTs);	-- state machine
-	signal curr_state, next_state: state_type;
    
-   signal tb,td,tc : unsigned(7 downto 0); --recorded times
-   signal tbset,tdset,tcset, tset : std_logic; --set them
-   signal T1x, T1y, T2 : unsigned(7 downto 0);  -- calculations
-   signal timer : unsigned(7 downto 0); --timer
-   signal timerReset : std_logic;
+   COMPONENT AccelDetector
+	PORT(
+		Clk : IN std_logic;
+		SigIn : IN std_logic;          
+		T1out : OUT std_logic_vector(7 downto 0);
+		T2out : OUT std_logic_vector(7 downto 0)
+		);
+	END COMPONENT;
    
-   signal Zactual: unsigned(15 downto 0); 
-   --signal ZXactual: unsigned(15 downto 0);
-   signal X, Y : unsigned(7 downto 0); --internal signals for output after some maths
+--   signal X, Y : unsigned(7 downto 0); --internal signals for output after some maths   
+--   
+--   signal rfd: std_logic; --do we need this?
+--   signal dividend: std_logic_VECTOR(31 downto 0);
+--   signal divisor: std_logic_VECTOR(7 downto 0);
+--   signal quotient: std_logic_VECTOR(31 downto 0);
+--   signal fractional: std_logic_VECTOR(7 downto 0); --throw this out?
    
-    --obtain these from oscillospope 
-    -- we'll just measure this once since it should hold fairly steady for the device in general
-    -- MAKE SURE THESE ARE THE SAME FOR X AND Y WHEN MEASURING AS THEY MAY BE DIFFERENT.
-   constant T2cal : unsigned(7 downto 0) := "00000100"; --this is from rising to rising of either x or y
-   constant Zcal: unsigned(7 downto 0) := "00000100";  --this is from rising to falling of either x or y AT level should just be 50% or T2cal
-   constant K: unsigned (7 downto 0):= (4 * (T2Cal * 180)) / T2Cal; 
-   
-   
-   signal rfd: std_logic; --do we need this?
-   signal dividend: std_logic_VECTOR(31 downto 0);
-   signal divisor: std_logic_VECTOR(7 downto 0);
-   signal quotient: std_logic_VECTOR(31 downto 0);
-   signal fractional: std_logic_VECTOR(7 downto 0); --throw this out?
+   signal t1y,t1x,t2y,t2x: std_logic_vector(7 downto 0);
     
 begin
 
-your_instance_name : ACCELDivision
-		port map (
-			clk => clk,
-			rfd => rfd,
-			dividend => dividend,
-			divisor => divisor,
-			quotient => quotient,
-			fractional => fractional);
-
-TimerCounter:
-process (Clk)
-   begin
-   if rising_edge(Clk) then
-      if timerReset = '1' then
-         timer <= (others => '0');
-      else
-         timer <= timer + 1;
-      end if;
-   end if;
-end process TimerCounter;
-
-
-process (clk)
-   begin
-      if rising_edge(Clk) then
-         tb <= tb;
-         tc <= tc;
-         td <= td;
-         T1x <= T1x;
-         T1y <= T1y;
-         T2 <= T2;
-         
-         if tbset = '1' then
-            tb <= timer;
-         elsif tcset = '1' then
-            tc <= timer;
-         elsif tdset = '1' then
-            td <= timer;
-         elsif tset = '1' then
-            T1x <= tb;
-            T1y <= td - tc;
-            T2 <= (td - ((td - tc)/2)) - (tb/2);
-         end if;
-      end if;
-end process;
-
-
-Decode:
-process (curr_state, Xin, Yin, timer)
-   begin 
-   timerReset <= '0';
-   next_state <= curr_state;
-   tbset <= '0';
-   tcset <= '0';
-   tdset <= '0';
-   tset <= '0';
+xdetect: AccelDetector PORT MAP(
+		Clk => Clk,
+		SigIn => Xin,
+		T1out => t1x,
+		T2out => t2x
+	);
    
-   case curr_state is
-      when sWaitXup =>
-         if Xin = '1' then
-            timerReset <= '1'; --reset timer --might not be on for long enough
-            next_state <= sWaitXdown;
-         end if;
---      when sResetTimer =>  --this takes an extra clock but isn't necessary
---         timerReset <= '1'; --reset timer
---         next_state <= sWaitXdown;
-      when sWaitXdown =>
-         if Xin = '0' then --record x time
-            tbset <= '1';
-            next_state <= sWaitFirstYdown;
-         end if;
-      when sWaitFirstYdown =>
-         if Yin = '0' then -- move onto the waiting for the next up
-            next_state <= sWaitYup;
-         end if;
-      when sWaitYup =>
-         if Yin = '1' then --record x2y time
-            tcset <= '1';
-            next_state <= sWaitYdown;
-         end if;
-      when sWaitYDown =>
-         if Yin = '0' then --record xthroughy time
-            tdset <= '1';
-            next_state <= sSetTs;
-         end if;
-      when sSetTs =>
-         Tset <= '1';
-         next_state <= sWaitXup;
-      when others => 
-         next_state <= sWaitXup;
-   end case;
-end process Decode;
+--ydetect: AccelDetector PORT MAP(
+--		Clk => Clk,
+--		SigIn => Yin,
+--		T1out => t1y,
+--		T2out => t2y
+--	);
 
-T2Out <= std_logic_vector(T2);
-T1xOut <= std_logic_vector(T1x);
-T1yOut <= std_logic_vector(T1y);
+--divs : ACCELDivision
+--		port map (
+--			clk => clk,
+--			rfd => rfd,
+--			dividend => dividend,
+--			divisor => divisor,
+--			quotient => quotient,
+--			fractional => fractional);
 
-Zactual <= (Zcal * T2) / T2Cal;
+T2Out <= std_logic_vector(t1x);
+--T1xOut <= std_logic_vector(T1x);
+--T1yOut <= std_logic_vector(T1y);
 
---X <= (K * (T1x - Zactual)) / T2;
---Y <= (K * (T1y - Zactual)) / T2;
-
-dividend <= std_logic_vector((K * (T1x - Zactual)));
-divisor <= std_logic_vector(T2);
+--dividend <= std_logic_vector((K * (T1x - Zactual)));
+--divisor <= std_logic_vector(T2);
 
 
-Xout <= std_logic_vector(X);
-Yout <= std_logic_vector(Y);
+--Xout <= std_logic_vector(dividend);
+--Yout <= std_logic_vector(divisor);
 
-
-StateSwitcher:
-process (Clk)
-begin
-	if rising_edge(Clk) then
-		curr_state <= next_state;
-	end if;
-end process StateSwitcher;
 
 
 end Behavioral;

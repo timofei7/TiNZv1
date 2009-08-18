@@ -89,7 +89,7 @@ process(Clk)
       if rising_edge(Clk) then
          if seqReset = '1' then
             frame <= (others => '0');
-         elsif CE = '1' then
+         elsif CE = '1' and seqDone = '0' then --check this
             frame <= frame +1;
          else frame <= frame;
          end if;

@@ -2,15 +2,15 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   01:13:12 08/10/2009
+-- Create Date:   01:55:04 08/18/2009
 -- Design Name:   
--- Module Name:   C:/engs31_cellHELP/cellHELP/ACCELDecoder_TB.vhd
+-- Module Name:   C:/engs31_cellHELP/cellHELP/AccelDetector_TB.vhd
 -- Project Name:  cellHELP
 -- Target Device:  
 -- Tool versions:  
 -- Description:   
 -- 
--- VHDL Test Bench Created by ISE for module: ACCELDecoder
+-- VHDL Test Bench Created by ISE for module: AccelDetector
 -- 
 -- Dependencies:
 -- 
@@ -30,36 +30,30 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.ALL;
  
-ENTITY ACCELDecoder_TB IS
-END ACCELDecoder_TB;
+ENTITY AccelDetector_TB IS
+END AccelDetector_TB;
  
-ARCHITECTURE behavior OF ACCELDecoder_TB IS 
+ARCHITECTURE behavior OF AccelDetector_TB IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT ACCELDecoder
+    COMPONENT AccelDetector
     PORT(
-         Xin : IN  std_logic;
-         --Yin : IN  std_logic;
          Clk : IN  std_logic;
-         --RATE : OUT  std_logic_vector(8 downto 0);
-         T2Out : OUT  std_logic_vector(7 downto 0)
-         --T1yOut : OUT  std_logic_vector(7 downto 0);
-         --T1xOut : OUT  std_logic_vector(7 downto 0)
+         SigIn : IN  std_logic;
+         T1out : OUT  std_logic_vector(7 downto 0);
+         T2out : OUT  std_logic_vector(7 downto 0)
         );
     END COMPONENT;
     
 
    --Inputs
-   signal Xin : std_logic := '0';
-   --signal Yin : std_logic := '0';
    signal Clk : std_logic := '0';
+   signal SigIn : std_logic := '0';
 
  	--Outputs
-   --signal RATE : std_logic_vector(8 downto 0);
-   signal T2Out : std_logic_vector(7 downto 0);
-   --signal T1yOut : std_logic_vector(11 downto 0);
-   --signal T1xOut : std_logic_vector(11 downto 0);
+   signal T1out : std_logic_vector(7 downto 0);
+   signal T2out : std_logic_vector(7 downto 0);
 
    -- Clock period definitions
    constant Clk_period : time := 20ns;
@@ -67,14 +61,11 @@ ARCHITECTURE behavior OF ACCELDecoder_TB IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: ACCELDecoder PORT MAP (
-          Xin => Xin,
-          --Yin => Yin,
+   uut: AccelDetector PORT MAP (
           Clk => Clk,
-          --RATE => RATE,
-          T2Out => T2Out
-          --T1yOut => T1yOut,
-          --T1xOut => T1xOut
+          SigIn => SigIn,
+          T1out => T1out,
+          T2out => T2out
         );
 
    -- Clock process definitions
@@ -90,31 +81,33 @@ BEGIN
    -- Stimulus process
    stim_proc: process
    begin		
+      wait for Clk_period*2.25;
       
-      --Yin <= '0';
-      Xin <= '0';
-      wait for 5ms;
-
-     -- in <= '1';
-      Xin <= '1';
+      SigIn <= '0';
+      
       wait for 5ms;
       
-
-      --Yin <= '0';
-      Xin <= '0';
+      SigIn <= '1';
       wait for 5ms;
-
-      --Yin <= '1';
-      Xin <= '1';
+      SigIn <= '0';
       wait for 5ms;
-
-      --Yin <= '0';
-      Xin <= '0';
+      
+      SigIn <= '1';
       wait for 5ms;
-
-      --Yin <= '1';
-      Xin <= '1';
+      SigIn <= '0';
       wait for 5ms;
+      
+      SigIn <= '1';
+      wait for 10ms;
+      SigIn <= '0';
+      wait for 10ms;
+            
+      SigIn <= '1';
+      wait for 7ms;
+      SigIn <= '0';
+      wait for 7ms;
+      
+      
 
       wait;
    end process;

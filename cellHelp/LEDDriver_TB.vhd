@@ -40,9 +40,9 @@ ARCHITECTURE behavior OF LEDDriver_TB IS
     COMPONENT LEDDriver
     PORT(
          Clk : IN  std_logic;
-         Data: IN std_logic;
-         GoDisplay : IN  std_logic;
-         MISO : IN  std_logic;
+         --Data: IN std_logic;
+         --GoDisplay : IN  std_logic;
+         --MISO : IN  std_logic;
          MOSI : OUT  std_logic;
          SCLK : OUT  std_logic;
          CS : OUT  std_logic
@@ -52,9 +52,9 @@ ARCHITECTURE behavior OF LEDDriver_TB IS
 
    --Inputs
    signal Clk : std_logic := '0';
-   signal Data: std_logic := '0';
-   signal GoDisplay : std_logic := '0';
-   signal MISO : std_logic := '0';
+   --signal Data: std_logic := '0';
+   --signal GoDisplay : std_logic := '0';
+   --signal MISO : std_logic := '0';
 
  	--Outputs
    signal MOSI : std_logic;
@@ -70,9 +70,9 @@ BEGIN
 	-- Instantiate the Unit Under Test (UUT)
    uut: LEDDriver PORT MAP (
           Clk => Clk,
-          Data => Data,
-          GoDisplay => GoDisplay,
-          MISO => MISO,
+          --Data => Data,
+          --GoDisplay => GoDisplay,
+          --MISO => MISO,
           MOSI => MOSI,
           SCLK => SCLK,
           CS => CS
@@ -89,14 +89,14 @@ BEGIN
  
 
  
-   MISO <= MOSI;
+   --MISO <= MOSI;
 
    -- Stimulus process
    stim_proc: process
    begin		
 
       wait for Clk_period*2.25;
-      GoDisplay <= '1';
+      --GoDisplay <= '1';
       --wait for Clk_period;
       --GoDisplay <= '0';
 
