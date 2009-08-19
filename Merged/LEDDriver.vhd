@@ -26,7 +26,7 @@ entity LEDDriver is
            Data: in STD_LOGIC;
            GoDisplay : in  STD_LOGIC;
            ShiftBitOut : out STD_LOGIC; 
-           DoneShiftingThanks : out STD_LOGIC;
+           displayDone : out STD_LOGIC;
            --MISO : in  STD_LOGIC;
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
@@ -58,11 +58,26 @@ signal shiftCount: unsigned(9 downto 0):= (others => '0'); --count shifts
 signal shiftBit: std_logic:='0'; --shift our bits out onto MOSIs
 signal shiftTC: std_logic:='0'; --shift terminal count
 
+signal displayDoneReg: std_logic:='0'; --low when I'm active high when I'm not
+
 
 begin
 
 MOSI <= Data; --we shift out datas from this shift register from Display
 shiftBitOut <= shiftBit; --just a hookup of internal to external
+displayDone <= displayDoneReg; --do it or rather don't
+
+displaydonot:
+process(Clk)
+   begin
+      if rising_edge(Clk) then
+         if GoDisplay = '1' then
+            displayDoneReg <= '0';
+         elsif shiftTC = '1' then
+            displayDoneReg <= '1';
+         end if;
+      end if;
+end process displaydonot;
 
 
 waitCounter: --15bit up counter to enable .5ms pause
@@ -105,7 +120,6 @@ process(Clk)
       end if;
 end process shiftCounter;
 shiftTC <= '1' when shiftCount = shiftFinal else '0'; --I just added this why was it working before??!
-DoneShiftingThanks <= shiftTC;
 
 statemachine: --state machine to do all the work
 process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)

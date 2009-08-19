@@ -21,7 +21,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity PlayerInput is
+entity Play is
     Port ( 
       Clk : in  STD_LOGIC;
       Xin : IN std_logic; --from accelerometer
@@ -37,9 +37,9 @@ entity PlayerInput is
       moveCountTens : OUT std_logic_vector(3 downto 0); --''
       moveCountHundreds : OUT std_logic_vector(3 downto 0) --''
     );
-end PlayerInput;
+end Play;
 
-architecture Behavioral of PlayerInput is
+architecture Behavioral of Play is
 
 COMPONENT ACCELDecoder
 PORT(
