@@ -99,19 +99,19 @@ NET "Clk" LOC = "B8"; # Bank = 0, Pin name = IP_L13P_0/GCLK8, Type = GCLK, Sch n
 #NET "MemDB<15> " LOC = "T1"; # Bank = 3, Pin name = IO_L24N_3, Type = I/O, Sch name = DB15
 #
 ## 7 segment display
-#NET "seg<0>" LOC = "L18"; # Bank = 1, Pin name = IO_L10P_1, Type = I/O, Sch name = CA
-#NET "seg<1>" LOC = "F18"; # Bank = 1, Pin name = IO_L19P_1, Type = I/O, Sch name = CB
-#NET "seg<2>" LOC = "D17"; # Bank = 1, Pin name = IO_L23P_1/HDC, Type = DUAL, Sch name = CC
-#NET "seg<3>" LOC = "D16"; # Bank = 1, Pin name = IO_L23N_1/LDC0, Type = DUAL, Sch name = CD
-#NET "seg<4>" LOC = "G14"; # Bank = 1, Pin name = IO_L20P_1, Type = I/O, Sch name = CE
-#NET "seg<5>" LOC = "J17"; # Bank = 1, Pin name = IO_L13P_1/A6/RHCLK4/IRDY1, Type = RHCLK/DUAL, Sch name = CF
-#NET "seg<6>" LOC = "H14"; # Bank = 1, Pin name = IO_L17P_1, Type = I/O, Sch name = CG
+NET "seg<0>" LOC = "L18"; # Bank = 1, Pin name = IO_L10P_1, Type = I/O, Sch name = CA
+NET "seg<1>" LOC = "F18"; # Bank = 1, Pin name = IO_L19P_1, Type = I/O, Sch name = CB
+NET "seg<2>" LOC = "D17"; # Bank = 1, Pin name = IO_L23P_1/HDC, Type = DUAL, Sch name = CC
+NET "seg<3>" LOC = "D16"; # Bank = 1, Pin name = IO_L23N_1/LDC0, Type = DUAL, Sch name = CD
+NET "seg<4>" LOC = "G14"; # Bank = 1, Pin name = IO_L20P_1, Type = I/O, Sch name = CE
+NET "seg<5>" LOC = "J17"; # Bank = 1, Pin name = IO_L13P_1/A6/RHCLK4/IRDY1, Type = RHCLK/DUAL, Sch name = CF
+NET "seg<6>" LOC = "H14"; # Bank = 1, Pin name = IO_L17P_1, Type = I/O, Sch name = CG
 #NET "dp " LOC = "C17"; # Bank = 1, Pin name = IO_L24N_1/LDC2, Type = DUAL, Sch name = DP
 #
-#NET "an<0>" LOC = "F17"; # Bank = 1, Pin name = IO_L19N_1, Type = I/O, Sch name = AN0
-#NET "an<1>" LOC = "H17"; # Bank = 1, Pin name = IO_L16N_1/A0, Type = DUAL, Sch name = AN1
-#NET "an<2>" LOC = "C18"; # Bank = 1, Pin name = IO_L24P_1/LDC1, Type = DUAL, Sch name = AN2
-#NET "an<3>" LOC = "F15"; # Bank = 1, Pin name = IO_L21P_1, Type = I/O, Sch name = AN3
+NET "an<0>" LOC = "F17"; # Bank = 1, Pin name = IO_L19N_1, Type = I/O, Sch name = AN0
+NET "an<1>" LOC = "H17"; # Bank = 1, Pin name = IO_L16N_1/A0, Type = DUAL, Sch name = AN1
+NET "an<2>" LOC = "C18"; # Bank = 1, Pin name = IO_L24P_1/LDC1, Type = DUAL, Sch name = AN2
+NET "an<3>" LOC = "F15"; # Bank = 1, Pin name = IO_L21P_1, Type = I/O, Sch name = AN3
 #
 ## Leds
 NET "PlayerX<0>" LOC = "J14"; # Bank = 1, Pin name = IO_L14N_1/A3/RHCLK7, Type = RHCLK/DUAL, Sch name = JD10/LD0
@@ -120,16 +120,16 @@ NET "PlayerX<2>" LOC = "K15"; # Bank = 1, Pin name = IO_L12P_1/A8/RHCLK2, Type =
 NET "PlayerY<0>" LOC = "K14"; # Bank = 1, Pin name = IO_L12N_1/A7/RHCLK3/TRDY1, Type = RHCLK/DUAL, Sch name = JD7/LD3
 NET "PlayerY<1>" LOC = "E17"; # Bank = 1, Pin name = IO, Type = I/O, Sch name = LD4?
 NET "PlayerY<2>" LOC = "P15"; # Bank = 1, Pin name = IO, Type = I/O, Sch name = LD5?
-NET "moveCountOnes<2>" LOC = "F4"; # Bank = 3, Pin name = IO, Type = I/O, Sch name = LD6?
-NET "moveCountOnes<3>" LOC = "R4"; # Bank = 3, Pin name = IO/VREF_3, Type = VREF, Sch name = LD7?
+#NET "moveCountOnes<2>" LOC = "F4"; # Bank = 3, Pin name = IO, Type = I/O, Sch name = LD6?
+#NET "moveCountOnes<3>" LOC = "R4"; # Bank = 3, Pin name = IO/VREF_3, Type = VREF, Sch name = LD7?
 #NET "" LOC = "E16"; # Bank = 1, Pin name = N.C., Type = N.C., Sch name = LD4?
 ##NET "Led<5> " LOC = "P16"; # Bank = 1, Pin name = N.C., Type = N.C., Sch name = LD5?
 ##NET "Led<6> " LOC = "E4"; # Bank = 3, Pin name = N.C., Type = N.C., Sch name = LD6?
 ##NET "Led<7> " LOC = "P4"; # Bank = 3, Pin name = N.C., Type = N.C., Sch name = LD7?
 #
 ## Switches
-#NET "DisplayEN" LOC = "G18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW0
-#NET "ResetDisplay" LOC = "H18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = SW1
+NET "SevenSegEN" LOC = "G18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW0
+NET "SevenSegSelector" LOC = "H18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = SW1
 #NET "Data<2>" LOC = "K18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW2
 #NET "Data<3>" LOC = "K17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW3
 #NET "Data<4>" LOC = "L14"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW4
@@ -140,7 +140,7 @@ NET "moveCountOnes<3>" LOC = "R4"; # Bank = 3, Pin name = IO/VREF_3, Type = VREF
 ## Buttons
 #
 NET "resetPlayer" LOC = "B18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN0
-#NET "btn<1> " LOC = "D18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = BTN1
+NET "resetGameT" LOC = "D18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = BTN1
 #NET "btn<2> " LOC = "E18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN2
 #NET "btn<3> " LOC = "H13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN3
 #

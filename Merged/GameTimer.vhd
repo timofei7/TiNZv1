@@ -140,7 +140,7 @@ begin
 	end if;
 end process timeUp;
 
-sevenSegDisplay: process(sevenSegSelector, Ones, Tens, Hundreds, numMovesHundreds, numMovesTens, numOnes, anodeCount)
+sevenSegDisplay: process(sevenSegSelector, Ones, Tens, Hundreds, numMovesHundreds, numMovesTens, numMovesOnes, anodeCount)
 begin
 	if sevenSegSelector='0' then	--display timer on seven seg display
 		case anodeCount is

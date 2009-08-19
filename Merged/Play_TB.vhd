@@ -30,14 +30,14 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.ALL;
  
-ENTITY PlayerInput_TB IS
-END PlayerInput_TB;
+ENTITY Play_TB IS
+END Play_TB;
  
-ARCHITECTURE behavior OF PlayerInput_TB IS 
+ARCHITECTURE behavior OF Play_TB IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
-    COMPONENT PlayerInput
+    COMPONENT Play
     PORT(
          Clk : IN  std_logic;
          Xin : IN  std_logic;
@@ -79,7 +79,7 @@ ARCHITECTURE behavior OF PlayerInput_TB IS
 BEGIN
  
 	-- Instantiate the Unit Under Test (UUT)
-   uut: PlayerInput PORT MAP (
+   uut: Play PORT MAP (
           Clk => Clk,
           Xin => Xin,
           Yin => Yin,

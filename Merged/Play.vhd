@@ -30,12 +30,18 @@ entity Play is
       YAnalogIn : IN std_logic; --''
       XAnalogOut : OUT std_logic; --need to hook up to something to prevent errors
       YAnalogOut : OUT std_logic; --''
+      
       resetPlayer : IN std_logic; --resets player pos
       playerX : OUT std_logic_vector(2 downto 0); --current pos
       playerY : OUT std_logic_vector(2 downto 0); --''
-      moveCountOnes : OUT std_logic_vector(3 downto 0); --move counter for displaying score
-      moveCountTens : OUT std_logic_vector(3 downto 0); --''
-      moveCountHundreds : OUT std_logic_vector(3 downto 0) --''
+      
+      resetGameT : IN std_logic;
+      sevenSegEN : IN std_logic;
+      sevenSegSelector : IN std_logic;          
+      gameOver : OUT std_logic;
+      
+      an  : OUT std_logic_vector(3 downto 0);
+      seg : OUT std_logic_vector(0 to 6)
     );
 end Play;
 
@@ -73,10 +79,32 @@ PORT(
    );
 END COMPONENT;
 
+
+COMPONENT GameTimer
+PORT(
+   Clk : IN std_logic;
+   resetGameT : IN std_logic;
+   sevenSegEN : IN std_logic;
+   numMovesOnes : IN std_logic_vector(3 downto 0);
+   numMovesTens : IN std_logic_vector(3 downto 0);
+   numMovesHundreds : IN std_logic_vector(3 downto 0);
+   sevenSegSelector : IN std_logic;          
+   gameOver : OUT std_logic;
+   an : OUT std_logic_vector(3 downto 0);
+   segDisplay : OUT std_logic_vector(0 to 6)
+   );
+END COMPONENT;
+
+
+
 signal XMinus : std_logic; --internal pulse of detected move from accelerometer
 signal XPlus : std_logic;  --''
 signal YMinus : std_logic; --''
 signal YPlus : std_logic;  --''
+
+signal moveCountOnes : std_logic_vector(3 downto 0) :=(others => '0'); --move counter for displaying score
+signal moveCountTens : std_logic_vector(3 downto 0) :=(others => '0'); --''
+signal moveCountHundreds : std_logic_vector(3 downto 0) :=(others => '0');--''
 
 begin
 
@@ -107,5 +135,19 @@ theplayer: Player PORT MAP(
 		moveCountTens => moveCountTens,
 		moveCountHundreds => moveCountHundreds 
 	);
+   
+   
+timesup: GameTimer PORT MAP(
+		Clk => Clk,
+		resetGameT => resetGameT,
+		sevenSegEN => sevenSegEN,
+		numMovesOnes => moveCountOnes,
+		numMovesTens => moveCountTens,
+		numMovesHundreds => moveCountHundreds,
+		sevenSegSelector => sevenSegSelector,
+		gameOver => gameOver,
+		an => an,
+		segDisplay => seg
+	);   
 end Behavioral;
 
