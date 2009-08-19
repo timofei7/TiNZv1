@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH - ENGS31
+-- Company:    DARTMOUTH COLLEGE - ENGS31
 -- Engineer:   Divya Gunasekaran and Tim Tregubov
 -- 
 -- Create Date:    23:08:00 08/09/2009 
@@ -23,21 +23,18 @@ use ieee.numeric_std.all;
 
 
 entity ACCELDecoder is
-    Port ( Xin : in  STD_LOGIC;
+    Port ( 
+           Clk : in  STD_LOGIC;    
+           Xin : in  STD_LOGIC;
            Yin : in  STD_LOGIC;
 			  XAnalogIn : in  STD_LOGIC;
            YAnalogIn : in  STD_LOGIC;
 			  XAnalogOut : out std_logic;
 			  YAnalogOut : out std_logic;
-           Clk : in  STD_LOGIC;
-			  xt : out  STD_LOGIC;
-			  yt : out  STD_LOGIC;
 			  XMinus : out  STD_LOGIC;
 			  XPlus : out  STD_LOGIC;
 			  YMinus : out  STD_LOGIC;
 			  YPlus : out  STD_LOGIC
-           --Xout : out STD_LOGIC_VECTOR (7 downto 0)
-           --Yout : out STD_LOGIC_VECTOR (7 downto 0)
            );
 end ACCELDecoder;
 
@@ -81,13 +78,13 @@ architecture Behavioral of ACCELDecoder is
    --signal rfdX: std_logic; --we don't need this
    signal dividendX: std_logic_VECTOR(7 downto 0);
    signal divisorX: std_logic_VECTOR(7 downto 0);
-   signal quotientX: std_logic_VECTOR(7 downto 0);
+   --signal quotientX: std_logic_VECTOR(7 downto 0); --trash
    signal fractionalX: std_logic_VECTOR(7 downto 0); 
    
    --signal rfdY: std_logic; --we don't need this
    signal dividendY: std_logic_VECTOR(7 downto 0);
    signal divisorY: std_logic_VECTOR(7 downto 0);
-   signal quotientY: std_logic_VECTOR(7 downto 0);
+   --signal quotientY: std_logic_VECTOR(7 downto 0); --trash
    signal fractionalY: std_logic_VECTOR(7 downto 0); 
 
    signal t1y,t1x,t2y,t2x: std_logic_vector(7 downto 0);
@@ -97,8 +94,6 @@ architecture Behavioral of ACCELDecoder is
     
 begin
 
-xt <= xin; --fr testing
-yt <= yin;
 
 XAnalogOut <= XAnalogIn;
 YAnalogOut <= YAnalogIn;
@@ -137,7 +132,7 @@ divsX : ACCELDivision
 			rfd => OPEN,
 			dividend => dividendX,
 			divisor => divisorX,
-			quotient => quotientX, --throw out
+			quotient => OPEN, --throw out
 			fractional => fractionalX);
 
 divsY : ACCELDivision
@@ -146,7 +141,7 @@ divsY : ACCELDivision
 			rfd => OPEN,
 			dividend => dividendY,
 			divisor => divisorY,
-			quotient => quotientY, --throw out
+			quotient => OPEN, --throw out
 			fractional => fractionalY);
 
 
