@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company:    DARTMOUTH COLLEGE - ENGS31
+-- Engineer:   Divya Gunasekaran and Tim Tregubov
 -- 
 -- Create Date:    13:35:17 08/16/2009 
 -- Design Name: 

@@ -132,7 +132,6 @@ colorOUT <= color;
 CollisionData <= enabled & doutb(7);  --grab the relevant collision bits the enable bit first and the enemy/pup bit second
 
 
-
 FrameCounter: --animate the frames
 process(Clk)
    begin

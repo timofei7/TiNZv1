@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company:    DARTMOUTH COLLEGE - ENGS31
+-- Engineer:   Divya Gunasekaran and Tim Tregubov
 -- 
 -- Create Date:    12:48:55 08/16/2009 
 -- Design Name: 
@@ -21,11 +21,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-
----- Uncomment the following library declaration if instantiating
----- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity GameTimer is
     Port ( Clk : in STD_LOGIC;
