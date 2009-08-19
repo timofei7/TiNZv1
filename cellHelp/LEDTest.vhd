@@ -159,7 +159,7 @@ process(curr_state, waitTC, shiftCount, slowTC, slowCount)
          next_state <= sWaitD;
       when sWaitD => --wait for .5ms to denable cs
          if waitTC = '1' then
-            next_state <= sBogus;--CHANGEME
+            next_state <= sIdle;--CHANGEME
          end if;
       when sBogus =>
          CS <= '1';
