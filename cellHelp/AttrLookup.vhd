@@ -33,7 +33,7 @@ entity AttrLookup is
            Enabled : out STD_LOGIC);
 end AttrLookup;
 
-architecture Behavioral of AttrLookup is     
+architecture Behavioral of AttrLookup is
      constant enemy1Color : std_logic_vector(7 downto 0) := "11100000";  --bright red enemies
      constant enemy2Color : std_logic_vector(7 downto 0) := "10000000";  --dark red enemies
      constant enemy3Color : std_logic_vector(7 downto 0) := "10000010";  --dark purplish enemies
@@ -92,7 +92,7 @@ begin
    end if;
 end process;
 
-process(ReadColor)
+process(ReadColor, enemy1, enemy2, enemy3, pu1, pu2, pu3, empty, finish)
 begin
    Color <= emptyColor;
    case ReadColor is
@@ -134,7 +134,7 @@ begin
 end process;
 
 
-process(ReadEnabled)
+process(ReadEnabled, enemy1, enemy2, enemy3, pu1, pu2, pu3, empty, finish)
 begin
    case ReadEnabled is
       when x"1" => Enabled <= enemy1; 

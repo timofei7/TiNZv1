@@ -32,16 +32,17 @@ architecture Behavioral of ThresHysteresis is
 
 constant upt: unsigned(7 downto 0)   := "10111111";
 constant uph: unsigned(7 downto 0)   := "10011111"; 
-constant downt: unsigned(7 downto 0) := "01011111"; 
 constant downh: unsigned(7 downto 0) := "01111111"; 
+constant downt: unsigned(7 downto 0) := "01011111"; 
 
 signal sins: unsigned(7 downto 0);
 signal waitReset: std_logic;
 signal waitcount: unsigned(24 downto 0) := (others => '0');
 constant waitcountfinal: unsigned(24 downto 0) := (others => '1');
+--constant waitcountfinal: unsigned(24 downto 0) := "0000000000000000000000100";
 signal waitTC : std_logic;
 
-type state_type is (sStart, sUP, sSendUP, sDOWN, sSendDOWN, sWaitU, sWaitD);	-- state machine
+type state_type is (sStart, sSendUP, sSendDOWN, sWaitU, sWaitD);	-- state machine
 signal curr_state, next_state: state_type;
 
 
@@ -65,7 +66,7 @@ waitTC <= '1' when waitcount = waitcountfinal else '0';
 
 
 Detect:
-process(curr_state, sins)
+process(curr_state, sins, waitTC)
    begin
       next_state <= curr_state;
       UP <= '0';
@@ -76,6 +77,8 @@ process(curr_state, sins)
          when sStart =>
             if sins >= upt then
                next_state <= sSendUP;
+				elsif sins <= downt then
+					next_state <= sSendDOWN;
             end if;
          when sSendUP =>
             UP <= '1';
@@ -86,13 +89,15 @@ process(curr_state, sins)
             waitReset <= '1';
             next_state <= sWaitD;
          when sWaitD =>
-            if sins <= downh then
+				--DOWN <= '1'; --for testing
+            if sins >= downh then
                next_state <= sStart;
             elsif waitTC = '1' then
                next_state <= sSendDown;
             end if;
          when sWaitU =>
-            if sins < uph then
+				--UP <= '1';--for testing
+            if sins <= uph then
                next_state <= sStart;
             elsif waitTC = '1' then
                next_state <= sSendUP;
