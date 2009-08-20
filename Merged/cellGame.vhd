@@ -70,25 +70,25 @@ COMPONENT LEDDriver
 	END COMPONENT;
    
    
-COMPONENT GameBoard
-	PORT(
-		Clk : IN std_logic;
-		SeqReset : IN std_logic;
-		ResetPUs : IN std_logic;
-		DisablePU : IN std_logic;
-		ReadENColor : IN std_logic;
-		RowA : IN std_logic_vector(2 downto 0);
-		ColA : IN std_logic_vector(2 downto 0);
-		RowB : IN std_logic_vector(2 downto 0);
-		ColB : IN std_logic_vector(2 downto 0);          
-		ColorOUT : OUT std_logic_vector(7 downto 0);
-		ColorDONE : OUT std_logic;
-		CollisionData : OUT std_logic_vector(1 downto 0)
-		);
-	END COMPONENT;
+--COMPONENT GameBoard
+--	PORT(
+--		Clk : IN std_logic;
+--		SeqReset : IN std_logic;
+--		ResetPUs : IN std_logic;
+--		DisablePU : IN std_logic;
+--		ReadENColor : IN std_logic;
+--		RowA : IN std_logic_vector(2 downto 0);
+--		ColA : IN std_logic_vector(2 downto 0);
+--		RowB : IN std_logic_vector(2 downto 0);
+--		ColB : IN std_logic_vector(2 downto 0);          
+--		ColorOUT : OUT std_logic_vector(7 downto 0);
+--		ColorDONE : OUT std_logic;
+--		CollisionData : OUT std_logic_vector(1 downto 0)
+--		);
+--	END COMPONENT;
    
 
-signal colorDisplay : std_logic_vector(7 downto 0) := "00000000";
+signal colorDisplay : std_logic_vector(7 downto 0) := "00001111";
 signal dataReady : std_logic := '0';
 signal shiftToDisplay : std_logic := '0';
 signal playerX : std_logic_vector(2 downto 0) := "000";
@@ -143,20 +143,20 @@ leddrive: LEDDriver PORT MAP(
 		CS => CS
 	);
    
-thegameboard: GameBoard PORT MAP(
-		Clk => Clk,
-		SeqReset => resetDisplay,
-		ResetPUs => defunct1,
-		DisablePU => defunct1,
-		ReadENColor => memEN,
-		RowA => row,
-		ColA => col,
-		ColorOUT => colorDisplay,
-		ColorDONE => dataReady,
-		RowB => defunct3,
-		ColB => defunct3B,
-		CollisionData => defunct2
-	);
+--thegameboard: GameBoard PORT MAP(
+--		Clk => Clk,
+--		SeqReset => resetDisplay,
+--		ResetPUs => defunct1,
+--		DisablePU => defunct1,
+--		ReadENColor => memEN,
+--		RowA => row,
+--		ColA => col,
+--		ColorOUT => colorDisplay,
+--		ColorDONE => dataReady,
+--		RowB => defunct3,
+--		ColB => defunct3B,
+--		CollisionData => defunct2
+--	);
    
 
 end Behavioral;

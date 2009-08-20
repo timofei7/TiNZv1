@@ -56,7 +56,7 @@ COMPONENT shiftRegisters
 		dataInReady_tick : IN std_logic;
 		dataIn : IN std_logic_vector(7 downto 0);  
 		shiftOut : IN std_logic;
-      displayDone : IN std_logic;
+		reset : IN std_logic;
 		dataShifted8 : OUT std_logic;
 		regFilled : OUT std_logic;
 		outBit : OUT std_logic
@@ -70,28 +70,30 @@ colorRegisters: shiftRegisters PORT MAP(
 		dataInReady_tick => colorReady,
 		dataIn => colorSelected,
 		shiftOut => shiftToLED,
-      displayDone => displayDone,
+		reset => resetDisplay,
 		dataShifted8 => incrementPosition,
 		regFilled => displayReady,
 		outBit => displayBit
 	);
 	
 --Counter that sends row and column number to ROM to get color information
-LocationCounter: process(Clk, displayEN, incrementPosition)
+LocationCounter: process(Clk, displayEN, incrementPosition, displayDone)
 begin
 	if rising_edge(Clk) then
 		getColor <= '0';
-		if displayEN ='1' then
-			getColor <= '1';
-			if resetDisplay = '1' then
+		if displayEN ='1' then 
+			if resetDisplay='1' then
 				row <= "000";
 				col <= "000";
-			elsif incrementPosition='1' then
-				if col="111" then
-					row <= row + 1;
-					col <= col + 1;
-				else 
-					col <= col + 1;
+			elsif displayDone='1' then	
+				getColor <= '1';
+				if incrementPosition='1' then
+					if col="111" then
+						row <= row + 1;
+						col <= col + 1;
+					else 
+						col <= col + 1;
+					end if;
 				end if;
 			else
 				col <= col;

@@ -28,7 +28,7 @@ Port (	  Clk : in STD_LOGIC;
            dataInReady_tick : in  STD_LOGIC;
 			  dataIn : in  STD_LOGIC_VECTOR(7 downto 0);
 			  shiftOut : in STD_LOGIC;
-           displayDone : in STD_LOGIC;
+           reset : in STD_LOGIC;
 			  dataShifted8 : out STD_LOGIC;	--ready to get next color byte
 			  regFilled : out STD_LOGIC;		--ready to output to LED backpack
            outBit : out  STD_LOGIC);
@@ -48,19 +48,23 @@ architecture Behavioral of shiftRegisters is
 
 begin
 
-loadReg <= '1' when (dataInReady_tick='1' and displayDone='1') else '0';
+loadReg <= '1' when dataInReady_tick='1' else '0';
 
 --8 bit parallel-load, left shift register
-ShiftReg8: process (Clk, loadReg)
+ShiftReg8: process (Clk, loadReg, reset)
 begin
 	if rising_edge(Clk) then
-		if loadReg='1' then
-			D <= dataIn;
-		elsif loadReg='0' and shR='1' then
-			D <= D(6 downto 0) & '0';
-			bitShift <= D(7);
+		if reset='1' then
+			D <= (others => '0');
 		else
-			D <= D(7 downto 0);
+			if loadReg='1' then
+				D <= dataIn;
+			elsif loadReg='0' and shR='1' then
+				D <= D(6 downto 0) & '0';
+				bitShift <= D(7);
+			else
+				D <= D(7 downto 0);
+			end if;
 		end if;
 	end if;
 end process ShiftReg8;
@@ -69,39 +73,47 @@ end process ShiftReg8;
 --64-byte right shift register
 --shRIn (bit that gets shifted in when right shifting) is bit output from 8-bit shift register
 --serial output
-ShiftReg64: process (Clk, shR64, shiftOut)
+ShiftReg64: process (Clk, shR64, shiftOut, reset)
 begin
 	if rising_edge(Clk) then
-		if shR64='1' or shiftOut='1' then
-			R <= bitShift & R(15 downto 1); --change from 511 to 15 for simul purposes
-			outBit <= R(0);
+		if reset='1' then
+			R <= (others => '0');
 		else
-			R <= R(15 downto 0); 				--change from 511 to 15 for simul purposes
+			if shR64='1' or shiftOut='1' then
+				R <= bitShift & R(15 downto 1); --change from 511 to 15 for simul purposes
+				outBit <= R(0);
+			else
+				R <= R(15 downto 0); 				--change from 511 to 15 for simul purposes
+			end if;
 		end if;
 	end if;
 end process ShiftReg64;
 
 --Count from 0 to 8, send out 8 pulses to shR and 8 pulses to shR64
 --Send out dataShifted8 pulse after 8
-CountNumShifts8: process (Clk, shiftCount8)
+CountNumShifts8: process (Clk, shiftCount8, reset)
 begin
 	if rising_edge(Clk) then
 		dataShifted8 <= '0';
 		shR <= '0';
 		shR64 <= '0';
-		if loadReg='1' then
-			shiftCount8 <= shiftCount8 + 1;
-			shR <= '1';
-		elsif loadReg='0' and shiftCount8="0000" then
-			shiftCount8 <= "0000";		
-		elsif shiftCount8 = "1000" then
+		if reset='1' then
 			shiftCount8 <= "0000";
-			shR64 <= '1';
-			dataShifted8 <= '1';
-		else
-			shiftCount8 <= shiftCount8 + 1;
-			shR <= '1';
-			shR64 <= '1';
+		else 
+			if loadReg='1' then
+				shiftCount8 <= shiftCount8 + 1;
+				shR <= '1';
+			elsif loadReg='0' and shiftCount8="0000" then
+				shiftCount8 <= "0000";		
+			elsif shiftCount8 = "1000" then
+				shiftCount8 <= "0000";
+				shR64 <= '1';
+				dataShifted8 <= '1';
+			else
+				shiftCount8 <= shiftCount8 + 1;
+				shR <= '1';
+				shR64 <= '1';
+			end if;
 		end if;
 	else
 		shiftCount8 <= shiftCount8;
@@ -110,19 +122,23 @@ end process CountNumShifts8;
 
 --Counts number of shifts in 64-byte shift register
 --Sends out high pulse after 512 shifts and resets to 0
-CountNumShifts64: process (Clk, shR64, shiftCount64)
+CountNumShifts64: process (Clk, shR64, shiftCount64, reset)
 begin
 	if rising_edge(Clk) then
 		regFilled <= '0';
-		if shR64='1' then
-			if shiftCount64 = "1111" then	--change to "1111" for simul purposes
-				shiftCount64 <= (others=>'0');
-				regFilled <= '1';
-			else
-				shiftCount64 <= shiftCount64 + 1;
-			end if;
+		if reset='1' then
+			shiftCount64 <= (others => '0');
 		else
-			shiftCount64 <= shiftCount64;
+			if shR64='1' then
+				if shiftCount64 = "1111" then	--change to "1111" for simul purposes
+					shiftCount64 <= (others=>'0');
+					regFilled <= '1';
+				else
+					shiftCount64 <= shiftCount64 + 1;
+				end if;
+			else
+				shiftCount64 <= shiftCount64;
+			end if;
 		end if;
 	end if;
 end process CountNumShifts64;
