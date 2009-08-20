@@ -88,11 +88,13 @@ COMPONENT GameBoard
 	END COMPONENT;
    
 
-signal colorDisplay : std_logic_vector(7 downto 0) := "00000000";
+signal colorDisplay : std_logic_vector(7 downto 0) := "11100000";
+signal ColorReady : std_logic := '0';
 signal dataReady : std_logic := '0';
+signal startDisplayProcess : std_logic := '0';
 signal shiftToDisplay : std_logic := '0';
-signal playerX : std_logic_vector(2 downto 0) := "100";
-signal playerY : std_logic_vector(2 downto 0) := "100";
+signal playerX : std_logic_vector(2 downto 0) := "010";
+signal playerY : std_logic_vector(2 downto 0) := "010";
 signal playerColor : std_logic_vector(7 downto 0) := "00001111";
 signal introColor : std_logic_vector(7 downto 0) := "00000000";
 signal deathColor : std_logic_vector(7 downto 0) := "00000000";
@@ -108,6 +110,12 @@ signal defunct1 : std_logic := '0';
 signal defunct2 : std_logic_vector(1 downto 0) := "00";
 signal defunct3 : std_logic_vector(2 downto 0) := "000";
 signal defunct3B : std_logic_vector(2 downto 0) := "000";
+signal colorDefunct : std_logic_vector(7 downto 0) := "00000000";
+
+-- state machine for controlling display parts
+type state_type is (sStart, sIdle, sDisableWait, sResetWait, sDoneWait);	-- state machine
+signal curr_state: state_type := sStart;
+signal next_state: state_type;
 
 begin
 
@@ -123,7 +131,7 @@ disp: Display PORT MAP(
 		deathByte => deathColor,
 		playerColor => playerColor,
 		selectDisplay => selectBoard,
-		colorReady => dataReady,
+		colorReady => ColorReady,
       displayDone => displayDone,
 		getRow => row,
 		getColumn => col,
@@ -151,7 +159,7 @@ thegameboard: GameBoard PORT MAP(
 		ReadENColor => memEN,
 		RowA => row,
 		ColA => col,
-		ColorOUT => colorDisplay,
+		ColorOUT => colorDefunct,
 		ColorDONE => dataReady,
 		RowB => defunct3,
 		ColB => defunct3B,
@@ -159,5 +167,66 @@ thegameboard: GameBoard PORT MAP(
 	);
    
 
+
+controlls: process(curr_state, DisplayDone, DisplayEN, resetDisplay)
+begin
+   --Defaults
+   startDisplayProcess <= '0';
+   next_state <= curr_state;
+   
+   case curr_state is
+      when sStart =>
+         startDisplayProcess <= '1';
+         if DisplayDone = '1' then
+            next_state <= sDoneWait;
+         else
+            next_state <= sIdle;
+         end if;
+      when sIdle =>
+         if DisplayDone = '1' then
+            next_state <= sStart;
+         elsif DisplayEN = '0' then
+            next_state <= sDisableWait;
+         elsif resetDisplay = '1' then
+            next_state <= sResetWait;
+         end if;
+      when sResetWait =>
+         if ResetDisplay = '0' then
+            next_state <= sIdle;
+         elsif DisplayEN = '0' then
+            next_state <=sDisableWait;
+         end if;
+      when sDoneWait =>
+         if DisplayDone = '0' then
+            next_state <= sIdle;
+         elsif resetDisplay = '1' then
+            next_state <= sResetWait;
+         elsif DisplayEN = '0' then
+            next_state <=sDisableWait;
+         end if;
+      when sDisableWait => 
+         if DisplayEN ='1' then
+            next_state <= sStart;
+         end if;
+      when others =>
+         next_state <= sStart;
+   end case;
+end process controlls; 
+
+ColorReady <= startDisplayProcess or dataReady;     
+         
+         
+         
+
+statechanger:
+process (Clk)
+begin
+	if rising_edge(Clk) then --slow us down to at most 125khz
+		curr_state <= next_state;
+	end if;
+end process statechanger;
+
 end Behavioral;
+
+
 

@@ -37,7 +37,7 @@ architecture Behavioral of LEDDriver is
 
    
 -- state machine for SPI bus
-type state_type is (sBogus, sIdle, sInit, sWaitS, sSendInit, sSendDown, sSendM, sSendUP, sDeInit, sWaitD);	-- state machine
+type state_type is (sIdle, sInit, sWaitS, sSendInit, sSendDown, sSendM, sSendUP, sDeInit, sWaitD);	-- state machine
 signal curr_state: state_type := sIdle;
 signal next_state: state_type;
 
@@ -53,31 +53,23 @@ signal slowCount: unsigned(7 downto 0) := (others => '0'); --counts for SCLK
 signal slowTC : std_logic:='0'; --terminal count
 signal slowReset : std_logic:='0'; --reset the wait counters
 
-constant shiftFinal: unsigned(9 downto 0):= "1000000000"; --final count 511
+constant shiftFinal: unsigned(9 downto 0):= "1000000000"; --final count 512
 signal shiftCount: unsigned(9 downto 0):= (others => '0'); --count shifts
 signal shiftBit: std_logic:='0'; --shift our bits out onto MOSIs
 signal shiftTC: std_logic:='0'; --shift terminal count
 
-signal displayDoneReg: std_logic:='1'; --low when I'm active high when I'm not
+--signal displayDoneReg: std_logic:='1'; --low when I'm active high when I'm not
 
+signal csy: std_logic:='0'; --internal CS sig
 
 begin
 
 MOSI <= Data; --we shift out datas from this shift register from Display
 shiftBitOut <= shiftBit; --just a hookup of internal to external
-displayDone <= displayDoneReg; --do it or rather don't
+displayDone <= csy; --do it or rather don't
+CS <= csy;
 
-displaydonot:
-process(Clk)
-   begin
-      if rising_edge(Clk) then
-         if GoDisplay = '1' then
-            displayDoneReg <= '0';
-         elsif shiftTC = '1' then
-            displayDoneReg <= '1';
-         end if;
-      end if;
-end process displaydonot;
+
 
 
 waitCounter: --15bit up counter to enable .5ms pause
@@ -112,33 +104,33 @@ shiftCounter: --just counts shifts so we don't ask for more than we need
 process(Clk)
    begin
       if rising_edge(Clk) then
-         if shiftTC = '1' then 
+         if shiftTC = '1' then
             shiftCount <= (others => '0');
          elsif shiftBit = '1' then
             shiftCount <= shiftCount + 1;
          end if;
       end if;
 end process shiftCounter;
-shiftTC <= '1' when shiftCount = shiftFinal else '0'; --I just added this why was it working before??!
 
 statemachine: --state machine to do all the work
 process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
    begin
    next_state <= curr_state;
-   CS <= '0'; --opposite default - this is active low but we only set it high false during sIdle
+   csy <= '0'; --opposite default - this is active low but we only set it high false during sIdle
    shiftBit <= '0';
    waitReset <= '0';
    slowReset <= '0';
    SCLK <= '0';
+   shiftTC <= '0';
    
    case curr_state is
       when sIdle => --base state - CS is high false
-         CS <= '1';
+         csy <= '1';
          if GoDisplay = '1' then
             next_state <= sInit;
          end if;
       when sInit => --resest counters to deassert cs
-         CS <= '1';
+         csy<= '1';
          waitReset <= '1';
          next_state <= sWaitS;
       when sWaitS => --wait for .5ms after deasserting cs
@@ -161,6 +153,7 @@ process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
          SCLK <= '1'; --default is 0 so here's the rising edge for the slave!
          if slowTC = '1' then
             if shiftCount = shiftFinal then --are we done shifting?
+               shiftTC <= '1';
                next_state <= sDeInit;
             else
                next_state <= sSendInit;
