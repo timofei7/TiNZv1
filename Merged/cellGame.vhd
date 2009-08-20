@@ -64,36 +64,36 @@ COMPONENT LEDDriver
       ShiftBitOut : out STD_LOGIC;
       Data: in STD_LOGIC;
       GoDisplay : in  STD_LOGIC;
-      doneShiftingThanks : OUT STD_LOGIC;
+      displayDone : OUT STD_LOGIC;
 		CS : OUT std_logic
 		);
 	END COMPONENT;
    
    
---COMPONENT GameBoard
---	PORT(
---		Clk : IN std_logic;
---		SeqReset : IN std_logic;
---		ResetPUs : IN std_logic;
---		DisablePU : IN std_logic;
---		ReadENColor : IN std_logic;
---		RowA : IN std_logic_vector(2 downto 0);
---		ColA : IN std_logic_vector(2 downto 0);
---		RowB : IN std_logic_vector(2 downto 0);
---		ColB : IN std_logic_vector(2 downto 0);          
---		ColorOUT : OUT std_logic_vector(7 downto 0);
---		ColorDONE : OUT std_logic;
---		CollisionData : OUT std_logic_vector(1 downto 0)
---		);
---	END COMPONENT;
+COMPONENT GameBoard
+	PORT(
+		Clk : IN std_logic;
+		SeqReset : IN std_logic;
+		ResetPUs : IN std_logic;
+		DisablePU : IN std_logic;
+		ReadENColor : IN std_logic;
+		RowA : IN std_logic_vector(2 downto 0);
+		ColA : IN std_logic_vector(2 downto 0);
+		RowB : IN std_logic_vector(2 downto 0);
+		ColB : IN std_logic_vector(2 downto 0);          
+		ColorOUT : OUT std_logic_vector(7 downto 0);
+		ColorDONE : OUT std_logic;
+		CollisionData : OUT std_logic_vector(1 downto 0)
+		);
+	END COMPONENT;
    
 
-signal colorDisplay : std_logic_vector(7 downto 0) := "00001111";
+signal colorDisplay : std_logic_vector(7 downto 0) := "00000000";
 signal dataReady : std_logic := '0';
 signal shiftToDisplay : std_logic := '0';
-signal playerX : std_logic_vector(2 downto 0) := "000";
-signal playerY : std_logic_vector(2 downto 0) := "000";
-signal playerColor : std_logic_vector(7 downto 0) := "11100001";
+signal playerX : std_logic_vector(2 downto 0) := "100";
+signal playerY : std_logic_vector(2 downto 0) := "100";
+signal playerColor : std_logic_vector(7 downto 0) := "00001111";
 signal introColor : std_logic_vector(7 downto 0) := "00000000";
 signal deathColor : std_logic_vector(7 downto 0) := "00000000";
 signal selectBoard : std_logic_vector(1 downto 0) := "00";
@@ -139,24 +139,24 @@ leddrive: LEDDriver PORT MAP(
       shiftBitOut => shiftToDisplay,
       Data => displayBit,
       GoDisplay => startDisplay,
-      doneShiftingThanks => displayDone,
+      displayDone => displayDone,
 		CS => CS
 	);
    
---thegameboard: GameBoard PORT MAP(
---		Clk => Clk,
---		SeqReset => resetDisplay,
---		ResetPUs => defunct1,
---		DisablePU => defunct1,
---		ReadENColor => memEN,
---		RowA => row,
---		ColA => col,
---		ColorOUT => colorDisplay,
---		ColorDONE => dataReady,
---		RowB => defunct3,
---		ColB => defunct3B,
---		CollisionData => defunct2
---	);
+thegameboard: GameBoard PORT MAP(
+		Clk => Clk,
+		SeqReset => resetDisplay,
+		ResetPUs => defunct1,
+		DisablePU => defunct1,
+		ReadENColor => memEN,
+		RowA => row,
+		ColA => col,
+		ColorOUT => colorDisplay,
+		ColorDONE => dataReady,
+		RowB => defunct3,
+		ColB => defunct3B,
+		CollisionData => defunct2
+	);
    
 
 end Behavioral;

@@ -38,17 +38,18 @@ end shiftRegisters;
 architecture Behavioral of shiftRegisters is
 	signal loadReg : std_logic := '0';
 	signal D : std_logic_vector (7 downto 0) := "00000000"; --data in 8-bit shift register
-	signal R : std_logic_vector(15 downto 0) := (others => '0'); --data in 64-byte shift register
+	signal R : std_logic_vector(511 downto 0) := (others => '0'); --data in 64-byte shift register
 																						--change from 511 to 15 for simul purposes
 	signal bitShift : std_logic;
 	signal shR : std_logic := '0';
 	signal shR64 : std_logic := '0';
 	signal shiftCount8 : unsigned(3 downto 0) := "0000";
-	signal shiftCount64 : unsigned(3 downto 0) := "0000"; --Change from 8 to 3 for simul purposes
+	signal shiftCount64 : unsigned(8 downto 0) := "000000000"; --Change from 8 to 3 for simul purposes
+	signal firstRead : std_logic := '1';
 
 begin
 
-loadReg <= '1' when dataInReady_tick='1' else '0';
+loadReg <= '1' when dataInReady_tick='1' or firstRead='1' else '0';
 
 --8 bit parallel-load, left shift register
 ShiftReg8: process (Clk, loadReg, reset)
@@ -59,6 +60,7 @@ begin
 		else
 			if loadReg='1' then
 				D <= dataIn;
+				firstRead <= '0';
 			elsif loadReg='0' and shR='1' then
 				D <= D(6 downto 0) & '0';
 				bitShift <= D(7);
@@ -80,10 +82,10 @@ begin
 			R <= (others => '0');
 		else
 			if shR64='1' or shiftOut='1' then
-				R <= bitShift & R(15 downto 1); --change from 511 to 15 for simul purposes
+				R <= bitShift & R(511 downto 1); --change from 511 to 15 for simul purposes
 				outBit <= R(0);
 			else
-				R <= R(15 downto 0); 				--change from 511 to 15 for simul purposes
+				R <= R(511 downto 0); 				--change from 511 to 15 for simul purposes
 			end if;
 		end if;
 	end if;
@@ -130,7 +132,7 @@ begin
 			shiftCount64 <= (others => '0');
 		else
 			if shR64='1' then
-				if shiftCount64 = "1111" then	--change to "1111" for simul purposes
+				if shiftCount64 = "111111111" then	--change to "1111" for simul purposes
 					shiftCount64 <= (others=>'0');
 					regFilled <= '1';
 				else

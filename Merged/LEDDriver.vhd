@@ -58,7 +58,7 @@ signal shiftCount: unsigned(9 downto 0):= (others => '0'); --count shifts
 signal shiftBit: std_logic:='0'; --shift our bits out onto MOSIs
 signal shiftTC: std_logic:='0'; --shift terminal count
 
-signal displayDoneReg: std_logic:='0'; --low when I'm active high when I'm not
+signal displayDoneReg: std_logic:='1'; --low when I'm active high when I'm not
 
 
 begin

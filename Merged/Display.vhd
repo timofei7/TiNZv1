@@ -47,8 +47,8 @@ architecture Behavioral of Display is
 
 signal colorSelected : std_logic_vector(7 downto 0); --color output by 4x1 mux
 signal incrementPosition : std_logic := '0';
-signal row : unsigned(2 downto 0) := "000";  --row
-signal col :unsigned(2 downto 0) := "000"; --column
+signal row : unsigned(2 downto 0) := "111";  --row
+signal col :unsigned(2 downto 0) := "111"; --column
 
 COMPONENT shiftRegisters
 	PORT(
@@ -86,13 +86,14 @@ begin
 				row <= "000";
 				col <= "000";
 			elsif displayDone='1' then	
-				getColor <= '1';
-				if incrementPosition='1' then
+				if incrementPosition='1' then					
 					if col="111" then
 						row <= row + 1;
 						col <= col + 1;
+						getColor <= '1';
 					else 
 						col <= col + 1;
+						getColor <= '1';
 					end if;
 				end if;
 			else
