@@ -54,7 +54,7 @@ signal regFilled : std_logic := '0';
 
 signal colorReady : std_logic := '0';
 
-type stateType is (DoNothing, LoadData, WaitforMem, WaitforLED);
+type stateType is (DoNothing, LoadData, WaitforMem, WaitforLED, CheckReg);
 signal currState, nextState : stateType;
 
 COMPONENT shiftRegisters
@@ -110,23 +110,27 @@ begin
 			end if;
 		when LoadData =>	--simultaneously load register and increment position
 			colorReady <= '1';
-			incrementPosition <= '1';
 			if displayEN='1' then
-				nextState <= WaitforMem;
+				nextState <= CheckReg;
 			else
 				nextState <= DoNothing;
 			end if;
-		when WaitforMem =>	--wait one clock cycle as memory gets new position
+			
+		when CheckReg=>	--wait one clock cycle as memory gets new position
+			
 			if displayEN='1' and regFilled='0' then
-				nextState <= LoadData;
+				nextState <= WaitforMem;
 			elsif displayEN='1' and regFilled='1' then
 				nextState <= WaitforLED;
 			else
 				nextState <= DoNothing;
 			end if;
+		when WaitforMem =>
+			incrementPosition <= '1';
+			nextState <= LoadData;
 		when WaitforLED =>	--64-byte register filled; wait for displayDone tick from LED driver
 			if displayEN='1' and displayDone='1' then
-				nextState <= LoadData;
+				nextState <= WaitforMem;
 			elsif displayEN='1' and displayDone='0' then
 				nextState <= WaitforLED;
 			else

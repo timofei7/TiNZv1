@@ -44,7 +44,7 @@ architecture Behavioral of shiftRegisters is
 	--signal shR : std_logic := '0';
 	--signal shR64 : std_logic := '0';
 	--signal shiftCount8 : unsigned(3 downto 0) := "0000";
-	signal shiftCount64 : unsigned(6 downto 0) := "0000000"; --Change from 6 to 3 for simul purposes
+	signal shiftCount64 : unsigned(6 downto 0) := "0000000"; --Change from 5 to 3 for simul purposes
 
 begin
 
@@ -82,12 +82,12 @@ begin
 		else
          if loadReg='1' then
             R <= dataIn(0) & dataIn(1) & dataIn(2) & dataIn(3) & dataIn(4) & dataIn(5) & dataIn(6) & dataIn(7) & R(511 downto 8);
-            if shiftCount64="1000000" then
-               shiftCount64 <= (others => '0');
-            else
-               shiftCount64 <= shiftCount64 + 1;
-            end if;
-         elsif shiftOut='1' then
+				shiftCount64 <= shiftCount64 + 1;
+   
+         elsif shiftCount64="1000000" then
+            shiftCount64 <= (others => '0');
+			
+			elsif shiftOut='1' then
 				R <= '0' & R(511 downto 1); --change from 511 to 15 for simul purposes
 				outBit <= R(0);
             shiftCount64 <= shiftCount64;
