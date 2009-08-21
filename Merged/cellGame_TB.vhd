@@ -41,7 +41,7 @@ ARCHITECTURE behavior OF cellGame_TB IS
     PORT(
          Clk : IN  std_logic;
          displayEN : IN  std_logic;
-         resetDisplay : IN  std_logic;
+--         resetDisplay : IN  std_logic;
          MOSI : OUT  std_logic;
          SCLK : OUT  std_logic;
          CS : OUT  std_logic
@@ -52,7 +52,7 @@ ARCHITECTURE behavior OF cellGame_TB IS
    --Inputs
    signal Clk : std_logic := '0';
    signal displayEN : std_logic := '0';
-   signal resetDisplay : std_logic := '0';
+ --  signal resetDisplay : std_logic := '0';
 
  	--Outputs
    signal MOSI : std_logic;
@@ -68,7 +68,7 @@ BEGIN
    uut: cellGame PORT MAP (
           Clk => Clk,
           displayEN => displayEN,
-          resetDisplay => resetDisplay,
+     --     resetDisplay => resetDisplay,
           MOSI => MOSI,
           SCLK => SCLK,
           CS => CS

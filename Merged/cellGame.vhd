@@ -24,7 +24,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity cellGame is
     Port ( Clk : in  STD_LOGIC;
            displayEN : in  STD_LOGIC;
-           resetDisplay : in  STD_LOGIC;
+         --  resetDisplay : in  STD_LOGIC;
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
            CS : out  STD_LOGIC);
@@ -36,7 +36,7 @@ COMPONENT Display
 	PORT(
 		Clk : IN std_logic;
 		displayEN : IN std_logic;
-		resetDisplay : IN std_logic;
+	--	resetDisplay : IN std_logic;
 		shiftToLED : IN std_logic;
 		playerX : IN std_logic_vector(2 downto 0);
 		playerY : IN std_logic_vector(2 downto 0);
@@ -45,11 +45,11 @@ COMPONENT Display
 		deathByte : IN std_logic_vector(7 downto 0);
 		playerColor : IN std_logic_vector(7 downto 0);
 		selectDisplay : IN std_logic_vector(1 downto 0);
-		colorReady : IN std_logic;      
+	--	colorReady : IN std_logic;      
       displayDone : IN std_logic;
 		getRow : OUT std_logic_vector(2 downto 0);
 		getColumn : OUT std_logic_vector(2 downto 0);
-		getColor : OUT std_logic;
+--		getColor : OUT std_logic;
 		displayReady : OUT std_logic;
 		displayBit : OUT std_logic
 		);
@@ -87,11 +87,11 @@ COMPONENT GameBoard
 		);
 	END COMPONENT;
    
-
+signal resetDisplay : std_logic := '0';
 signal colorDisplay : std_logic_vector(7 downto 0) := "11100000";
 signal ColorReady : std_logic := '0';
 signal dataReady : std_logic := '0';
-signal startDisplayProcess : std_logic := '0';
+--signal startDisplayProcess : std_logic := '0';
 signal shiftToDisplay : std_logic := '0';
 signal playerX : std_logic_vector(2 downto 0) := "010";
 signal playerY : std_logic_vector(2 downto 0) := "010";
@@ -101,7 +101,7 @@ signal deathColor : std_logic_vector(7 downto 0) := "00000000";
 signal selectBoard : std_logic_vector(1 downto 0) := "00";
 signal row : std_logic_vector(2 downto 0) := "000";
 signal col : std_logic_vector(2 downto 0) := "000";
-signal memEN : std_logic := '0';
+signal memEN : std_logic := '1';
 signal displayBit : std_logic := '0';
 signal startDisplay : std_logic := '0';
 signal displayDone : std_logic := '0';
@@ -112,17 +112,19 @@ signal defunct3 : std_logic_vector(2 downto 0) := "000";
 signal defunct3B : std_logic_vector(2 downto 0) := "000";
 signal colorDefunct : std_logic_vector(7 downto 0) := "00000000";
 
--- state machine for controlling display parts
-type state_type is (sStart, sIdle, sDisableWait, sResetWait, sDoneWait);	-- state machine
-signal curr_state: state_type := sStart;
-signal next_state: state_type;
+---- state machine for controlling display parts
+--type state_type is (sStart, sIdle, sDisableWait, sResetWait, sDoneWait);	-- state machine
+--signal curr_state: state_type := sStart;
+--signal next_state: state_type;
 
 begin
+
+resetDisplay <= '1' when displayEN='0' else '0';
 
 disp: Display PORT MAP(
 		Clk => Clk,
 		displayEN => displayEN,
-		resetDisplay => resetDisplay,
+	--	resetDisplay => resetDisplay,
 		shiftToLED => shiftToDisplay,
 		playerX => playerX,
 		playerY => playerY,
@@ -131,11 +133,11 @@ disp: Display PORT MAP(
 		deathByte => deathColor,
 		playerColor => playerColor,
 		selectDisplay => selectBoard,
-		colorReady => ColorReady,
+	--	colorReady => ColorReady,
       displayDone => displayDone,
 		getRow => row,
 		getColumn => col,
-		getColor => memEN,
+	--	getColor => memEN,
 		displayReady => startDisplay,
 		displayBit => displayBit
 	);
@@ -168,63 +170,65 @@ thegameboard: GameBoard PORT MAP(
    
 
 
-controlls: process(curr_state, DisplayDone, DisplayEN, resetDisplay)
-begin
-   --Defaults
-   startDisplayProcess <= '0';
-   next_state <= curr_state;
-   
-   case curr_state is
-      when sStart =>
-         startDisplayProcess <= '1';
-         if DisplayDone = '1' then
-            next_state <= sDoneWait;
-         else
-            next_state <= sIdle;
-         end if;
-      when sIdle =>
-         if DisplayDone = '1' then
-            next_state <= sStart;
-         elsif DisplayEN = '0' then
-            next_state <= sDisableWait;
-         elsif resetDisplay = '1' then
-            next_state <= sResetWait;
-         end if;
-      when sResetWait =>
-         if ResetDisplay = '0' then
-            next_state <= sIdle;
-         elsif DisplayEN = '0' then
-            next_state <=sDisableWait;
-         end if;
-      when sDoneWait =>
-         if DisplayDone = '0' then
-            next_state <= sIdle;
-         elsif resetDisplay = '1' then
-            next_state <= sResetWait;
-         elsif DisplayEN = '0' then
-            next_state <=sDisableWait;
-         end if;
-      when sDisableWait => 
-         if DisplayEN ='1' then
-            next_state <= sStart;
-         end if;
-      when others =>
-         next_state <= sStart;
-   end case;
-end process controlls; 
+--controlls: process(curr_state, DisplayDone, DisplayEN, resetDisplay)
+--begin
+--   --Defaults
+--   startDisplayProcess <= '0';
+--   next_state <= curr_state;
+--   
+--   case curr_state is
+--      when sStart =>
+--         startDisplayProcess <= '1';
+--         if DisplayDone = '1' then
+--            next_state <= sDoneWait;
+--         else
+--            next_state <= sIdle;
+--         end if;
+--      when sIdle =>
+--         if DisplayDone = '1' then
+--            next_state <= sStart;
+--         elsif DisplayEN = '0' then
+--            next_state <= sDisableWait;
+--         elsif resetDisplay = '1' then
+--            next_state <= sResetWait;
+--         end if;
+--      when sResetWait =>
+--         if ResetDisplay = '0' then
+--            next_state <= sIdle;
+--         elsif DisplayEN = '0' then
+--            next_state <=sDisableWait;
+--         end if;
+--      when sDoneWait =>
+--         if DisplayDone = '0' then
+--            next_state <= sIdle;
+--         elsif resetDisplay = '1' then
+--            next_state <= sResetWait;
+--         elsif DisplayEN = '0' then
+--            next_state <=sDisableWait;
+--         end if;
+--      when sDisableWait => 
+--         if DisplayEN ='1' then
+--            next_state <= sStart;
+--         end if;
+--      when others =>
+--         next_state <= sStart;
+--   end case;
+--end process controlls; 
+--
+--ColorReady <= startDisplayProcess or dataReady;     
+--         
+--         
+--         
+--
+--statechanger:
+--process (Clk)
+--begin
+--	if rising_edge(Clk) then --slow us down to at most 125khz
+--		curr_state <= next_state;
+--	end if;
+--end process statechanger;
+--
 
-ColorReady <= startDisplayProcess or dataReady;     
-         
-         
-         
-
-statechanger:
-process (Clk)
-begin
-	if rising_edge(Clk) then --slow us down to at most 125khz
-		curr_state <= next_state;
-	end if;
-end process statechanger;
 
 end Behavioral;
 

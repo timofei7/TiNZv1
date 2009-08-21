@@ -29,7 +29,7 @@ Port (	  Clk : in STD_LOGIC;
 			  dataIn : in  STD_LOGIC_VECTOR(7 downto 0);
 			  shiftOut : in STD_LOGIC;
            reset : in STD_LOGIC;
-			  dataShifted8 : out STD_LOGIC;	--ready to get next color byte
+			  --dataShifted8 : out STD_LOGIC;	--ready to get next color byte
 			  regFilled : out STD_LOGIC;		--ready to output to LED backpack
            outBit : out  STD_LOGIC);
 			  
@@ -76,7 +76,6 @@ loadReg <= '1' when dataInReady_tick='1' else '0';
 ShiftReg64: process (Clk, shiftCount64, loadReg, shiftOut, reset)
 begin
 	if rising_edge(Clk) then
-   regFilled <= '0';
 		if reset='1' then
 			R <= (others => '0');
          shiftCount64 <= (others => '0');
@@ -85,7 +84,6 @@ begin
             R <= dataIn(0) & dataIn(1) & dataIn(2) & dataIn(3) & dataIn(4) & dataIn(5) & dataIn(6) & dataIn(7) & R(511 downto 8);
             if shiftCount64="1000000" then
                shiftCount64 <= (others => '0');
-               regFilled <= '1';
             else
                shiftCount64 <= shiftCount64 + 1;
             end if;
@@ -100,7 +98,7 @@ begin
 		end if;
 	end if;
 end process ShiftReg64;
-dataShifted8 <= loadReg;
+regFilled <= '1' when shiftCount64="1000000" else '0';
 
 --Count from 0 to 8, send out 8 pulses to shR and 8 pulses to shR64
 --Send out dataShifted8 pulse after 8
