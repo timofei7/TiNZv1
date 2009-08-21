@@ -50,8 +50,8 @@ architecture Behavioral of AttrLookup is
      constant pu1addr : std_logic_vector(3 downto 0) := x"4";
      constant pu2addr : std_logic_vector(3 downto 0) := x"5";
      constant pu3addr : std_logic_vector(3 downto 0) := x"6";
-     constant emptyaddr : std_logic_vector(3 downto 0) := x"7"; 
-     constant finishaddr : std_logic_vector(3 downto 0) := x"8";
+     constant emptyaddr : std_logic_vector(3 downto 0) := x"0"; 
+     constant finishaddr : std_logic_vector(3 downto 0) := x"7";
      
      signal enemy1 : std_logic := '1'; 
      signal enemy2 : std_logic := '1';  
@@ -84,8 +84,8 @@ begin
             when x"4" => pu1 <= '0'; -- we really only need these
             when x"5" => pu2 <= '0';
             when x"6" => pu3 <= '0'; --
-            when x"7" => empty <= '0';
-            when x"8" => finish <= '0';
+            when x"0" => empty <= '0';
+            when x"7" => finish <= '0';
             when others => empty <= '0';
          end case;
       end if;
@@ -120,11 +120,11 @@ begin
          if pu3 = '1' then
             Color <= pu3Color;
          end if;
-      when x"7" =>
+      when x"0" =>
          if empty = '1' then
             Color <= emptyColor;
          end if;
-      when x"8" =>
+      when x"7" =>
          if finish = '1' then
             Color <= finishColor;
          end if;
@@ -143,8 +143,8 @@ begin
       when x"4" => Enabled <= pu1;
       when x"5" => Enabled <= pu2;
       when x"6" => Enabled <= pu3;
-      when x"7" => Enabled <= empty;
-      when x"8" => Enabled <= finish;
+      when x"0" => Enabled <= empty;
+      when x"7" => Enabled <= finish;
       when others => Enabled <= empty;
    end case;
 end process;

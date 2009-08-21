@@ -27,10 +27,68 @@ entity cellGame is
          --  resetDisplay : in  STD_LOGIC;
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
-           CS : out  STD_LOGIC);
+           CS : out  STD_LOGIC;
+           Xin : IN std_logic;
+           Yin : IN std_logic;
+           XAnalogIn : IN std_logic;
+           YAnalogIn : IN std_logic;
+           XAnalogOut : OUT std_logic;
+           YAnalogOut : OUT std_logic;
+           deathout: out std_logic;
+           an : OUT std_logic_vector(3 downto 0);
+           seg : OUT std_logic_vector(0 to 6)
+); 
 end cellGame;
 
 architecture Behavioral of cellGame is
+
+COMPONENT GameLogicFSM
+PORT(
+   Clk : IN std_logic;
+   collisionData : IN std_logic_vector(1 downto 0);
+   shieldStatus : IN std_logic;
+   logicEN : IN std_logic;
+   gameOver : IN std_logic;
+   isEN : IN std_logic;          
+   disablePU : OUT std_logic;
+   death : OUT std_logic;
+   shieldSet : OUT std_logic;
+   playerColor : OUT std_logic_vector(1 downto 0)
+   );
+END COMPONENT;
+
+
+
+COMPONENT Play
+PORT(
+   Clk : IN std_logic;
+   Xin : IN std_logic;
+   Yin : IN std_logic;
+   XAnalogIn : IN std_logic;
+   YAnalogIn : IN std_logic;
+   resetPlayer : IN std_logic;
+   resetGameT : IN std_logic;
+   sevenSegEN : IN std_logic;
+   sevenSegSelector : IN std_logic;          
+   XAnalogOut : OUT std_logic;
+   YAnalogOut : OUT std_logic;
+   playerX : OUT std_logic_vector(2 downto 0);
+   playerY : OUT std_logic_vector(2 downto 0);
+   gameOver : OUT std_logic;
+   an : OUT std_logic_vector(3 downto 0);
+   seg : OUT std_logic_vector(0 to 6)
+   );
+END COMPONENT;
+
+
+COMPONENT PlayerColor
+PORT(
+   Clk : IN std_logic;
+   Selector : IN std_logic_vector(1 downto 0);          
+   PlayerColor : OUT std_logic_vector(7 downto 0)
+   );
+END COMPONENT;
+
 
 COMPONENT Display
 	PORT(
@@ -88,14 +146,14 @@ COMPONENT GameBoard
 	END COMPONENT;
    
 signal resetDisplay : std_logic := '0';
-signal colorDisplay : std_logic_vector(7 downto 0) := "11100000";
+signal colorDisplay : std_logic_vector(7 downto 0) := "00000001";
 signal ColorReady : std_logic := '0';
 signal dataReady : std_logic := '0';
 --signal startDisplayProcess : std_logic := '0';
 signal shiftToDisplay : std_logic := '0';
-signal playerX : std_logic_vector(2 downto 0) := "010";
-signal playerY : std_logic_vector(2 downto 0) := "010";
-signal playerColor : std_logic_vector(7 downto 0) := "00001111";
+signal playerX : std_logic_vector(2 downto 0) := "000";
+signal playerY : std_logic_vector(2 downto 0) := "000";
+signal playerColorColor : std_logic_vector(7 downto 0) := "00001111";
 signal introColor : std_logic_vector(7 downto 0) := "00000000";
 signal deathColor : std_logic_vector(7 downto 0) := "00000000";
 signal selectBoard : std_logic_vector(1 downto 0) := "00";
@@ -106,20 +164,64 @@ signal displayBit : std_logic := '0';
 signal startDisplay : std_logic := '0';
 signal displayDone : std_logic := '0';
 
-signal defunct1 : std_logic := '0';
-signal defunct2 : std_logic_vector(1 downto 0) := "00";
+signal disablePU : std_logic := '0';
+signal collisiondata : std_logic_vector(1 downto 0) := "00";
 signal defunct3 : std_logic_vector(2 downto 0) := "000";
 signal defunct3B : std_logic_vector(2 downto 0) := "000";
 signal colorDefunct : std_logic_vector(7 downto 0) := "00000000";
 
----- state machine for controlling display parts
---type state_type is (sStart, sIdle, sDisableWait, sResetWait, sDoneWait);	-- state machine
---signal curr_state: state_type := sStart;
---signal next_state: state_type;
+signal playerSelector: std_logic_vector(1 downto 0) := "00";
+
+signal resetGameT: std_logic:='0';
+signal sevenSegEN: std_logic:='1';
+signal sevenSegSelector: std_logic:='0';
+signal gameOver: std_logic:='0';
+signal death: std_logic;
+signal logicen: std_logic:= '1';
+signal shieldstatus: std_logic:='0';
+signal shieldset: std_logic:='0';
 
 begin
-
+deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
+
+gamelogical: GameLogicFSM PORT MAP(
+		Clk => Clk,
+		collisionData => collisionData,
+		shieldStatus => shieldStatus, --BOGUS
+		logicEN => logicEN,
+		gameOver => gameOver,
+		isEN => collisiondata(1),
+		disablePU => disablePU,
+		death => death,
+		shieldSet => shieldSet, --BOGUS
+		playerColor => playerSelector
+	);
+
+playplay: Play PORT MAP(
+		Clk => Clk,
+		Xin => Xin,
+		Yin => Yin,
+		XAnalogIn => XAnalogIn,
+		YAnalogIn => YAnalogIn,
+		XAnalogOut => XAnalogOUt,
+		YAnalogOut => YAnalogOut,
+		resetPlayer => ResetDisplay,
+		playerX => playerX,
+		playerY => playerY,
+		resetGameT => ResetGameT,
+		sevenSegEN => sevenSegEN,
+		sevenSegSelector => sevenSegSelector,
+		gameOver => gameOver,
+		an => an,
+		seg => seg
+	);
+
+playacola: PlayerColor PORT MAP(
+		Clk => Clk,
+		Selector => playerSelector,
+		PlayerColor => PlayerColorColor
+	);
 
 disp: Display PORT MAP(
 		Clk => Clk,
@@ -131,7 +233,7 @@ disp: Display PORT MAP(
 		colorByte => colorDisplay,
 		introByte => introColor,
 		deathByte => deathColor,
-		playerColor => playerColor,
+		playerColor => playerColorColor,
 		selectDisplay => selectBoard,
 	--	colorReady => ColorReady,
       displayDone => displayDone,
@@ -156,78 +258,17 @@ leddrive: LEDDriver PORT MAP(
 thegameboard: GameBoard PORT MAP(
 		Clk => Clk,
 		SeqReset => resetDisplay,
-		ResetPUs => defunct1,
-		DisablePU => defunct1,
+		ResetPUs => resetDisplay,
+		DisablePU => disablePU,
 		ReadENColor => memEN,
 		RowA => row,
 		ColA => col,
-		ColorOUT => colorDefunct,
+		ColorOUT => colorDisplay,
 		ColorDONE => dataReady,
 		RowB => defunct3,
 		ColB => defunct3B,
-		CollisionData => defunct2
+		CollisionData => collisiondata
 	);
-   
-
-
---controlls: process(curr_state, DisplayDone, DisplayEN, resetDisplay)
---begin
---   --Defaults
---   startDisplayProcess <= '0';
---   next_state <= curr_state;
---   
---   case curr_state is
---      when sStart =>
---         startDisplayProcess <= '1';
---         if DisplayDone = '1' then
---            next_state <= sDoneWait;
---         else
---            next_state <= sIdle;
---         end if;
---      when sIdle =>
---         if DisplayDone = '1' then
---            next_state <= sStart;
---         elsif DisplayEN = '0' then
---            next_state <= sDisableWait;
---         elsif resetDisplay = '1' then
---            next_state <= sResetWait;
---         end if;
---      when sResetWait =>
---         if ResetDisplay = '0' then
---            next_state <= sIdle;
---         elsif DisplayEN = '0' then
---            next_state <=sDisableWait;
---         end if;
---      when sDoneWait =>
---         if DisplayDone = '0' then
---            next_state <= sIdle;
---         elsif resetDisplay = '1' then
---            next_state <= sResetWait;
---         elsif DisplayEN = '0' then
---            next_state <=sDisableWait;
---         end if;
---      when sDisableWait => 
---         if DisplayEN ='1' then
---            next_state <= sStart;
---         end if;
---      when others =>
---         next_state <= sStart;
---   end case;
---end process controlls; 
---
---ColorReady <= startDisplayProcess or dataReady;     
---         
---         
---         
---
---statechanger:
---process (Clk)
---begin
---	if rising_edge(Clk) then --slow us down to at most 125khz
---		curr_state <= next_state;
---	end if;
---end process statechanger;
---
 
 
 end Behavioral;

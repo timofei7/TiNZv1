@@ -47,8 +47,8 @@ signal waitCount: unsigned(14 downto 0) := (others => '0'); --counts for the ini
 signal waitTC : std_logic:='0'; --terminal count
 signal waitReset : std_logic:='0'; --reset the wait counter
 
-constant slowFinal: unsigned(7 downto 0) := "11111010"; --count to 250 for a rate of 100khz in for down/up of SCLK
---constant slowFinal: unsigned(7 downto 0) := "00000010"; --FOR TESTING
+--constant slowFinal: unsigned(7 downto 0) := "11111010"; --count to 250 for a rate of 100khz in for down/up of SCLK
+constant slowFinal: unsigned(7 downto 0) := "11111010"; --FOR TESTING
 signal slowCount: unsigned(7 downto 0) := (others => '0'); --counts for SCLK
 signal slowTC : std_logic:='0'; --terminal count
 signal slowReset : std_logic:='0'; --reset the wait counters

@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version 11.2
-# Date: Wed Aug 19 04:01:08 2009
+# Date: Fri Aug 21 03:09:27 2009
 #
 ##############################################################
 #
@@ -38,7 +38,7 @@ SELECT Block_Memory_Generator family Xilinx,_Inc. 3.2
 CSET algorithm=Minimum_Area
 CSET assume_synchronous_clk=false
 CSET byte_size=9
-CSET coe_file=C:\engs31_cellHELP\cellHelp\gameboard.coe
+CSET coe_file=C:\engs31_cellHELP\Merged\gameboard.coe
 CSET collision_warnings=ALL
 CSET component_name=GameBoardROM
 CSET disable_collision_warnings=false
@@ -80,4 +80,4 @@ CSET write_width_a=8
 CSET write_width_b=8
 # END Parameters
 GENERATE
-# CRC: 6fe19e9d
+# CRC: c17b12b3
