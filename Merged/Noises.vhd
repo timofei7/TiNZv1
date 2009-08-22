@@ -31,70 +31,41 @@ end Noises;
 architecture Behavioral of Noises is
 
 COMPONENT Noise
-GENERIC (countfinal : integer:= 25000);
 PORT(
    Clk : IN std_logic;
-   NoiseON : IN std_logic;          
+   NoiseON : IN std_logic;
+   FreqCount: IN std_logic_vector(16 downto 0);
    SIGOUT : OUT std_logic
    );
 END COMPONENT;
 
-signal one, two, three, four, five: std_logic;
+
+signal freqout: std_logic_vector(16 downto 0);
 
 begin
 
-one_r: Noise 
-   GENERIC MAP( countfinal => 125000) --200hz
-   PORT MAP(
+noisemaker: Noise PORT MAP(
 		Clk => Clk,
 		NoiseON => NoiseON,
-		SIGOUT => one
+		FreqCount => freqout,
+		SIGOUT => NoiseOut
 	);
-two_r: Noise
-   GENERIC MAP( countfinal => 25000) --1000hz
-   PORT MAP(
-		Clk => Clk,
-		NoiseON => NoiseON,
-		SIGOUT => two
-	);
-three_r: Noise
-   GENERIC MAP( countfinal => 12207) --2048hz LOUDEST
-   PORT MAP(
-		Clk => Clk,
-		NoiseON => NoiseON,
-		SIGOUT => three
-	);
-four_r: Noise
-   GENERIC MAP( countfinal => 6250) --4000hz
-   PORT MAP(
-		Clk => Clk,
-		NoiseON => NoiseON,
-		SIGOUT => four
-	);
-five_r: Noise
-   GENERIC MAP( countfinal => 4166) --6000hz
-   PORT MAP(
-		Clk => Clk,
-		NoiseON => NoiseON,
-		SIGOUT => five
-	);   
 
-
-process(NoiseType,one, two, three, four, five)
+process(NoiseType)
    begin
       case NoiseType is
-         when "001" =>
-            NoiseOUT <= one;
-         when "010" =>
-            NoiseOUT <= two;
-         when "011" =>
-            NoiseOUT <= three;         
-         when "100" =>
-            NoiseOUT <= four;
-         when "101" =>
-            NoiseOUT <= five;
+         when "001" =>  --125000,  200hz 
+            FreqOut <= "11110100001001000";
+         when "010" => -- 25000,  1000hz
+            FreqOUT <= "00110000110101000";
+         when "011" => -- 12207,  2048hz
+            FreqOUT <= "00010111110101111";
+         when "100" => -- 6250,   4000hz
+            FreqOUT <= "00001100001101010";
+         when "101" => -- 4166,   6000hz
+            FreqOUT <= "00001000001000110";
          when others =>
-            NoiseOUT <= one;
+            FreqOUT <= "11110100001001000";
       end case;
 end process;
 

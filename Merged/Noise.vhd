@@ -22,9 +22,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 entity Noise is
-    GENERIC (countfinal : integer:= 25000);   --12500 for 200hz, 25000 for 1000hz,  12207 for 2048hz LOUDEST, 6250 for 4000hz
     Port ( Clk : in  STD_LOGIC;
            NoiseON : in  STD_LOGIC;
+           FreqCount : in std_logic_vector(16 downto 0);
            SIGOUT : out  STD_LOGIC);
 end Noise;
 
@@ -34,7 +34,8 @@ architecture Behavioral of Noise is
 signal countCE: std_logic:='0';
 signal countReset: std_logic:='0';
 
-signal count: unsigned(31 downto 0):= (others => '0'); --big enough for lots of values of countfinal
+signal count: unsigned(16 downto 0):= (others => '0'); --big enough for lots of values of countfinal
+signal countfinal: unsigned(16 downto 0):= (others => '0');
 
 -- state machine for sound
 type state_type is (sIdle, sResetUP, sUP, sResetDown, sDOWN);	-- state machine
@@ -45,6 +46,7 @@ signal next_state: state_type;
 
 begin
 
+countfinal <= unsigned(FreqCount);
 
 process(Clk)
    begin

@@ -38,6 +38,7 @@ entity cellGame is
            Xout: OUT std_logic_vector(2 downto 0);
            Yout: OUT std_logic_vector(2 downto 0);
            deathout: out std_logic;
+           NoiseOut: out std_logic;
            sevenSegSelector: in std_logic;
            an : OUT std_logic_vector(3 downto 0);
            seg : OUT std_logic_vector(0 to 6)
@@ -61,7 +62,14 @@ PORT(
    );
 END COMPONENT;
 
-
+COMPONENT Noises
+PORT(
+   Clk : IN std_logic;
+   NoiseType : IN std_logic_vector(2 downto 0);
+   NoiseON : IN std_logic;          
+   NoiseOut : OUT std_logic
+   );
+END COMPONENT;
 
 COMPONENT Play
 PORT(
@@ -116,7 +124,7 @@ COMPONENT Display
 		displayReady : OUT std_logic;
 		displayBit : OUT std_logic
 		);
-	END COMPONENT;
+END COMPONENT;
 
 
 COMPONENT LEDDriver
@@ -130,7 +138,7 @@ COMPONENT LEDDriver
       displayDone : OUT STD_LOGIC;
 		CS : OUT std_logic
 		);
-	END COMPONENT;
+END COMPONENT;
    
    
 COMPONENT GameBoard
@@ -148,13 +156,12 @@ COMPONENT GameBoard
 		ColorDONE : OUT std_logic;
 		CollisionData : OUT std_logic_vector(1 downto 0)
 		);
-	END COMPONENT;
+END COMPONENT;
    
 signal resetDisplay : std_logic := '0';
 signal colorDisplay : std_logic_vector(7 downto 0) := "00000001";
 signal ColorReady : std_logic := '0';
 signal dataReady : std_logic := '0';
---signal startDisplayProcess : std_logic := '0';
 signal shiftToDisplay : std_logic := '0';
 signal playerX : std_logic_vector(2 downto 0) := "000";
 signal playerY : std_logic_vector(2 downto 0) := "000";
@@ -185,13 +192,17 @@ signal logicen: std_logic:= '1';
 signal shieldstatus: std_logic:='0';
 signal shieldset: std_logic:='0';
 
+
+signal NoiseType: std_logic_vector(2 downto 0);
+signal NoiseON: std_logic:='0';
+
 begin
 deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
 Xout<=playerX;
 Yout<=playerY;
 
-gamelogical: GameLogicFSM PORT MAP(
+thegamelogic: GameLogicFSM PORT MAP(
 		Clk => Clk,
 		collisionData => collisionData,
 		shieldStatus => shieldStatus, --BOGUS
@@ -203,8 +214,16 @@ gamelogical: GameLogicFSM PORT MAP(
 		shieldSet => shieldSet, --BOGUS
 		playerColor => playerSelector
 	);
+   
+thenoises: Noises PORT MAP(
+		Clk => Clk,
+		NoiseType => NoiseType,
+		NoiseON => NoiseON,
+		NoiseOut => NoiseOut
+	);
 
-playplay: Play PORT MAP(
+
+theplay: Play PORT MAP(
 		Clk => Clk,
 		Xin => Xin,
 		Yin => Yin,
@@ -224,13 +243,13 @@ playplay: Play PORT MAP(
 		seg => seg
 	);
 
-playacola: PlayerColor PORT MAP(
+theplayercolor: PlayerColor PORT MAP(
 		Clk => Clk,
 		Selector => playerSelector,
 		PlayerColor => PlayerColorColor
 	);
 
-disp: Display PORT MAP(
+thedisplay: Display PORT MAP(
 		Clk => Clk,
 		displayEN => displayEN,
 	--	resetDisplay => resetDisplay,
@@ -251,7 +270,7 @@ disp: Display PORT MAP(
 		displayBit => displayBit
 	);
    
-leddrive: LEDDriver PORT MAP(
+theleddriver: LEDDriver PORT MAP(
 		Clk => Clk,
 		MOSI => MOSI,
 		SCLK => SCLK,

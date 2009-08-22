@@ -227,7 +227,7 @@ NET "YAnalogOut" LOC = "H16"; # Bank = 1, Pin name = IO_L16P_1, Type = I/O, Sch 
 #NET "JC<4> " LOC = "H15"; # Bank = 1, Pin name = IO_L17N_1, Type = I/O, Sch name = JC7
 #NET "JC<5> " LOC = "F14"; # Bank = 1, Pin name = IO_L21N_1, Type = I/O, Sch name = JC8
 #NET "JC<6> " LOC = "G16"; # Bank = 1, Pin name = IO_L18N_1, Type = I/O, Sch name = JC9
-#NET "JC<7> " LOC = "J12"; # Bank = 1, Pin name = IO_L15P_1/A2, Type = DUAL, Sch name = JC10
+NET "NOISEOUT" LOC = "J12"; # Bank = 1, Pin name = IO_L15P_1/A2, Type = DUAL, Sch name = JC10
 #NET "JD<0> " LOC = "J13"; # Bank = 1, Pin name = IO_L15N_1/A1, Type = DUAL, Sch name = JD1
 #NET "JD<1> " LOC = "M18"; # Bank = 1, Pin name = IO_L08N_1, Type = I/O, Sch name = JD2
 #NET "JD<2> " LOC = "N18"; # Bank = 1, Pin name = IO_L08P_1, Type = I/O, Sch name = JD3

@@ -48,7 +48,6 @@ constant onenemy: std_logic_vector(7 downto 0) := "11100011"; --bright purple
 signal breathCounter: unsigned(3 downto 0) := "0000"; --for indexing into the color arrays
 signal breathDirection: std_logic:='1'; --up or down?
 signal breathSlow: std_logic := '0'; --slow count enable
-signal breathTC: std_logic := '0'; --terminal count
 signal color: std_logic_vector(7 downto 0):= "00000000"; --internal color signal for choice
 
 begin

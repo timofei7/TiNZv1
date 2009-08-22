@@ -216,8 +216,8 @@
     <property xil_pn:name="Device" xil_pn:value="xc3s500e"/>
     <property xil_pn:name="Device Family" xil_pn:value="Spartan3E"/>
     <property xil_pn:name="Fitter Report Format" xil_pn:value="HTML"/>
-    <property xil_pn:name="Implementation Top" xil_pn:value="Architecture|Noises|Behavioral"/>
-    <property xil_pn:name="Implementation Top Instance Path" xil_pn:value="/Noises"/>
+    <property xil_pn:name="Implementation Top" xil_pn:value="Architecture|cellGame|Behavioral"/>
+    <property xil_pn:name="Implementation Top Instance Path" xil_pn:value="/cellGame"/>
     <property xil_pn:name="PROP_BehavioralSimTop" xil_pn:value="Architecture|Noise_TB|behavior"/>
     <property xil_pn:name="PROP_DesignName" xil_pn:value="Merged"/>
     <property xil_pn:name="PROP_DevFamilyPMName" xil_pn:value="spartan3e"/>
