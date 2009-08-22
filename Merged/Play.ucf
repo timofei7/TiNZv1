@@ -114,14 +114,14 @@ NET "an<2>" LOC = "C18"; # Bank = 1, Pin name = IO_L24P_1/LDC1, Type = DUAL, Sch
 NET "an<3>" LOC = "F15"; # Bank = 1, Pin name = IO_L21P_1, Type = I/O, Sch name = AN3
 #
 ## Leds
-NET "PlayerX<0>" LOC = "J14"; # Bank = 1, Pin name = IO_L14N_1/A3/RHCLK7, Type = RHCLK/DUAL, Sch name = JD10/LD0
-NET "PlayerX<1>" LOC = "J15"; # Bank = 1, Pin name = IO_L14P_1/A4/RHCLK6, Type = RHCLK/DUAL, Sch name = JD9/LD1
-NET "PlayerX<2>" LOC = "K15"; # Bank = 1, Pin name = IO_L12P_1/A8/RHCLK2, Type = RHCLK/DUAL, Sch name = JD8/LD2
-NET "PlayerY<0>" LOC = "K14"; # Bank = 1, Pin name = IO_L12N_1/A7/RHCLK3/TRDY1, Type = RHCLK/DUAL, Sch name = JD7/LD3
-NET "PlayerY<1>" LOC = "E17"; # Bank = 1, Pin name = IO, Type = I/O, Sch name = LD4?
-NET "PlayerY<2>" LOC = "P15"; # Bank = 1, Pin name = IO, Type = I/O, Sch name = LD5?
-#NET "moveCountOnes<2>" LOC = "F4"; # Bank = 3, Pin name = IO, Type = I/O, Sch name = LD6?
-#NET "moveCountOnes<3>" LOC = "R4"; # Bank = 3, Pin name = IO/VREF_3, Type = VREF, Sch name = LD7?
+NET "TESTOUT<0>" LOC = "J14"; # Bank = 1, Pin name = IO_L14N_1/A3/RHCLK7, Type = RHCLK/DUAL, Sch name = JD10/LD0
+NET "TESTOUT<1>" LOC = "J15"; # Bank = 1, Pin name = IO_L14P_1/A4/RHCLK6, Type = RHCLK/DUAL, Sch name = JD9/LD1
+NET "TESTOUT<2>" LOC = "K15"; # Bank = 1, Pin name = IO_L12P_1/A8/RHCLK2, Type = RHCLK/DUAL, Sch name = JD8/LD2
+NET "TESTOUT<3>" LOC = "K14"; # Bank = 1, Pin name = IO_L12N_1/A7/RHCLK3/TRDY1, Type = RHCLK/DUAL, Sch name = JD7/LD3
+NET "TESTOUT<4>" LOC = "E17"; # Bank = 1, Pin name = IO, Type = I/O, Sch name = LD4?
+NET "TESTOUT<5>" LOC = "P15"; # Bank = 1, Pin name = IO, Type = I/O, Sch name = LD5?
+NET "TESTOUT<6>" LOC = "F4"; # Bank = 3, Pin name = IO, Type = I/O, Sch name = LD6?
+NET "TESTOUT<7>" LOC = "R4"; # Bank = 3, Pin name = IO/VREF_3, Type = VREF, Sch name = LD7?
 #NET "" LOC = "E16"; # Bank = 1, Pin name = N.C., Type = N.C., Sch name = LD4?
 ##NET "Led<5> " LOC = "P16"; # Bank = 1, Pin name = N.C., Type = N.C., Sch name = LD5?
 ##NET "Led<6> " LOC = "E4"; # Bank = 3, Pin name = N.C., Type = N.C., Sch name = LD6?

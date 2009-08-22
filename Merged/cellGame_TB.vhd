@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer:
 --
--- Create Date:   08:00:14 08/19/2009
+-- Create Date:   16:31:57 08/21/2009
 -- Design Name:   
--- Module Name:   C:/engs31_cellHELP/Merged/cellGame_TB.vhd
+-- Module Name:   C:/engs31_cellHELP/Merged/CellGame_TB.vhd
 -- Project Name:  Merged
 -- Target Device:  
 -- Tool versions:  
@@ -30,10 +30,10 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.std_logic_unsigned.all;
 USE ieee.numeric_std.ALL;
  
-ENTITY cellGame_TB IS
-END cellGame_TB;
+ENTITY CellGame_TB IS
+END CellGame_TB;
  
-ARCHITECTURE behavior OF cellGame_TB IS 
+ARCHITECTURE behavior OF CellGame_TB IS 
  
     -- Component Declaration for the Unit Under Test (UUT)
  
@@ -41,10 +41,18 @@ ARCHITECTURE behavior OF cellGame_TB IS
     PORT(
          Clk : IN  std_logic;
          displayEN : IN  std_logic;
---         resetDisplay : IN  std_logic;
          MOSI : OUT  std_logic;
          SCLK : OUT  std_logic;
-         CS : OUT  std_logic
+         CS : OUT  std_logic;
+         Xin : IN  std_logic;
+         Yin : IN  std_logic;
+         XAnalogIn : IN  std_logic;
+         YAnalogIn : IN  std_logic;
+         XAnalogOut : OUT  std_logic;
+         YAnalogOut : OUT  std_logic;
+         deathout : OUT  std_logic;
+         an : OUT  std_logic_vector(3 downto 0);
+         seg : OUT  std_logic_vector(0 to 6)
         );
     END COMPONENT;
     
@@ -52,12 +60,20 @@ ARCHITECTURE behavior OF cellGame_TB IS
    --Inputs
    signal Clk : std_logic := '0';
    signal displayEN : std_logic := '0';
- --  signal resetDisplay : std_logic := '0';
+   signal Xin : std_logic := '0';
+   signal Yin : std_logic := '0';
+   signal XAnalogIn : std_logic := '0';
+   signal YAnalogIn : std_logic := '0';
 
  	--Outputs
    signal MOSI : std_logic;
    signal SCLK : std_logic;
    signal CS : std_logic;
+   signal XAnalogOut : std_logic;
+   signal YAnalogOut : std_logic;
+   signal deathout : std_logic;
+   signal an : std_logic_vector(3 downto 0);
+   signal seg : std_logic_vector(0 to 6);
 
    -- Clock period definitions
    constant Clk_period : time := 20ns;
@@ -68,10 +84,18 @@ BEGIN
    uut: cellGame PORT MAP (
           Clk => Clk,
           displayEN => displayEN,
-     --     resetDisplay => resetDisplay,
           MOSI => MOSI,
           SCLK => SCLK,
-          CS => CS
+          CS => CS,
+          Xin => Xin,
+          Yin => Yin,
+          XAnalogIn => XAnalogIn,
+          YAnalogIn => YAnalogIn,
+          XAnalogOut => XAnalogOut,
+          YAnalogOut => YAnalogOut,
+          deathout => deathout,
+          an => an,
+          seg => seg
         );
 
    -- Clock process definitions
@@ -87,9 +111,11 @@ BEGIN
 
    -- Stimulus process
    stim_proc: process
-   begin		
-
+   begin	
+      
       displayEN <= '1';
+      
+      
 
       wait;
    end process;

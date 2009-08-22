@@ -47,14 +47,14 @@ architecture Behavioral of Display is
 
 signal colorSelected : std_logic_vector(7 downto 0); --color output by 4x1 mux
 signal incrementPosition : std_logic := '0';
-signal row : unsigned(2 downto 0) := "000";  --row
-signal col :unsigned(2 downto 0) := "000"; --column
+signal row : unsigned(2 downto 0) := "111";  --row
+signal col :unsigned(2 downto 0) := "111"; --column
 signal resetWorld : std_logic := '0';
 signal regFilled : std_logic := '0';
 
 signal colorReady : std_logic := '0';
 
-type stateType is (DoNothing, LoadData, WaitforMem, WaitforLED, CheckReg);
+type stateType is (DoNothing, LoadData, WaitforMem, WaitforLED, CheckReg, IncrementPos, WaitForMemMore);
 signal currState, nextState : stateType;
 
 COMPONENT shiftRegisters
@@ -88,7 +88,11 @@ colorRegisters: shiftRegisters PORT MAP(
 transitionStates: process (Clk)
 begin
 	if rising_edge(Clk) then 
-		currState <= nextState;
+      if displayEN='0' then 
+         currState <= DoNothing;
+      else 
+         currState <= nextState;
+      end if;
 	else
 		currState <= currState;
 	end if;
@@ -104,37 +108,31 @@ begin
 		when DoNothing => --display not enabled
 			resetWorld <= '1';
 			if displayEN='1' then 
-				nextState <= LoadData;
+				nextState <= IncrementPos;
 			else 
 				nextState <= DoNothing;
 			end if;
 		when LoadData =>	--simultaneously load register and increment position
 			colorReady <= '1';
-			if displayEN='1' then
-				nextState <= CheckReg;
-			else
-				nextState <= DoNothing;
-			end if;
-			
+		   nextState <= CheckReg;
 		when CheckReg=>	--wait one clock cycle as memory gets new position
-			
-			if displayEN='1' and regFilled='0' then
-				nextState <= WaitforMem;
-			elsif displayEN='1' and regFilled='1' then
+			if regFilled='1' then
 				nextState <= WaitforLED;
 			else
-				nextState <= DoNothing;
-			end if;
-		when WaitforMem =>
+				nextState <= IncrementPos;
+         end if;
+		when IncrementPos =>
 			incrementPosition <= '1';
-			nextState <= LoadData;
+         nextState <= WaitforMem;
+      when WaitforMem =>
+         nextState <= WaitForMemMore;
+      when WaitforMemMore =>
+         nextState <= LoadData;
 		when WaitforLED =>	--64-byte register filled; wait for displayDone tick from LED driver
-			if displayEN='1' and displayDone='1' then
-				nextState <= WaitforMem;
-			elsif displayEN='1' and displayDone='0' then
-				nextState <= WaitforLED;
+			if displayDone='1' then
+				nextState <= IncrementPos;
 			else
-				nextState <= DoNothing;
+				nextState <= WaitforLED;
 			end if;
 		when others =>
 			nextState <= currState;
@@ -147,8 +145,8 @@ LocationCounter: process(Clk, displayEN, incrementPosition, displayDone)
 begin
 if rising_edge(Clk) then
 	if resetWorld='1' then
-		row <= "000";
-		col <= "000";
+		row <= "111";
+		col <= "111";
 	elsif incrementPosition='1' then					
 		if col="111" then
 			row <= row + 1;

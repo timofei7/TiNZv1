@@ -31,6 +31,8 @@ entity Play is
       XAnalogOut : OUT std_logic; --need to hook up to something to prevent errors
       YAnalogOut : OUT std_logic; --''
       
+      TESTOUT: out std_logic_vector(7 downto 0);
+      
       resetPlayer : IN std_logic; --resets player pos
       playerX : OUT std_logic_vector(2 downto 0); --current pos
       playerY : OUT std_logic_vector(2 downto 0); --''
@@ -52,6 +54,7 @@ PORT(
    Clk : IN std_logic;
    Xin : IN std_logic;
    Yin : IN std_logic;
+   TESTOUT: out std_logic_vector(7 downto 0); --for testing
    XAnalogIn : IN std_logic;
    YAnalogIn : IN std_logic;
    XAnalogOut : OUT std_logic;
@@ -112,6 +115,7 @@ theaccelerometer: ACCELDecoder PORT MAP(
 		Clk => Clk,
 		Xin => Xin,
 		Yin => Yin,
+      TESTOUT => TESTOUT,
 		XAnalogIn => XAnalogIn,
 		YAnalogIn => YAnalogIn,
 		XAnalogOut => XAnalogOut,

@@ -132,20 +132,20 @@ BEGIN
       wait;
    end process;
    
-   stim2:
-   process
-      begin
-      wait for Clk_period*3.25;
-         for i in 0 to 7 loop
-            for j in 0 to 7 loop
-               RowB <= std_logic_vector(to_unsigned(i, 3));
-               ColB <= std_logic_vector(to_unsigned(j, 3));
-               --ReadENCollision <='1';
-               --wait for Clk_period;
-               --ReadENCollision <='0';
-               Wait for Clk_period*2;
-            end loop;
-         end loop;
-   end process stim2;
+--   stim2:
+--   process
+--      begin
+--      wait for Clk_period*3.25;
+--         for i in 0 to 7 loop
+--            for j in 0 to 7 loop
+--               RowB <= std_logic_vector(to_unsigned(i, 3));
+--               ColB <= std_logic_vector(to_unsigned(j, 3));
+--               --ReadENCollision <='1';
+--               --wait for Clk_period;
+--               --ReadENCollision <='0';
+--               Wait for Clk_period*2;
+--            end loop;
+--         end loop;
+--   end process stim2;
 
 END;

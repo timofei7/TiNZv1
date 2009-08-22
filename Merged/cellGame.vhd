@@ -28,13 +28,17 @@ entity cellGame is
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
            CS : out  STD_LOGIC;
+           TESTOUT: out std_logic_vector(7 downto 0);
            Xin : IN std_logic;
            Yin : IN std_logic;
            XAnalogIn : IN std_logic;
            YAnalogIn : IN std_logic;
            XAnalogOut : OUT std_logic;
            YAnalogOut : OUT std_logic;
+           Xout: OUT std_logic_vector(2 downto 0);
+           Yout: OUT std_logic_vector(2 downto 0);
            deathout: out std_logic;
+           sevenSegSelector: in std_logic;
            an : OUT std_logic_vector(3 downto 0);
            seg : OUT std_logic_vector(0 to 6)
 ); 
@@ -68,6 +72,7 @@ PORT(
    YAnalogIn : IN std_logic;
    resetPlayer : IN std_logic;
    resetGameT : IN std_logic;
+   TESTOUT: out std_logic_vector(7 downto 0);
    sevenSegEN : IN std_logic;
    sevenSegSelector : IN std_logic;          
    XAnalogOut : OUT std_logic;
@@ -174,7 +179,6 @@ signal playerSelector: std_logic_vector(1 downto 0) := "00";
 
 signal resetGameT: std_logic:='0';
 signal sevenSegEN: std_logic:='1';
-signal sevenSegSelector: std_logic:='0';
 signal gameOver: std_logic:='0';
 signal death: std_logic;
 signal logicen: std_logic:= '1';
@@ -184,6 +188,8 @@ signal shieldset: std_logic:='0';
 begin
 deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
+Xout<=playerX;
+Yout<=playerY;
 
 gamelogical: GameLogicFSM PORT MAP(
 		Clk => Clk,
@@ -206,6 +212,7 @@ playplay: Play PORT MAP(
 		YAnalogIn => YAnalogIn,
 		XAnalogOut => XAnalogOUt,
 		YAnalogOut => YAnalogOut,
+      TESTOUT => TESTOUT,
 		resetPlayer => ResetDisplay,
 		playerX => playerX,
 		playerY => playerY,

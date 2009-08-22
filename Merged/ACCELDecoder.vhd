@@ -24,7 +24,8 @@ use ieee.numeric_std.all;
 
 entity ACCELDecoder is
     Port ( 
-           Clk : in  STD_LOGIC;    
+           Clk : in  STD_LOGIC; 
+           TESTOUT: out std_logic_vector(7 downto 0);
            Xin : in  STD_LOGIC;
            Yin : in  STD_LOGIC;
 			  XAnalogIn : in  STD_LOGIC;
@@ -66,9 +67,19 @@ architecture Behavioral of ACCELDecoder is
    COMPONENT AccelDetector
 	PORT(
 		Clk : IN std_logic;
-		SigIn : IN std_logic;          
+		SigIn : IN std_logic; 
+      Done: OUT std_logic;
 		T1out : OUT std_logic_vector(7 downto 0);
 		T2out : OUT std_logic_vector(7 downto 0)
+		);
+	END COMPONENT;
+   
+   COMPONENT AccelFilter
+	PORT(
+		Clk : IN std_logic;
+		CE : IN std_logic;
+		SIGIN : IN std_logic_vector(7 downto 0);          
+		SIGOUT : OUT std_logic_vector(7 downto 0)
 		);
 	END COMPONENT;
    
@@ -89,11 +100,27 @@ architecture Behavioral of ACCELDecoder is
 
    signal t1y,t1x,t2y,t2x: std_logic_vector(7 downto 0);
 	
-	
+	signal doneX: std_logic:= '0';
+   signal doneY: std_logic:= '0';
    
     
 begin
 
+xFilt: AccelFilter PORT MAP(
+		Clk => Clk,
+		CE => doneX,
+		SIGIN => fractionalX,
+		SIGOUT => X
+	);
+yFilt: AccelFilter PORT MAP(
+		Clk => Clk,
+		CE => doneY,
+		SIGIN => fractionalY,
+		SIGOUT => Y
+	);
+
+
+TESTOUT <= X;
 
 XAnalogOut <= XAnalogIn;
 YAnalogOut <= YAnalogIn;
@@ -115,6 +142,7 @@ hysY: ThresHysteresis PORT MAP(
 xdetect: AccelDetector PORT MAP(
 		Clk => Clk,
 		SigIn => Xin,
+      Done => doneX,
 		T1out => t1x,
 		T2out => t2x
 	);
@@ -122,6 +150,7 @@ xdetect: AccelDetector PORT MAP(
 ydetect: AccelDetector PORT MAP(
 		Clk => Clk,
 		SigIn => Yin,
+      Done => doneY,
 		T1out => t1y,
 		T2out => t2y
 	);
@@ -151,13 +180,11 @@ divisorX <= t2x;
 dividendY <= t1y;
 divisorY <=t2y;
 
-X <= fractionalX;
-Y <= fractionalY;
+--X <= fractionalX;
+--Y <= fractionalY;
 
 
 
---Xout <= X; 
---Yout <= Y;
 
 
 

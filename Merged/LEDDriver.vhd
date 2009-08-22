@@ -154,18 +154,18 @@ process(curr_state, GoDisplay, waitTC, shiftCount, slowTC, slowCount)
          if slowTC = '1' then
             if shiftCount = shiftFinal then --are we done shifting?
                shiftTC <= '1';
-               next_state <= sDeInit;
+               next_state <= sIdle;--sDeInit usually
             else
                next_state <= sSendInit;
             end if;
          end if;
-      when sDeInit => --NOT SURE WE NEED DELAY AT END --this is for CS to stay low for a little extra
-         waitReset <= '1';
-         next_state <= sWaitD;
-      when sWaitD => --wait for .5ms to denable cs
-         if waitTC = '1' then
-            next_state <= sIdle;
-         end if;
+--      when sDeInit => --NOT SURE WE NEED DELAY AT END --this is for CS to stay low for a little extra
+--         waitReset <= '1';
+--         next_state <= sWaitD;
+--      when sWaitD => --wait for .5ms to denable cs
+--         if waitTC = '1' then
+--            next_state <= sIdle;
+--         end if;
       when others => next_state <= sIdle;
    end case;
 end process statemachine;

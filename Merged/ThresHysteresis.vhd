@@ -30,16 +30,25 @@ end ThresHysteresis;
 
 architecture Behavioral of ThresHysteresis is
 
-constant upt: unsigned(7 downto 0)   := "10111111";
-constant uph: unsigned(7 downto 0)   := "10011111"; 
-constant downh: unsigned(7 downto 0) := "01111111"; 
-constant downt: unsigned(7 downto 0) := "01011111"; 
+--constant upt: unsigned(7 downto 0)   := "10111111";
+--constant uph: unsigned(7 downto 0)   := "10011111"; 
+--constant downh: unsigned(7 downto 0) := "01111111"; 
+--constant downt: unsigned(7 downto 0) := "01011111"; 
+
+--constant upt: unsigned(7 downto 0)   := "11100110";  --THIS IS FUCKED UP!
+--constant uph: unsigned(7 downto 0)   := "11011011"; 
+--constant downh: unsigned(7 downto 0) := "11000111"; 
+--constant downt: unsigned(7 downto 0) := "10110101"; 
+
+constant upt: unsigned(7 downto 0)   := "10111011";  --this is in digilab with averaging
+constant uph: unsigned(7 downto 0)   := "10011111";  --and pretty heavy tilt
+constant downh: unsigned(7 downto 0) := "01101111"; 
+constant downt: unsigned(7 downto 0) := "01001110"; 
 
 signal sins: unsigned(7 downto 0);
 signal waitReset: std_logic;
 signal waitcount: unsigned(24 downto 0) := (others => '0');
 constant waitcountfinal: unsigned(24 downto 0) := (others => '1');
---constant waitcountfinal: unsigned(24 downto 0) := "0000000000000000000000100";
 signal waitTC : std_logic;
 
 type state_type is (sStart, sSendUP, sSendDOWN, sWaitU, sWaitD);	-- state machine

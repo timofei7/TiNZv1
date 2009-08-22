@@ -24,6 +24,7 @@ use ieee.numeric_std.all;
 entity AccelDetector is
     Port ( Clk : in  STD_LOGIC;
            SigIn : in  STD_LOGIC;
+           Done: out STD_LOGIC;
            T1out : out  STD_LOGIC_VECTOR (7 downto 0);
            T2out : out  STD_LOGIC_VECTOR (7 downto 0));
 end AccelDetector;
@@ -114,7 +115,7 @@ process(curr_state, SigIn, count)
          when others => next_state <= sStart;
       end case;
 end process Detect;
-            
+Done <= countReset;    
             
 
 
