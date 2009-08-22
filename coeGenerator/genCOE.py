@@ -1,10 +1,10 @@
 #!/usr/bin/python
 import sys, re
 
-#DEBUG=True
-DEBUG=False
+DEBUG=True
+#DEBUG=False
 
-PREFIX=";; this is memory inits for %s\nmemory_initialization_radix=2;\nmemory_initialization_vector="
+PREFIX=";; this is memory inits for %s\n;;remember that the frames are defined 0th frame at bottom\nmemory_initialization_radix=2;\nmemory_initialization_vector="
 
 # from http://en.wikipedia.org/wiki/Web_colors#Web-safe_colors bottom of page
 COLORS = {"black":"00000000","gray":"01101110","silver":"01001001","white":"11111111","maroon":"10000000","red":"11100000",
@@ -36,7 +36,7 @@ mode=""
 #count em so we know when we need to end
 # also find what mode we should use
 def countframes():
-	global frametotal, mode, PREFIX
+	global frame, frametotal, mode, PREFIX
 	for each in lines:
 		if re.search("frame", each):
 			frametotal = frametotal + 1
@@ -47,78 +47,88 @@ def countframes():
 	PREFIX = PREFIX % mode
 	print ";processing total frames: %s" % frametotal
 	print ";in mode: %s" % mode
+	frame = frametotal - 1 #end on 0
 
 #insert commas/end semicolons where appropirate
-def comma():
+def increment():
 	global row, col
-	cm = ""
-	if row == 0 and col == 7 and frame == frametotal:
-		cm = ";"
-	else:
-		cm = ","
 	if col == 7:
 		col = 0
 	else:
 		col = col+1
-	return cm
 
 #figure out what char is what positional code
 def encodePositional(char):
-	global output, col 
+	str = ""
+	status = False
 	if char=="X":
-		output.append("11" + idents["enemy1"] + comma())	
+		str = "11" + idents["enemy1"]	
 	elif char=="Y":
-		output.append("11" + idents["enemy2"] + comma())	
+		str = "11" + idents["enemy2"]	
 	elif char=="Z":
-		output.append("11" + idents["enemy3"] + comma())	
+		str = "11" + idents["enemy3"]	
 	elif char=="P":
-		output.append("10" + idents["powerup1"] + comma())	
+		str = "10" + idents["powerup1"]	
 	elif char=="Q":
-		output.append("10" + idents["powerup2"] + comma())	
+		str = "10" + idents["powerup2"]	
 	elif char=="R":
-		output.append("10" + idents["powerup3"] + comma())	
+		str = "10" + idents["powerup3"]	
 	elif char=="F":
-		output.append("00" + idents["finish"] + comma())
+		str = "00" + idents["finish"]
 	elif char=="O":
-		output.append("00" + idents["blank"] + comma())
-	#if space do nothing
+		str = "00" + idents["blank"]
+	if str != "":
+		status = True 
+		increment()
+	return status, str
 
 # for colors we do everything in one row
 def encodeColoral(char):
-	global output, col
 	if char in COLORMAP.keys():
-		output.append(COLORS[COLORMAP[char]] + comma())
-		#output.append(COLORS[COLORMAP[char]] ) #can renable old style one line output
+		increment()
+		return COLORS[COLORMAP[char]]
 
 #main
 countframes()
 
 for line in lines:
+	nline = []
+	status = False
 	if re.search("frame", line):
 		if DEBUG: output.append(" #frame: %s " % frame)
-		if mode=="DISABLEDcoloral": #add the commas between frames rather than between rows 
-			if frame != 0:
-				output.append(",\n")
-		frame = frame+1	
+		frame = frame-1	
 		row = 7 #reset row count 
 	elif line != "\n": #skip blank lines
 		if DEBUG: output.append(" #row: %s " % row)
 		for char in list(line):
 			if mode=="positional":
-				encodePositional(char)		
+				status, str = encodePositional(char)
+				if status: nline.append(str)		
 			elif mode=="coloral":
-				encodeColoral(char)
+				status, str = encodeColoral(char)
+				if status: nline.append(str)
 		row = row-1
+	if nline != []: output.append(nline)
+
+if DEBUG:
+	for line in output:
+		print line
+
+#reformat it here for correct ordering
+output.reverse()
 
 #print it all to a .coe file
 newfile = open(file+".coe", "w")
 print >> newfile, PREFIX
-if mode=="positional" or mode =="coloral":
-	for line in output:
-		print >> newfile, line
-elif mode=="DISABLEDcoloral": #can reanble old style single line output here
-	tmp=""
-	for each in output:
-		tmp = tmp + each
-	tmp = tmp + ";\n"  #add the final ;
-	print >> newfile, tmp
+cnt = 1
+for row in output:
+	global cnt	
+	if type(row) == type([]): #get rid of debug output
+		for column in row:
+			if cnt == 64 * frametotal: #account for frames
+				print >> newfile, column+";" 
+			else:
+				print >> newfile, column+","
+			cnt = cnt + 1
+
+
