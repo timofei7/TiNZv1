@@ -128,18 +128,18 @@ NET "TESTOUT<7>" LOC = "R4"; # Bank = 3, Pin name = IO/VREF_3, Type = VREF, Sch 
 ##NET "Led<7> " LOC = "P4"; # Bank = 3, Pin name = N.C., Type = N.C., Sch name = LD7?
 #
 ## Switches
-NET "DisplayEN" LOC = "G18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW0
-NET "sevenSegSelector" LOC = "H18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = SW1
+#NET "DisplayEN" LOC = "G18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW0
+#NET "sevenSegSelector" LOC = "H18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = SW1
 #NET "Data<2>" LOC = "K18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW2
 #NET "Data<3>" LOC = "K17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW3
 #NET "Data<4>" LOC = "L14"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW4
-NET "NoiseType<0>" LOC = "L13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW5
-NET "NoiseType<1>" LOC = "N17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW6
-NET "NoiseType<2>" LOC = "R17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW7
+#NET "NoiseType<0>" LOC = "L13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW5
+#NET "NoiseType<1>" LOC = "N17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW6
+#NET "NoiseType<2>" LOC = "R17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW7
 #
 ## Buttons
 #
-NET "NoiseON" LOC = "B18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN0
+#NET "NoiseON" LOC = "B18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN0
 #NET "btn<1> " LOC = "D18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = BTN1
 #NET "btn<2> " LOC = "E18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN2
 #NET "btn<3> " LOC = "H13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN3

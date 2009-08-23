@@ -30,12 +30,14 @@ entity Player is
            yPlus : in  STD_LOGIC;
            yMinus : in  STD_LOGIC;
            resetPlayer : in  STD_LOGIC;
+			  moveEN : in STD_LOGIC; 		--from Controller
            --shieldSet : in  STD_LOGIC;
            playerX : out  STD_LOGIC_VECTOR(2 downto 0);
            playerY : out  STD_LOGIC_VECTOR(2 downto 0);
 			  moveCountOnes : out STD_LOGIC_VECTOR(3 downto 0);
 			  moveCountTens : out STD_LOGIC_VECTOR(3 downto 0);
-			  moveCountHundreds : out STD_LOGIC_VECTOR(3 downto 0)
+			  moveCountHundreds : out STD_LOGIC_VECTOR(3 downto 0);
+			  makeSoundMove : out STD_LOGIC_VECTOR(2 downto 0)
            --numMoves : out  STD_LOGIC_VECTOR(7 downto 0)
            --shieldStatus : out  STD_LOGIC
 			  );
@@ -51,6 +53,8 @@ signal incrementTens : std_logic := '0';
 signal DOUT10 : std_logic := '0';
 signal incrementHundreds : std_logic := '0';	
 signal DOUT100 : std_logic := '0'; --unused
+signal xSound : std_logic_vector(2 downto 0) := "000";
+signal ySound : std_logic_vector(2 downto 0) := "000";
 
 COMPONENT positionCounter
 	PORT(
@@ -58,7 +62,8 @@ COMPONENT positionCounter
 		DOWN : IN std_logic;
 		rst : IN std_logic;
 		Clk : IN std_logic;          
-		count : OUT std_logic_vector(2 downto 0)
+		count : OUT std_logic_vector(2 downto 0);
+		makeSoundMove : out STD_LOGIC_VECTOR(2 downto 0)
 		);
 	END COMPONENT;
 	
@@ -80,7 +85,8 @@ locationX: positionCounter PORT MAP(
 		DOWN => xMinus,
 		rst => resetPlayer,
 		Clk => Clk,
-		count => playerXSig
+		count => playerXSig,
+		makeSoundMove => xSound
 	);
 playerX <= playerXSig;
 
@@ -91,10 +97,11 @@ locationY: positionCounter PORT MAP(
 		DOWN => yMinus,
 		rst => resetPlayer,
 		Clk => Clk,
-		count => playerYSig
+		count => playerYSig,
+		makeSoundMove => ySound
 	);
 playerY <= playerYSig;
-	
+makeSoundMove <= xSound or ySound;
 	
 incrementHundreds <= '1' when (DOUT10='1' and incrementTens='1') else '0';
 
@@ -141,8 +148,12 @@ hundredsPlayerMoves: moveCounter PORT MAP(
 countMoves: process(xPlus, xMinus, yPlus, yMinus, resetPlayer, moveSig, Clk)
 begin
 	if rising_edge(Clk) then
-		if ((xPlus = '1' and playerXSig /= "111") xor (xMinus = '1' and playerXSig /= "000")) or ((yPlus = '1' and playerYSig /= "111") xor (yMinus = '1' and playerYSig /= "000")) then
-			moveSig <= '1';
+		if moveEN='1' then
+			if ((xPlus = '1' and playerXSig /= "111") xor (xMinus = '1' and playerXSig /= "000")) or ((yPlus = '1' and playerYSig /= "111") xor (yMinus = '1' and playerYSig /= "000")) then
+				moveSig <= '1';
+			else
+				moveSig <= '0';
+			end if;
 		else
 			moveSig <= '0';
 		end if;

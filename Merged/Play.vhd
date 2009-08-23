@@ -34,6 +34,7 @@ entity Play is
       TESTOUT: out std_logic_vector(7 downto 0);
       
       resetPlayer : IN std_logic; --resets player pos
+		moveEN : IN std_logic;		--enables move signals
       playerX : OUT std_logic_vector(2 downto 0); --current pos
       playerY : OUT std_logic_vector(2 downto 0); --''
       
@@ -41,6 +42,8 @@ entity Play is
       sevenSegEN : IN std_logic;
       sevenSegSelector : IN std_logic;          
       gameOver : OUT std_logic;
+		
+		makeSoundMove : OUT std_logic_vector(2 downto 0);
       
       an  : OUT std_logic_vector(3 downto 0);
       seg : OUT std_logic_vector(0 to 6)
@@ -73,12 +76,14 @@ PORT(
    xMinus : IN std_logic;
    yPlus : IN std_logic;
    yMinus : IN std_logic;
-   resetPlayer : IN std_logic;          
+   resetPlayer : IN std_logic;  
+   moveEN : IN std_logic;
    playerX : OUT std_logic_vector(2 downto 0);
    playerY : OUT std_logic_vector(2 downto 0);
    moveCountOnes : OUT std_logic_vector(3 downto 0);
    moveCountTens : OUT std_logic_vector(3 downto 0);
-   moveCountHundreds : OUT std_logic_vector(3 downto 0)
+   moveCountHundreds : OUT std_logic_vector(3 downto 0);
+	makeSoundMove : OUT std_logic_vector(2 downto 0)
    );
 END COMPONENT;
 
@@ -111,11 +116,13 @@ signal moveCountHundreds : std_logic_vector(3 downto 0) :=(others => '0');--''
 
 begin
 
+TESTOUT <= "000" & sevenSegSelector & moveCountOnes;
+
 theaccelerometer: ACCELDecoder PORT MAP(
 		Clk => Clk,
 		Xin => Xin,
 		Yin => Yin,
-      TESTOUT => TESTOUT,
+      TESTOUT => OPEN,
 		XAnalogIn => XAnalogIn,
 		YAnalogIn => YAnalogIn,
 		XAnalogOut => XAnalogOut,
@@ -133,11 +140,13 @@ theplayer: Player PORT MAP(
 		yPlus => YPlus,
 		yMinus => YMinus,
 		resetPlayer => resetPlayer,
+		moveEN => moveEN,
 		playerX => playerX,
 		playerY => playerY,
 		moveCountOnes => moveCountOnes,
 		moveCountTens => moveCountTens,
-		moveCountHundreds => moveCountHundreds 
+		moveCountHundreds => moveCountHundreds,
+		makeSoundMove => makeSoundMove
 	);
    
    

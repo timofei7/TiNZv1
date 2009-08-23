@@ -33,6 +33,8 @@ entity GameLogicFSM is
            disablePU : out  STD_LOGIC;
            death : out  STD_LOGIC;
           -- shieldSet : out  STD_LOGIC;
+			  makeSoundLogic : out STD_LOGIC_VECTOR(2 downto 0); --for Noises module
+			  soundSelect : out STD_LOGIC; --for Noises module, gives priority to sounds from GameLogic
 			  playerColor : out STD_LOGIC_VECTOR (1 downto 0));
 end GameLogicFSM;
 
@@ -48,8 +50,11 @@ architecture Behavioral of GameLogicFSM is
 																				  --hitting enemy with shield
 	signal currPlayerColor : std_logic_vector(1 downto 0) := "00";
    signal disableSig : std_logic := '0';
+	
+	signal soundSig : std_logic_vector(2 downto 0) := "000"; --for Noises module
+	
    signal deathTest : std_logic := '0';
-   signal unshieldedState, deathStateSig, GetShieldState, ShieldedState, LoseToPUState, LoseToEnemyState : std_logic;
+	signal unshieldedState, deathStateSig, GetShieldState, ShieldedState, LoseToPUState, LoseToEnemyState : std_logic;
 
 	type stateType is (Unshielded, DeathState, GetShield, Shielded, LoseToPU, LoseToEnemy);
    signal currState, nextState: stateType;
@@ -94,6 +99,7 @@ end process stateUpdate;
 
 
 disablePU <= disableSig;
+makeSoundLogic <= soundSig;
 
 --FSM for GameLogic
 GameLogic: process(currState, collisionData, logicEN, shieldDepleted)
@@ -112,6 +118,8 @@ begin
    ShieldedState <= '0';
    LoseToPUState <= '0';
    LoseToEnemyState <= '0';
+	soundSig<= "000"; --for Noises module
+	soundSelect <= '1'; --for Noises module
    case currState is
       when Unshielded =>		--no shield
          --shieldSet <= '0';
@@ -127,12 +135,16 @@ begin
          deathStateSig <= '1'; --TESTING
          death <= '1';
          deathTest <= '1'; --for testing purposes REMOVE
+			soundSig <= "011";	--sound for beginning of death siren
+			soundSelect <= '1';	--for Noises module
          nextState <= DeathState;
       when GetShield =>		--got powerup while unshielded
          getShieldState <= '1'; --TESTING
          --shieldSet <= '1';
          disableSig <= '1';
          currPlayerColor <= "01";
+			soundSig <= "010";  --sound for getting power-up
+			soundSelect <= '1'; --for Noises module
          nextState <= Shielded;
       when Shielded =>		--shielded
          shieldedState <= '1'; --TESTING
@@ -152,6 +164,8 @@ begin
          disableSig <= '1';
          --shieldSet <= '1';
          startShieldTimer <= '1';
+			soundSig <= "001";	--sound for losing power-up
+			soundSelect <= '1'; --for Noises module
          if shieldDepleted='0' then
             nextState <= LoseToEnemy;
          else 
@@ -161,6 +175,8 @@ begin
          LoseToPUState <= '1'; --TESTING
          currPlayerColor <= "00";
          disableSig <= '1';
+			soundSig <= "001"; --sound for losing power-up
+			soundSelect <= '1'; --for Noises module
          --shieldSet <= '0';
          nextState <= Unshielded;
       when others =>

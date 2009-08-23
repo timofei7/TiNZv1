@@ -23,7 +23,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity cellGame is
     Port ( Clk : in  STD_LOGIC;
-           displayEN : in  STD_LOGIC;
+          -- displayEN : in  STD_LOGIC; --Included as signal rather than port
          --  resetDisplay : in  STD_LOGIC;
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
@@ -40,14 +40,35 @@ entity cellGame is
            deathout: out std_logic;
            NoiseOut: out std_logic;
            NoiseType: in std_logic_vector(2 downto 0);
-           NoiseON: in std_logic;
-           sevenSegSelector: in std_logic;
+         --  NoiseON: in std_logic; --Included as signal, rather than port
+			--  sevenSegSelector: in std_logic; --Included as signal rather than port, can use port for testing
            an : OUT std_logic_vector(3 downto 0);
            seg : OUT std_logic_vector(0 to 6)
 ); 
 end cellGame;
 
 architecture Behavioral of cellGame is
+
+COMPONENT MainController
+	PORT(
+		Clk : IN std_logic;
+		introDone : IN std_logic;
+		death : IN std_logic;
+		deathDone : IN std_logic;
+		WIN : IN std_logic;          
+		seqReset : OUT std_logic;
+		displaySelector : OUT std_logic_vector(1 downto 0);
+		sevenSegEN : OUT std_logic;
+		resetGameT : OUT std_logic;
+		resetPlayer : OUT std_logic;  
+		moveEN : OUT std_logic;
+	--	resetPU : OUT std_logic;		--This output directed through ~displayEN
+		displayEN : OUT std_logic;
+		gameLogicEN : OUT std_logic;
+		soundEN : OUT std_logic;
+		sevenSegSelector : OUT std_logic
+		);
+	END COMPONENT;
 
 COMPONENT GameLogicFSM
 PORT(
@@ -61,6 +82,8 @@ PORT(
    disablePU : OUT std_logic;
    death : OUT std_logic;
    --shieldSet : OUT std_logic;
+	makeSoundLogic : OUT std_logic_vector(2 downto 0);
+	soundSelect : OUT std_logic;
    playerColor : OUT std_logic_vector(1 downto 0)
    );
 END COMPONENT;
@@ -82,9 +105,14 @@ END COMPONENT;
 COMPONENT Noises
 PORT(
    Clk : IN std_logic;
-   NoiseType : IN std_logic_vector(2 downto 0);
-   NoiseON : IN std_logic;          
-   NoiseOut : OUT std_logic
+  -- NoiseType : IN std_logic_vector(2 downto 0);
+ --  NoiseON : IN std_logic; 
+	soundEN : IN STD_LOGIC;		 --enables sound, sent from Controller
+	soundSelect : IN STD_LOGIC;  --chooses between sound cmd from GameLogic or Player
+	makeSoundLogic : IN STD_LOGIC_VECTOR(2 downto 0);
+	makeSoundMove : IN STD_LOGIC_VECTOR(2 downto 0); 
+   NoiseOut : OUT std_logic;
+	TESTOUT : OUT STD_LOGIC_VECTOR(7 downto 0)
    );
 END COMPONENT;
 
@@ -96,6 +124,7 @@ PORT(
    XAnalogIn : IN std_logic;
    YAnalogIn : IN std_logic;
    resetPlayer : IN std_logic;
+	moveEN : IN std_logic;
    resetGameT : IN std_logic;
    TESTOUT: out std_logic_vector(7 downto 0);
    sevenSegEN : IN std_logic;
@@ -106,7 +135,8 @@ PORT(
    playerY : OUT std_logic_vector(2 downto 0);
    gameOver : OUT std_logic;
    an : OUT std_logic_vector(3 downto 0);
-   seg : OUT std_logic_vector(0 to 6)
+   seg : OUT std_logic_vector(0 to 6);
+	makeSoundMove : OUT std_logic_vector(2 downto 0)
    );
 END COMPONENT;
 
@@ -177,6 +207,7 @@ COMPONENT GameBoard
 END COMPONENT;
    
 signal resetDisplay : std_logic := '0';
+signal resetTimer : std_logic := '0';
 signal colorDisplay : std_logic_vector(7 downto 0) := "00000001";
 signal ColorReady : std_logic := '0';
 signal dataReady : std_logic := '0';
@@ -210,22 +241,59 @@ signal WIN: std_logic:='0';
 signal seqDone: std_logic:='0';
 
 
+signal endGame : std_logic := '0';
+signal logicEN : std_logic := '0';
+signal displayEN : std_logic := '0';
+signal sevenSegSelector : std_logic := '0'; 
+signal resetPlayer : std_logic := '0';
+signal moveEN : std_logic := '0';
+
+--Sound signals
+signal soundEN : std_logic := '1'; --HARDCODING for TESTING
+signal soundSelect : std_logic := '0';
+signal makeSoundLogic : std_logic_vector(2 downto 0) := "011";
+signal makeSoundMove : std_logic_vector(2 downto 0) := "011";
+
 begin
 deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
 Xout<=playerX;
 Yout<=playerY;
 
+endGame <= death or gameOver;
+--resetDisplay <= not(displayEN); --there are 2 versions...
+
+GameController: MainController PORT MAP(
+		Clk => Clk,
+		introDone => seqDone,
+		death => endGame,
+		deathDone => seqDone,
+		WIN => WIN,
+		seqReset => OPEN,
+		displaySelector => selectBoard,
+		sevenSegEN => sevenSegEN,
+		resetGameT => resetTimer,
+		resetPlayer => resetPlayer,
+		moveEN => moveEN,
+	--	resetPU => resetDisplay,
+		displayEN => displayEN,
+		gameLogicEN => logicEN,
+		soundEN => OPEN, --soundEN,
+		sevenSegSelector => sevenSegSelector
+	);
+
 thegamelogic: GameLogicFSM PORT MAP(
 		Clk => Clk,
 		collisionData => collisionData,
 		--shieldStatus => shieldStatus, --BOGUS
-		logicEN => not(resetDisplay),
+		logicEN => logicEN,
 		--gameOver => gameOver,
 		--isEN => collisiondata(1),
       TESTOUT => OPEN,
 		disablePU => disablePU,
 		death => death,
+		makeSoundLogic => OPEN, --makeSoundLogic,
+		soundSelect => OPEN, --soundSelect,
 		--shieldSet => shieldSet, --BOGUS
 		playerColor => playerSelector
 	);
@@ -234,7 +302,7 @@ thesequences: Sequences PORT MAP(
 		Clk => Clk,
 		row => row,
       col => col,
-      TESTOUT => TESTOUT,
+      TESTOUT => OPEN,
 		seqReset => ResetDisplay,
 		seqDone => seqDone,
 		deathColor => deathColor,
@@ -243,9 +311,14 @@ thesequences: Sequences PORT MAP(
    
 thenoises: Noises PORT MAP(
 		Clk => Clk,
-		NoiseType => NoiseType,
-		NoiseON => NoiseON,
-		NoiseOut => NoiseOut
+		--NoiseType => NoiseType,
+		--NoiseON => NoiseON,
+		soundEN => soundEN,
+		soundSelect => soundSelect,
+		makeSoundLogic => makeSoundLogic,
+		makeSoundMove => makeSoundMove,
+		NoiseOut => NoiseOut,
+		TESTOUT => TESTOUT
 	);
 
 
@@ -258,13 +331,15 @@ theplay: Play PORT MAP(
 		XAnalogOut => XAnalogOUt,
 		YAnalogOut => YAnalogOut,
       TESTOUT => OPEN,
-		resetPlayer => ResetDisplay,
+		resetPlayer => ResetPlayer,
+		moveEN => moveEN,
 		playerX => playerX,
 		playerY => playerY,
-		resetGameT => ResetGameT,
+		resetGameT => resetTimer,
 		sevenSegEN => sevenSegEN,
 		sevenSegSelector => sevenSegSelector,
 		gameOver => gameOver,
+		makeSoundMove => OPEN, --makeSoundMove,
 		an => an,
 		seg => seg
 	);

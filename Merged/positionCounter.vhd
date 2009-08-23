@@ -31,7 +31,8 @@ entity positionCounter is
 			  DOWN: in STD_LOGIC;
 			  rst : 	in   STD_LOGIC;
 			  Clk : in STD_LOGIC;
-			  count : out STD_LOGIC_VECTOR(2 downto 0));
+			  count : out STD_LOGIC_VECTOR(2 downto 0);
+			  makeSoundMove : out STD_LOGIC_VECTOR(2 downto 0));
           
 end positionCounter;
 
@@ -45,7 +46,7 @@ architecture Behavioral of positionCounter is
 	-- internal signals
 	--signal clkdivcount: 	unsigned(NCLKDIV-1 downto 0);	-- clock divider count value
 	signal D : unsigned (2 downto 0) := "000";
-	
+	signal soundMove : std_logic_vector(2 downto 0) := "000";
 	
 	
 begin
@@ -69,14 +70,18 @@ begin
 			if UP='1' and DOWN='0' then
 				if D="111" then
 					D <= D;
+					soundMove <= "001"; --sound signal for getting stuck
 				else
 					D <= D + 1;
+					soundMove <= "101"; --sound signal for moving freely
 				end if;
 			elsif DOWN='1' and UP='0' then
 				if D="000" then
 					D <= D;
+					soundMove <= "001";	--sound signal for getting stuck
 				else
 					D <= D - 1;
+					soundMove <= "101";	--sound signal for moving freely
 				end if;
 			else 
 				D <= D;
@@ -85,6 +90,7 @@ begin
 	end if;
 end process Counter;
 count <= std_logic_vector(D);
+makeSoundMove <= soundMove;
 
 end Behavioral;
 
