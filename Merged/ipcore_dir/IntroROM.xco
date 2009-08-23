@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version 11.2
-# Date: Tue Aug 11 02:35:22 2009
+# Date: Sun Aug 23 04:42:13 2009
 #
 ##############################################################
 #
@@ -38,7 +38,7 @@ SELECT Block_Memory_Generator family Xilinx,_Inc. 3.2
 CSET algorithm=Minimum_Area
 CSET assume_synchronous_clk=false
 CSET byte_size=9
-CSET coe_file=C:\engs31_cellHELP\cellHelp\introseq.coe
+CSET coe_file=C:\engs31_cellHELP\Merged\introseq.coe
 CSET collision_warnings=ALL
 CSET component_name=IntroROM
 CSET disable_collision_warnings=false
@@ -47,7 +47,7 @@ CSET ecc=false
 CSET enable_a=Always_Enabled
 CSET enable_b=Always_Enabled
 CSET error_injection_type=Single_Bit_Error_Injection
-CSET fill_remaining_memory_locations=false
+CSET fill_remaining_memory_locations=true
 CSET load_init_file=true
 CSET memory_type=Single_Port_ROM
 CSET operating_mode_a=WRITE_FIRST
@@ -80,4 +80,4 @@ CSET write_width_a=8
 CSET write_width_b=8
 # END Parameters
 GENERATE
-# CRC: f917bf35
+# CRC: 3a6ffe15

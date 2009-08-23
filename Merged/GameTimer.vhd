@@ -73,7 +73,6 @@ signal Yh : std_logic_vector(0 to 6) := "0000000";
 signal O : std_logic_vector(3 downto 0) := "0000";
 signal runTimer : std_logic := '0';
 signal DOUT10 : std_logic := '0';
-signal DOUT100 : std_logic :='0';
 signal decrementTens : std_logic := '0';
 signal decrementHundreds : std_logic := '0';
 signal Ones : std_logic_vector(3 downto 0) := "0000";
@@ -114,7 +113,7 @@ PORT MAP(
 		timerEN => decrementHundreds,
 		reset => resetGameT,
 		currTime => Hundreds,
-		DOUT => DOUT100
+		DOUT => OPEN
 	);
 	
 AnodeDriverDevice: AnodeDriver PORT MAP(

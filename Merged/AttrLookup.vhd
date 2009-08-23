@@ -30,6 +30,7 @@ entity AttrLookup is
            RstPU : in  STD_LOGIC;
            DisablePU : in  STD_LOGIC;
            Color : out STD_LOGIC_VECTOR(7 downto 0);
+           WIN: out std_logic;
            Enabled : out STD_LOGIC);
 end AttrLookup;
 
@@ -60,7 +61,7 @@ architecture Behavioral of AttrLookup is
      signal pu2 : std_logic := '1'; 
      signal pu3 : std_logic := '1'; 
      signal empty : std_logic := '0';
-     signal finish : std_logic := '0';
+     signal finish : std_logic := '1';
 begin
 
 
@@ -78,9 +79,9 @@ begin
          finish <= '0';
       elsif disablePU = '1' then
          case WriteAddr is
-            when x"1" => enemy1 <= '0';
-            when x"2" => enemy2 <= '0';
-            when x"3" => enemy3 <= '0';
+            when x"1" => enemy1 <= '1';
+            when x"2" => enemy2 <= '0';  --THIS IS ON PURPOSE these can get EATEN
+            when x"3" => enemy3 <= '1';
             when x"4" => pu1 <= '0'; -- we really only need these
             when x"5" => pu2 <= '0';
             when x"6" => pu3 <= '0'; --
@@ -136,6 +137,7 @@ end process;
 
 process(ReadEnabled, enemy1, enemy2, enemy3, pu1, pu2, pu3, empty, finish)
 begin
+   WIN <= '0';
    case ReadEnabled is
       when x"1" => Enabled <= enemy1; 
       when x"2" => Enabled <= enemy2;
@@ -144,7 +146,9 @@ begin
       when x"5" => Enabled <= pu2;
       when x"6" => Enabled <= pu3;
       when x"0" => Enabled <= empty;
-      when x"7" => Enabled <= finish;
+      when x"7" => 
+         Enabled <= finish;
+         WIN <= '1';
       when others => Enabled <= empty;
    end case;
 end process;

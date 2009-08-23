@@ -24,6 +24,7 @@ use ieee.numeric_std.all;
 entity GameBoard is
    Port( 
         Clk : in STD_LOGIC;
+        WIN: out STD_LOGIC;
         SeqReset : in  STD_LOGIC; --resets the gameboard frame back to start
         ResetPUs : in  STD_LOGIC;  --reset the powerups to initial state, on
         DisablePU : in  STD_LOGIC;  --disable the current type per the row and col address
@@ -63,6 +64,7 @@ PORT(
    RstPU : IN std_logic;
    DisablePU : IN std_logic;          
    Color : OUT std_logic_vector(7 downto 0);
+   WIN: out std_logic;
    Enabled : OUT std_logic
    );
 END COMPONENT;
@@ -119,6 +121,7 @@ attributes: AttrLookup PORT MAP(
    RstPU => ResetPUs,
    DisablePU => DisablePU,
    Color => color,
+   WIN => WIN,
    Enabled => enabled
 );
 
@@ -127,9 +130,9 @@ addra <= std_logic_vector(frameCount) & RowA & ColA; -- this is for DISPLAY
 addrb <= std_logic_vector(frameCount) & RowB & ColB; -- this is for GAMELOGIC
 readcolor <= douta(3 downto 0); --gets the type address from the main rom for color read --we throw out a couple bits
 readenabled <= doutb(3 downto 0); --same but for enable read --we throw out a couple bits
-writeaddr <= readcolor; -- could get rid of this distinction really
+writeaddr <= readenabled; -- idiot tim poor taxonomy
 colorOUT <= color;
-CollisionData <= enabled & doutb(7);  --grab the relevant collision bits the enable bit first and the enemy/pup bit second
+CollisionData <= enabled & doutb(6);  --grab the relevant collision bits the enable bit first and the enemy/pup bit second
 
 
 FrameCounter: --animate the frames

@@ -39,6 +39,8 @@ entity cellGame is
            Yout: OUT std_logic_vector(2 downto 0);
            deathout: out std_logic;
            NoiseOut: out std_logic;
+           NoiseType: in std_logic_vector(2 downto 0);
+           NoiseON: in std_logic;
            sevenSegSelector: in std_logic;
            an : OUT std_logic_vector(3 downto 0);
            seg : OUT std_logic_vector(0 to 6)
@@ -51,16 +53,31 @@ COMPONENT GameLogicFSM
 PORT(
    Clk : IN std_logic;
    collisionData : IN std_logic_vector(1 downto 0);
-   shieldStatus : IN std_logic;
+   --shieldStatus : IN std_logic;
    logicEN : IN std_logic;
-   gameOver : IN std_logic;
-   isEN : IN std_logic;          
+   --gameOver : IN std_logic;
+   --isEN : IN std_logic;  
+   TESTOUT: OUT std_logic_vector(7 downto 0);
    disablePU : OUT std_logic;
    death : OUT std_logic;
-   shieldSet : OUT std_logic;
+   --shieldSet : OUT std_logic;
    playerColor : OUT std_logic_vector(1 downto 0)
    );
 END COMPONENT;
+
+COMPONENT Sequences
+PORT(
+   Clk : IN std_logic;
+   row : IN std_logic_vector(2 downto 0);
+   col : IN std_logic_vector(2 downto 0);
+   seqReset : IN std_logic;          
+   seqDone : OUT std_logic;
+   TESTOUT: out std_logic_vector(7 downto 0);
+   deathColor : OUT std_logic_vector(7 downto 0);
+   introColor : OUT std_logic_vector(7 downto 0)
+   );
+END COMPONENT;
+
 
 COMPONENT Noises
 PORT(
@@ -144,6 +161,7 @@ END COMPONENT;
 COMPONENT GameBoard
 	PORT(
 		Clk : IN std_logic;
+      WIN: out std_logic;
 		SeqReset : IN std_logic;
 		ResetPUs : IN std_logic;
 		DisablePU : IN std_logic;
@@ -178,9 +196,6 @@ signal displayDone : std_logic := '0';
 
 signal disablePU : std_logic := '0';
 signal collisiondata : std_logic_vector(1 downto 0) := "00";
-signal defunct3 : std_logic_vector(2 downto 0) := "000";
-signal defunct3B : std_logic_vector(2 downto 0) := "000";
-signal colorDefunct : std_logic_vector(7 downto 0) := "00000000";
 
 signal playerSelector: std_logic_vector(1 downto 0) := "00";
 
@@ -188,13 +203,12 @@ signal resetGameT: std_logic:='0';
 signal sevenSegEN: std_logic:='1';
 signal gameOver: std_logic:='0';
 signal death: std_logic;
-signal logicen: std_logic:= '1';
+--signal logicen: std_logic:= '1';
 signal shieldstatus: std_logic:='0';
 signal shieldset: std_logic:='0';
+signal WIN: std_logic:='0';
+signal seqDone: std_logic:='0';
 
-
-signal NoiseType: std_logic_vector(2 downto 0);
-signal NoiseON: std_logic:='0';
 
 begin
 deathout<=death;
@@ -205,15 +219,27 @@ Yout<=playerY;
 thegamelogic: GameLogicFSM PORT MAP(
 		Clk => Clk,
 		collisionData => collisionData,
-		shieldStatus => shieldStatus, --BOGUS
-		logicEN => logicEN,
-		gameOver => gameOver,
-		isEN => collisiondata(1),
+		--shieldStatus => shieldStatus, --BOGUS
+		logicEN => not(resetDisplay),
+		--gameOver => gameOver,
+		--isEN => collisiondata(1),
+      TESTOUT => OPEN,
 		disablePU => disablePU,
 		death => death,
-		shieldSet => shieldSet, --BOGUS
+		--shieldSet => shieldSet, --BOGUS
 		playerColor => playerSelector
 	);
+   
+thesequences: Sequences PORT MAP(
+		Clk => Clk,
+		row => row,
+      col => col,
+      TESTOUT => TESTOUT,
+		seqReset => ResetDisplay,
+		seqDone => seqDone,
+		deathColor => deathColor,
+		introColor => introColor
+	);   
    
 thenoises: Noises PORT MAP(
 		Clk => Clk,
@@ -231,7 +257,7 @@ theplay: Play PORT MAP(
 		YAnalogIn => YAnalogIn,
 		XAnalogOut => XAnalogOUt,
 		YAnalogOut => YAnalogOut,
-      TESTOUT => TESTOUT,
+      TESTOUT => OPEN,
 		resetPlayer => ResetDisplay,
 		playerX => playerX,
 		playerY => playerY,
@@ -283,6 +309,7 @@ theleddriver: LEDDriver PORT MAP(
    
 thegameboard: GameBoard PORT MAP(
 		Clk => Clk,
+      WIN => WIN,
 		SeqReset => resetDisplay,
 		ResetPUs => resetDisplay,
 		DisablePU => disablePU,
@@ -291,8 +318,8 @@ thegameboard: GameBoard PORT MAP(
 		ColA => col,
 		ColorOUT => colorDisplay,
 		ColorDONE => dataReady,
-		RowB => defunct3,
-		ColB => defunct3B,
+		RowB => playerX,
+		ColB => playerY,
 		CollisionData => collisiondata
 	);
 

@@ -25,19 +25,20 @@ use IEEE.NUMERIC_STD.ALL;
 entity GameLogicFSM is
     Port ( Clk: in STD_LOGIC;
 			  collisionData : in  STD_LOGIC_VECTOR (1 downto 0);
-           shieldStatus : in  STD_LOGIC;
+          -- shieldStatus : in  STD_LOGIC;
            logicEN : in  STD_LOGIC;
-           gameOver : in  STD_LOGIC;
-			  isEN : in STD_LOGIC;
+           --gameOver : in  STD_LOGIC;
+			 -- isEN : in STD_LOGIC;
+           TESTOUT: out std_logic_vector(7 downto 0);
            disablePU : out  STD_LOGIC;
            death : out  STD_LOGIC;
-           shieldSet : out  STD_LOGIC;
+          -- shieldSet : out  STD_LOGIC;
 			  playerColor : out STD_LOGIC_VECTOR (1 downto 0));
 end GameLogicFSM;
 
 architecture Behavioral of GameLogicFSM is
 
-	constant NCLKDIV: integer := 1; --26;					--assuming clock freq of 50 MHz
+	constant NCLKDIV: integer := 27; 					--assuming clock freq of 50 MHz
    constant MAXCLKDIV: integer := 2**NCLKDIV-1; -- max count of clock divider, 1...11
 
 -- internal signals
@@ -46,12 +47,17 @@ architecture Behavioral of GameLogicFSM is
    signal shieldDepleted:       std_logic;                    -- signal to set shield to 0 after 
 																				  --hitting enemy with shield
 	signal currPlayerColor : std_logic_vector(1 downto 0) := "00";
+   signal disableSig : std_logic := '0';
+   signal deathTest : std_logic := '0';
+   signal unshieldedState, deathStateSig, GetShieldState, ShieldedState, LoseToPUState, LoseToEnemyState : std_logic;
 
 	type stateType is (Unshielded, DeathState, GetShield, Shielded, LoseToPU, LoseToEnemy);
    signal currState, nextState: stateType;
 
 
 begin
+
+TESTOUT <= deathTest & disableSig & unshieldedState & deathStateSig & GetShieldState & ShieldedState & LoseToPUState & LoseToEnemyState; --FOR TESTING
 
 --Timer for shield disable
 --Timer starts when player hits enemy when shielded
@@ -76,87 +82,90 @@ stateUpdate:
 process(Clk)
 begin
    if rising_edge(Clk) then
-      currState <= nextState;
+      if logicEN = '1' then
+         currState <= nextState;
+      else
+         currState <= UnSHielded;
+      end if;
+   else
+      currState <= currState;
    end if;
 end process stateUpdate;
 
 
+disablePU <= disableSig;
+
 --FSM for GameLogic
-GameLogic: process(Clk, currState, collisionData, logicEN, gameOver, isEN, shieldDepleted, shieldStatus)
+GameLogic: process(currState, collisionData, logicEN, shieldDepleted)
 begin
-	if logicEN='1' then													--if GameLogic enabled
-		--Defaults
-		disablePU <='0';
-		death <='0';
-		shieldSet <= shieldStatus;
-		currPlayerColor <= "00";
-		startShieldTimer <= '0';
-		case currState is
-			when Unshielded =>		--no shield
-				shieldSet <= '0';
-				if (collisionData="00" or collisionData="01" or (collisionData="11" and isEN='0')) and gameOver='0' then
-					nextState <= Unshielded;
-				elsif (collisionData = "11" and isEN='1') and gameOver='0' then
-					nextState <= getShield;
-				else 
-					nextState <= DeathState;
-				end if;
-			when DeathState => 	--game over or hit enemy without shield
-				death <= '1';
-				nextState <= DeathState;
-			when GetShield =>		--got powerup while unshielded
-				shieldSet <= '1';
-				disablePU <= '1';
-				currPlayerColor <= "01";
-				if gameOver='0' then
-					nextState <= Shielded;
-				else
-					nextState <= DeathState;
-				end if;
-			when Shielded =>		--shielded
-				shieldSet <= '1';
-				currPlayerColor <= "01";
-				startShieldTimer <='1';
-				if (collisionData ="00" or collisionData="01" or (collisionData="11" and isEN='0')) and gameOver='0' then
-					nextState <= Shielded;
-				elsif collisionData="10" and gameOver='0' then
-					nextState <= LoseToEnemy;
-				elsif collisionData="11" and isEn='1' and gameOver='0' and shieldDepleted='1' then
-					nextState <= LoseToPU;
-				else
-					nextState <= DeathState;
-				end if;
-			when LoseToEnemy =>	--lose shield by hitting enemy while shielded
-				currPlayerColor <= "10";
-				shieldSet <= '1';
-				startShieldTimer <= '1';
-				if gameOver='0' and shieldDepleted='0' then
-					nextState <= LoseToEnemy;
-				elsif gameOver='0' and shieldDepleted='1' then
-					nextState <= Unshielded;
-				else
-					nextState <= DeathState;
-				end if;
-			when LoseToPU =>		--lose shield by hitting powerup while shielded; also disables powerup 
-				currPlayerColor <= "00";
-				disablePU <= '1';
-				shieldSet <= '0';
-				if gameOver='0' then
-					nextState <= Unshielded;
-				else
-					nextState <= DeathState;
-				end if;
-			when others =>
-				nextState <= currState;
-		end case;
-	else						--logicEN='0'
-		disablePU <='0';
-		death <='0';
-		shieldSet <= '0';
-		currPlayerColor <= "00";
-		startShieldTimer <= '0';
-		nextState <= Unshielded;
-	end if;
+	nextState <= currState;							
+   --Defaults
+   disableSig <='0';
+   death <='0';
+   deathTest <= '0';
+   --shieldSet <= shieldStatus;
+   currPlayerColor <= "00";
+   startShieldTimer <= '0';
+   unshieldedState <= '0';
+   deathStateSig <= '0';
+   GetShieldState <= '0';
+   ShieldedState <= '0';
+   LoseToPUState <= '0';
+   LoseToEnemyState <= '0';
+   case currState is
+      when Unshielded =>		--no shield
+         --shieldSet <= '0';
+         unshieldedState <= '1'; --TeSTING
+         if (collisionData="00" or collisionData="01") then
+            nextState <= Unshielded;
+         elsif collisionData = "10" then
+            nextState <= getShield;
+         else 
+            nextState <= DeathState;
+         end if;
+      when DeathState => 	--game over or hit enemy without shield
+         deathStateSig <= '1'; --TESTING
+         death <= '1';
+         deathTest <= '1'; --for testing purposes REMOVE
+         nextState <= DeathState;
+      when GetShield =>		--got powerup while unshielded
+         getShieldState <= '1'; --TESTING
+         --shieldSet <= '1';
+         disableSig <= '1';
+         currPlayerColor <= "01";
+         nextState <= Shielded;
+      when Shielded =>		--shielded
+         shieldedState <= '1'; --TESTING
+         --shieldSet <= '1';
+         currPlayerColor <= "01";
+         startShieldTimer <='1';
+         if (collisionData ="00" or collisionData="01") then
+            nextState <= Shielded;
+         elsif collisionData="11" then
+            nextState <= LoseToEnemy;
+         elsif collisionData="10" and shieldDepleted='1' then
+            nextState <= LoseToPU;
+         end if;
+      when LoseToEnemy =>	--lose shield by hitting enemy while shielded
+         LoseToEnemyState <= '1'; --TESTING
+         currPlayerColor <= "10";
+         disableSig <= '1';
+         --shieldSet <= '1';
+         startShieldTimer <= '1';
+         if shieldDepleted='0' then
+            nextState <= LoseToEnemy;
+         else 
+            nextState <= Unshielded;
+         end if;
+      when LoseToPU =>		--lose shield by hitting powerup while shielded; also disables powerup 
+         LoseToPUState <= '1'; --TESTING
+         currPlayerColor <= "00";
+         disableSig <= '1';
+         --shieldSet <= '0';
+         nextState <= Unshielded;
+      when others =>
+         nextState <= currState;
+   end case;
 end process GameLogic;
 playerColor <= currPlayerColor;
 

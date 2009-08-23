@@ -133,13 +133,13 @@ NET "sevenSegSelector" LOC = "H18"; # Bank = 1, Pin name = IP/VREF_1, Type = VRE
 #NET "Data<2>" LOC = "K18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW2
 #NET "Data<3>" LOC = "K17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW3
 #NET "Data<4>" LOC = "L14"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW4
-#NET "Data<5>" LOC = "L13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW5
-#NET "Data<6>" LOC = "N17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW6
-#NET "Data<7>" LOC = "R17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW7
+NET "NoiseType<0>" LOC = "L13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW5
+NET "NoiseType<1>" LOC = "N17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW6
+NET "NoiseType<2>" LOC = "R17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW7
 #
 ## Buttons
 #
-#NET "btn<0> " LOC = "B18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN0
+NET "NoiseON" LOC = "B18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN0
 #NET "btn<1> " LOC = "D18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = BTN1
 #NET "btn<2> " LOC = "E18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN2
 #NET "btn<3> " LOC = "H13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN3
