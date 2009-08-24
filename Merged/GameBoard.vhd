@@ -37,6 +37,7 @@ entity GameBoard is
         --the following is to wire to game logic
         RowB : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check FOR GAMELOGIC
         ColB : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check FOR GAMELOGIC
+        Level: in  STD_LOGIC_VECTOR (1 downto 0); --pick a level!
         CollisionData : out STD_LOGIC_VECTOR(1 downto 0) := (others => '0') --msb=enabled? lsb=enemy or pup
     );
 end GameBoard;

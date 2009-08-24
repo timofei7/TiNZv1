@@ -9,7 +9,7 @@
 -- Target Devices: 
 -- Tool versions: 
 -- Description:   is a lookup to match a color and an enable bit with a type of object on the board
---                   THIS IS LAME FIX THIS 
+--                
 -- Dependencies: 
 --
 -- Revision: 
@@ -62,9 +62,27 @@ architecture Behavioral of AttrLookup is
      signal pu3 : std_logic := '1'; 
      signal empty : std_logic := '0';
      signal finish : std_logic := '1';
+     
+     signal countvamp: unsigned(1 downto 0):="00"; --for monopulser
+     signal winSig: std_logic:= '0'; --are we winning?
+
 begin
 
 
+--monopulser to limit this signal to a one clock cycle pulse
+process(Clk)
+begin
+   if rising_edge(Clk) then
+      if winSig = '0' then
+         countvamp <= "00";
+      elsif countvamp /= "10" then
+         countvamp <= countvamp +1;
+      end if;
+   end if;
+end process;
+WIN <= '1' when countvamp = "01" else '0';
+
+--disaple powerups here
 process(Clk)
 begin
    if rising_edge(Clk) then
@@ -93,6 +111,8 @@ begin
    end if;
 end process;
 
+
+--read appropriate type color here
 process(ReadColor, enemy1, enemy2, enemy3, pu1, pu2, pu3, empty, finish)
 begin
    Color <= emptyColor;
@@ -134,10 +154,10 @@ begin
    end case;
 end process;
 
-
+--read whether location is enabled and if we've won!
 process(ReadEnabled, enemy1, enemy2, enemy3, pu1, pu2, pu3, empty, finish)
 begin
-   WIN <= '0';
+   winSig <= '0';
    case ReadEnabled is
       when x"1" => Enabled <= enemy1; 
       when x"2" => Enabled <= enemy2;
@@ -148,7 +168,7 @@ begin
       when x"0" => Enabled <= empty;
       when x"7" => 
          Enabled <= finish;
-         WIN <= '1';
+         winSig <= '1';
       when others => Enabled <= empty;
    end case;
 end process;

@@ -80,8 +80,6 @@ signal Tens : std_logic_vector(3 downto 0) := "0000";
 signal Hundreds : std_logic_vector(3 downto 0) := "0000";
 
 signal countvamp: unsigned(1 downto 0):="00";
-signal vampTC: std_logic;
-
 signal gameOverSig: std_logic:= '0';
 
 begin
@@ -89,7 +87,7 @@ begin
 runTimer <= '1' when (sevenSegEN='1' and sevenSegSelector='0') else '0';
 decrementHundreds <= '1' when (DOUT10='1' and decrementTens='1') else '0';
 
-
+--monopulser to limit this signal to a one clock cycle pulse
 process(Clk)
 begin
    if rising_edge(Clk) then

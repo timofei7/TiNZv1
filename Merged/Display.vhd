@@ -32,6 +32,7 @@ entity Display is
            colorByte : in  STD_LOGIC_VECTOR (7 downto 0);
            introByte : in  STD_LOGIC_VECTOR (7 downto 0);
            deathByte : in  STD_LOGIC_VECTOR (7 downto 0);
+           winByte   : in  STD_LOGIC_VECTOR (7 downto 0);
            playerColor : in  STD_LOGIC_VECTOR (7 downto 0);
 			  selectDisplay : in STD_LOGIC_VECTOR(1 downto 0);
 			 -- colorReady : in STD_LOGIC;
@@ -164,7 +165,7 @@ getRow <= std_logic_vector(row);
 getColumn <= std_logic_vector(col);
 
 
-DisplaySelector: process(selectDisplay, playerX, playerY, row, col, playerColor, colorByte, introByte, deathByte)
+DisplaySelector: process(selectDisplay, playerX, playerY, row, col, playerColor, colorByte, introByte, deathByte, winByte)
 begin
 	if selectDisplay="00" then
 		if row=unsigned(playerX) and col=unsigned(playerY) then
@@ -176,6 +177,8 @@ begin
 		colorSelected <= introByte;
 	elsif selectDisplay="10" then
 		colorSelected <= deathByte;
+   elsif selectDisplay="11" then
+		colorSelected <= winByte;
 	else
 		colorSelected <= colorByte;
 	end if;

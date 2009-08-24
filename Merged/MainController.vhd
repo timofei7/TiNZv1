@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company:    DARTMOUTH COLLEGE - ENGS31
+-- Engineer:   Divya Gunasekaran and Tim Tregubov
 -- 
 -- Create Date:    18:27:09 08/17/2009 
 -- Design Name: 
@@ -21,16 +21,11 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
----- Uncomment the following library declaration if instantiating
----- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity MainController is
     Port ( Clk : in STD_LOGIC;
-			  introDone : in  STD_LOGIC;
            death : in  STD_LOGIC;
-           deathDone : in  STD_LOGIC;
+           seqDone : in  STD_LOGIC;
 			  WIN : in STD_LOGIC;
            seqReset : out  STD_LOGIC;
            TESTOUT: out std_logic_vector(7 downto 0);
@@ -54,7 +49,7 @@ architecture Behavioral of MainController is
 	signal gameReset : std_logic := '0';
 	signal gameResetCount : unsigned(NCLKDIV-1 downto 0) := (others=>'0');
 
-	type stateType is (Start, IntroDisplay, Reset, Play, StartDeath, DeathDisplay, Waiting, ResetGameTimer);
+	type stateType is (Start, IntroDisplay, Reset, Play, StartDeath, DeathDisplay, StartWin, WinDisplay, Waiting, ResetGameTimer);
    signal currState, nextState: stateType;
    
    signal teststate: std_logic_vector(2 downto 0):= "000";
@@ -63,6 +58,8 @@ architecture Behavioral of MainController is
 begin
 
 TESTOUT <= "0000" & death & teststate;
+
+--test stuff remove
 process(Clk)
    begin
       if rising_edge(Clk) then
@@ -104,7 +101,7 @@ end process stateUpdate;
 
 
 --FSM for Controller
-ControllerFSM: process(currState, introDone, death, deathDone, gameReset, WIN)
+ControllerFSM: process(currState, death, seqDone, gameReset, WIN)
 begin
 	--Defaults
 	seqReset <= '0';
@@ -129,7 +126,7 @@ begin
          statesig <= "001";
 			displaySelector <= "01";
 			displayEN <= '1';
-			if introDone='1' then
+			if seqDone='1' then
 				nextState <= Reset;
 			else
 				nextState <= IntroDisplay;
@@ -142,9 +139,6 @@ begin
 			--resetPU <= '1';
 			seqReset <= '1';
          nextState <= Play;
---			nextState <= Chilling;
---      when Chilling =>
---         nextState <= Play;
 		when Play =>
          statesig <= "011";
 			sevenSegEN <= '1';
@@ -155,7 +149,7 @@ begin
 			if death='1' then
 				nextState <= StartDeath;
 			elsif WIN='1' then
-				nextState <= Waiting;		--Change to win sequence state?? for now, keep in Waiting
+				nextState <= StartWin;		--Change to win sequence state?? for now, keep in Waiting
 			else
 				nextState <= Play;
 			end if;
@@ -170,10 +164,26 @@ begin
 			displaySelector <= "10";
 			displayEN <= '1';
 			soundEN <= '1';
-			if deathDone='1' then
+			if seqDone='1' then
 				nextState <= Waiting;
 			else 
 				nextState <= DeathDisplay;
+			end if;
+      when StartWin =>
+         --statesig <= "111";
+         gameLogicEN <= '1';
+         soundEN <= '1';
+			seqReset <= '1';
+			nextState <= WinDisplay;
+		when WinDisplay =>
+         statesig <= "111";
+			displaySelector <= "11";
+			displayEN <= '1';
+			soundEN <= '1';
+			if seqDone='1' then
+				nextState <= Waiting;
+			else 
+				nextState <= winDisplay;
 			end if;
 		when Waiting =>
          statesig <= "110";

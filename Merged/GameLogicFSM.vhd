@@ -68,6 +68,7 @@ begin
 
 TESTOUT <= deathTest & disableSig & unshieldedState & deathStateSig & GetShieldState & ShieldedState & LoseToPUState & LoseToEnemyState; --FOR TESTING
 
+--this is a monopulser for this signal
 process(Clk)
 begin
    if rising_edge(Clk) then

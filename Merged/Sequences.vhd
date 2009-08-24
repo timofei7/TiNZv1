@@ -29,11 +29,18 @@ entity Sequences is
            TESTOUT: out std_logic_vector(7 downto 0);
            seqDone : out STD_LOGIC;
            deathColor : out  STD_LOGIC_VECTOR (7 downto 0);
-           introColor : out  STD_LOGIC_VECTOR (7 downto 0));
+           introColor : out  STD_LOGIC_VECTOR (7 downto 0);
+           winColor   : out  STD_LOGIC_VECTOR (7 downto 0));
 end Sequences;
 
 architecture Behavioral of Sequences is
 
+   component WinROM
+      port (
+      clka: IN std_logic;
+      addra: IN std_logic_VECTOR(9 downto 0);
+      douta: OUT std_logic_VECTOR(7 downto 0));
+   end component;
    component DeathROM
       port (
       clka: IN std_logic;
@@ -47,6 +54,7 @@ architecture Behavioral of Sequences is
       douta: OUT std_logic_VECTOR(7 downto 0));
    end component;
    attribute syn_black_box : boolean;
+   attribute syn_black_box of WinROM: component is true;
    attribute syn_black_box of DeathROM: component is true;
    attribute syn_black_box of IntroROM: component is true;
 
@@ -61,6 +69,7 @@ architecture Behavioral of Sequences is
    signal addr : std_logic_vector(9 downto 0);
    signal dout : std_logic_vector(7 downto 0);
    signal iout : std_logic_vector(7 downto 0);
+   signal wout : std_logic_vector(7 downto 0);
    
    signal CE:       std_logic := '0';                    -- slow clock enable
    signal frame : unsigned(3 downto 0) := (others => '0');
@@ -87,10 +96,16 @@ introseq : IntroROM
 			clka => Clk,
 			addra => addr,
 			douta => iout);
+winseq : WinROM
+		port map (
+			clka => Clk,
+			addra => addr,
+			douta => wout);
 
 addr <= std_logic_vector(frame) & rowcol; --create the address from the row col being asked for and the current frame;
 deathColor <= dout;
 introColor <= iout;
+wincolor <= wout;
 
 FrameCounter:
 process(Clk)

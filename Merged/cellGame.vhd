@@ -52,9 +52,8 @@ architecture Behavioral of cellGame is
 COMPONENT MainController
 	PORT(
 		Clk : IN std_logic;
-		introDone : IN std_logic;
 		death : IN std_logic;
-		deathDone : IN std_logic;
+		seqDone : IN std_logic;
 		WIN : IN std_logic;          
 		seqReset : OUT std_logic;
 		displaySelector : OUT std_logic_vector(1 downto 0);
@@ -98,7 +97,8 @@ PORT(
    seqDone : OUT std_logic;
    TESTOUT: out std_logic_vector(7 downto 0);
    deathColor : OUT std_logic_vector(7 downto 0);
-   introColor : OUT std_logic_vector(7 downto 0)
+   introColor : OUT std_logic_vector(7 downto 0);
+   winColor   : OUT std_logic_vector(7 downto 0)
    );
 END COMPONENT;
 
@@ -162,6 +162,7 @@ COMPONENT Display
 		colorByte : IN std_logic_vector(7 downto 0);
 		introByte : IN std_logic_vector(7 downto 0);
 		deathByte : IN std_logic_vector(7 downto 0);
+      winByte   : IN std_logic_vector(7 downto 0);
 		playerColor : IN std_logic_vector(7 downto 0);
 		selectDisplay : IN std_logic_vector(1 downto 0);
 	--	colorReady : IN std_logic;      
@@ -218,6 +219,7 @@ signal playerY : std_logic_vector(2 downto 0) := "000";
 signal playerColorColor : std_logic_vector(7 downto 0) := "00001111";
 signal introColor : std_logic_vector(7 downto 0) := "00000000";
 signal deathColor : std_logic_vector(7 downto 0) := "00000000";
+signal winColor : std_logic_vector(7 downto 0) := "00000000";
 signal selectBoard : std_logic_vector(1 downto 0) := "00";
 signal row : std_logic_vector(2 downto 0) := "000";
 signal col : std_logic_vector(2 downto 0) := "000";
@@ -268,9 +270,8 @@ endGame <= death or gameOver;
 
 GameController: MainController PORT MAP(
 		Clk => Clk,
-		introDone => seqDone,
+		seqDone => seqDone,
 		death => endGame,
-		deathDone => seqDone,
 		WIN => WIN,
 		seqReset => OPEN,
 		displaySelector => selectBoard,
@@ -289,16 +290,13 @@ GameController: MainController PORT MAP(
 thegamelogic: GameLogicFSM PORT MAP(
 		Clk => Clk,
 		collisionData => collisionData,
-		--shieldStatus => shieldStatus, --BOGUS
 		logicEN => logicEN,
 		gameOver => gameOver,
-		--isEN => collisiondata(1),
       TESTOUT => TESTOUT,
 		disablePU => disablePU,
 		death => death,
 		makeSoundLogic => makeSoundLogic,
 		soundSelect => soundSelect,
-		--shieldSet => shieldSet, --BOGUS
 		playerColor => playerSelector
 	);
    
@@ -310,7 +308,8 @@ thesequences: Sequences PORT MAP(
 		seqReset => ResetDisplay,
 		seqDone => seqDone,
 		deathColor => deathColor,
-		introColor => introColor
+		introColor => introColor,
+      winColor => winColor
 	);   
    
 thenoises: Noises PORT MAP(
@@ -364,6 +363,7 @@ thedisplay: Display PORT MAP(
 		colorByte => colorDisplay,
 		introByte => introColor,
 		deathByte => deathColor,
+      winByte   => winColor,
 		playerColor => playerColorColor,
 		selectDisplay => selectBoard,
 	--	colorReady => ColorReady,
