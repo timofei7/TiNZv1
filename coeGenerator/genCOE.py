@@ -86,7 +86,7 @@ def encodePositional(char):
 def encodeColoral(char):
 	if char in COLORMAP.keys():
 		increment()
-		return COLORS[COLORMAP[char]]
+		return True, COLORS[COLORMAP[char]]
 
 #main
 countframes()
