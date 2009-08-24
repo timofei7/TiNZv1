@@ -27,6 +27,8 @@ entity MainController is
            death : in  STD_LOGIC;
            seqDone : in  STD_LOGIC;
 			  WIN : in STD_LOGIC;
+           ResetALL : in STD_LOGIC;
+           Level    : out  STD_LOGIC_VECTOR(1 downto 0);
            seqReset : out  STD_LOGIC;
            TESTOUT: out std_logic_vector(7 downto 0);
            displaySelector : out  STD_LOGIC_VECTOR(1 downto 0);
@@ -54,10 +56,25 @@ architecture Behavioral of MainController is
    
    signal teststate: std_logic_vector(2 downto 0):= "000";
    signal statesig: std_logic_vector(2 downto 0):= "000";
+   
+   signal LevelSig: unsigned(1 downto 0):= "00";
 
 begin
 
 TESTOUT <= "0000" & death & teststate;
+Level <= std_logic_vector(LevelSig);
+
+--level counter
+process(Clk)
+   begin
+      if rising_edge(Clk) then
+         if death = '1' then  --reset to level 1 if you die
+            LevelSig <= "00";
+         elsif WIN = '1' then --increment da level!  we just roll over to level 0 if person is awesome
+            LevelSig <= LevelSig + 1; --implement something cooler like switching accelerometer axis!
+         end if;
+      end if;
+end process;
 
 --test stuff remove
 process(Clk)
@@ -93,7 +110,11 @@ gameReset <= '1' when gameResetCount = MAXCLKDIV else '0'; --CHANGE so that game
 stateUpdate: process(Clk)
 begin
    if rising_edge(Clk) then
-      currState <= nextState;
+      if resetALL = '1' then
+         currState <= Reset;
+      else
+         currState <= nextState;
+      end if;
 	else
 		currState <= currState;
    end if;

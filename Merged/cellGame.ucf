@@ -139,7 +139,7 @@ NET "TESTOUT<7>" LOC = "R4"; # Bank = 3, Pin name = IO/VREF_3, Type = VREF, Sch 
 #
 ## Buttons
 #
-#NET "NoiseON" LOC = "B18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN0
+NET "ResetALL" LOC = "B18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN0
 #NET "btn<1> " LOC = "D18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = BTN1
 #NET "btn<2> " LOC = "E18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN2
 #NET "btn<3> " LOC = "H13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = BTN3

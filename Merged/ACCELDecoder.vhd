@@ -26,6 +26,8 @@ entity ACCELDecoder is
     Port ( 
            Clk : in  STD_LOGIC; 
            TESTOUT: out std_logic_vector(7 downto 0);
+           Randomize: in std_logic;
+           ResetRandomize : in std_logic;
            Xin : in  STD_LOGIC;
            Yin : in  STD_LOGIC;
 			  XAnalogIn : in  STD_LOGIC;
@@ -103,8 +105,60 @@ architecture Behavioral of ACCELDecoder is
 	signal doneX: std_logic:= '0';
    signal doneY: std_logic:= '0';
    
+   -- this is for randomizing directions wooot!
+   signal axisSwitcher: unsigned(1 downto 0):= "00";
+   signal xMinusSwap: std_logic;
+   signal yMinusSwap: std_logic;
+   signal xPlusSwap: std_logic;
+   signal yPlusSwap: std_logic;
     
 begin
+
+--randomizing directions to make the game harder!
+-- this is a counter for which randomizing to do
+process(Clk)
+   begin
+      if rising_edge(Clk) then
+         if ResetRandomize = '1' then
+            axisSwitcher <= (others => '0');
+         elsif Randomize = '1' then
+            axisSwitcher <= axisSwitcher + 1;
+         end if;
+      end if;
+end process;
+
+--
+process(xminusswap, yminusswap, xplusswap, yplusswap)
+   begin
+      case axisSwitcher is
+         when "00" =>  --normal
+            xminus <= xminusswap;
+            yminus <= yminusswap;
+            xplus <= xplusswap;
+            yplus <= yplusswap;
+         when "01" =>  --flips directions
+            xminus <= xplusswap;
+            yminus <= yplusswap;
+            xplus <= xminusswap;
+            yplus <= yminusswap;
+        when "10" =>  --swaps x and y
+            xminus <= yminusswap; 
+            yminus <= xminusswap;
+            xplus <= yplusswap;
+            yplus <= xplusswap;
+         when "11" => --flips and swaps
+            xminus <= yplusswap;
+            yminus <= xplusswap;
+            xplus <= yminusswap;
+            yplus <= xminusswap;
+         when others => 
+            xminus <= xminusswap;
+            yminus <= yminusswap;
+            xplus <= xplusswap;
+            yplus <= yplusswap;
+      end case;
+end process;
+                                    
 
 xFilt: AccelFilter PORT MAP(
 		Clk => Clk,
@@ -127,16 +181,16 @@ YAnalogOut <= YAnalogIn;
 
 hysX: ThresHysteresis PORT MAP(
 		Clk => Clk,
-		SIN => X,
-		UP => xminus,
-		DOWN => xplus
+		SIN => Y, --swap with X, Y gives correct direction
+		UP => xminusswap,
+		DOWN => xplusswap
 	);
 	
 hysY: ThresHysteresis PORT MAP(
 		Clk => Clk,
-		SIN => Y,
-		UP => yminus,
-		DOWN => yplus
+		SIN => X, --swap with Y, X gives correct direction
+		UP => yminusswap,
+		DOWN => yplusswap
 	);
 
 xdetect: AccelDetector PORT MAP(

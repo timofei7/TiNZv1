@@ -47,10 +47,10 @@ architecture Behavioral of GameBoard is
 COMPONENT GameBoardROM --the gameboard ROM
 	port (
 	clka: IN std_logic;
-	addra: IN std_logic_VECTOR(9 downto 0);
+	addra: IN std_logic_VECTOR(11 downto 0);
 	douta: OUT std_logic_VECTOR(7 downto 0);
 	clkb: IN std_logic;
-	addrb: IN std_logic_VECTOR(9 downto 0);
+	addrb: IN std_logic_VECTOR(11 downto 0);
 	doutb: OUT std_logic_VECTOR(7 downto 0));
 end component;
 attribute syn_black_box : boolean;
@@ -78,8 +78,8 @@ PORT(
    );
 END COMPONENT;
 
-signal addra: std_logic_VECTOR(9 downto 0) := (others => '0'); --gameboard rom read address a
-signal addrb: std_logic_VECTOR(9 downto 0) := (others => '0'); --gameboard rom read address b
+signal addra: std_logic_VECTOR(11 downto 0) := (others => '0'); --gameboard rom read address a
+signal addrb: std_logic_VECTOR(11 downto 0) := (others => '0'); --gameboard rom read address b
 signal douta: std_logic_VECTOR(7 downto 0) := (others => '0'); --gameboard rom out a
 signal doutb: std_logic_VECTOR(7 downto 0) := (others => '0'); --gameboard rom out b
 signal writeaddr:  std_logic_vector(3 downto 0) := (others => '0'); --ident address to change type settings --we throw out a couple bits
@@ -127,8 +127,8 @@ attributes: AttrLookup PORT MAP(
 );
 
 --  just hooking up various wires
-addra <= std_logic_vector(frameCount) & RowA & ColA; -- this is for DISPLAY
-addrb <= std_logic_vector(frameCount) & RowB & ColB; -- this is for GAMELOGIC
+addra <= Level & std_logic_vector(frameCount) & RowA & ColA; -- this is for DISPLAY
+addrb <= Level & std_logic_vector(frameCount) & RowB & ColB; -- this is for GAMELOGIC
 readcolor <= douta(3 downto 0); --gets the type address from the main rom for color read --we throw out a couple bits
 readenabled <= doutb(3 downto 0); --same but for enable read --we throw out a couple bits
 writeaddr <= readenabled; -- idiot tim poor taxonomy

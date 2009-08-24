@@ -23,8 +23,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity cellGame is
     Port ( Clk : in  STD_LOGIC;
-          -- displayEN : in  STD_LOGIC; --Included as signal rather than port
-         --  resetDisplay : in  STD_LOGIC;
+           ResetALL : in  STD_LOGIC;
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
            CS : out  STD_LOGIC;
@@ -40,8 +39,6 @@ entity cellGame is
            deathout: out std_logic;
            NoiseOut: out std_logic;
            NoiseType: in std_logic_vector(2 downto 0);
-         --  NoiseON: in std_logic; --Included as signal, rather than port
-			--  sevenSegSelector: in std_logic; --Included as signal rather than port, can use port for testing
            an : OUT std_logic_vector(3 downto 0);
            seg : OUT std_logic_vector(0 to 6)
 ); 
@@ -54,7 +51,9 @@ COMPONENT MainController
 		Clk : IN std_logic;
 		death : IN std_logic;
 		seqDone : IN std_logic;
-		WIN : IN std_logic;          
+		WIN : IN std_logic;
+      ResetALL: IN std_Logic;
+      Level : OUT std_logic_vector(1 downto 0);
 		seqReset : OUT std_logic;
 		displaySelector : OUT std_logic_vector(1 downto 0);
 		sevenSegEN : OUT std_logic;
@@ -106,8 +105,6 @@ END COMPONENT;
 COMPONENT Noises
 PORT(
    Clk : IN std_logic;
-  -- NoiseType : IN std_logic_vector(2 downto 0);
- --  NoiseON : IN std_logic; 
 	soundEN : IN STD_LOGIC;		 --enables sound, sent from Controller
 	soundSelect : IN STD_LOGIC;  --chooses between sound cmd from GameLogic or Player
 	makeSoundLogic : IN STD_LOGIC_VECTOR(2 downto 0);
@@ -134,6 +131,8 @@ PORT(
    YAnalogOut : OUT std_logic;
    playerX : OUT std_logic_vector(2 downto 0);
    playerY : OUT std_logic_vector(2 downto 0);
+   RandomizeDirection: in std_logic;
+   ResetRandomize : in std_logic;
    gameOver : OUT std_logic;
    an : OUT std_logic_vector(3 downto 0);
    seg : OUT std_logic_vector(0 to 6);
@@ -201,7 +200,8 @@ COMPONENT GameBoard
 		RowA : IN std_logic_vector(2 downto 0);
 		ColA : IN std_logic_vector(2 downto 0);
 		RowB : IN std_logic_vector(2 downto 0);
-		ColB : IN std_logic_vector(2 downto 0);          
+		ColB : IN std_logic_vector(2 downto 0);
+      Level: IN std_logic_vector(1 downto 0);
 		ColorOUT : OUT std_logic_vector(7 downto 0);
 		ColorDONE : OUT std_logic;
 		CollisionData : OUT std_logic_vector(1 downto 0)
@@ -257,11 +257,19 @@ signal soundSelect : std_logic := '0';
 signal makeSoundLogic : std_logic_vector(2 downto 0) := "000";
 signal makeSoundMove : std_logic_vector(2 downto 0) := "000";
 
+signal Level: std_logic_vector(1 downto 0):= "00"; --FOR TESTING -- connect to LOGIC
+
+signal ResetRandomize: std_logic:= '0';  --we might never need to rest as the counter rolls over... 
+
 begin
+
+
+
 deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
 Xout<=playerX;
 Yout<=playerY;
+
 
 --TESTOUT <= "000000" & gameOver & death;
 
@@ -273,6 +281,8 @@ GameController: MainController PORT MAP(
 		seqDone => seqDone,
 		death => endGame,
 		WIN => WIN,
+      ResetALL => ResetALL,
+      Level => Level,
 		seqReset => OPEN,
 		displaySelector => selectBoard,
 		sevenSegEN => sevenSegEN,
@@ -314,8 +324,6 @@ thesequences: Sequences PORT MAP(
    
 thenoises: Noises PORT MAP(
 		Clk => Clk,
-		--NoiseType => NoiseType,
-		--NoiseON => NoiseON,
 		soundEN => soundEN,
 		soundSelect => soundSelect,
 		makeSoundLogic => makeSoundLogic,
@@ -338,6 +346,8 @@ theplay: Play PORT MAP(
 		moveEN => moveEN,
 		playerX => playerX,
 		playerY => playerY,
+      RandomizeDirection => WIN, --randomize on win
+      ResetRandomize => ResetRandomize,
 		resetGameT => resetTimer,
 		sevenSegEN => sevenSegEN,
 		sevenSegSelector => sevenSegSelector,
@@ -399,6 +409,7 @@ thegameboard: GameBoard PORT MAP(
 		ColorDONE => dataReady,
 		RowB => playerX,
 		ColB => playerY,
+      Level => Level,
 		CollisionData => collisiondata
 	);
 
