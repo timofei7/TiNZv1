@@ -115,9 +115,11 @@ for line in lines:
 if DEBUG:
 	for line in output:
 		print line
-
 #reformat it here for correct ordering
 output.reverse()
+#for entry in output:
+#	if type(entry) == type([]): 
+#		entry.reverse()
 
 #print it all to a .coe file
 newfile = open(file+".coe", "w")

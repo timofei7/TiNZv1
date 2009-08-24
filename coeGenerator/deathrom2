@@ -1,0 +1,146 @@
+colors:
+frame:
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+frame:
+X X X R R R R R
+X X R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+frame:
+X X X X R R R R
+X X R R R R R R
+R X R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+frame:
+X X X X R X R R
+X X R R R X R R
+R X R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+frame:
+X X X X R X X R
+X X R R R X R R
+R X R R R R R R
+R X R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+frame:
+X X X X R X X R
+X X R R X X R R
+R X X R X R R R
+R X R R R R R R
+R X R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+frame:
+X X X X X X X X
+X X X X X X R R
+X X X R X R R R
+R X R R R R R R
+R X R R R R R R
+R R R R R R R R
+R R R R R R R R
+R R R R R R R R
+frame:
+X X X X X X X X
+X X X X X X R X
+X X X X X R R R
+X X X X R R R R
+R X R R R R R R
+R X X R R R R R
+R R R R R R R R
+R R R R R R R R
+frame:
+X X X X X X X X
+X X X X X X X X
+X X X X X R R R
+X X X X X R X R
+X X R R R R R R
+X X X R R R R R
+X R R R R R R R
+R X R R R R R R
+frame:
+X X X X X X X X
+X X X X X X X X
+X X X X X X X R
+X X X X X R X R
+X X R X R R R R
+X X X R R R R R
+X R R R R R R R
+X X R R R R R R
+frame:
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X R X R
+X X X X R R X R
+X X X X R R R R
+X X X R R R R R
+X X R R R R R R
+frame:
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X R X R
+X X X X X R R R
+X X X X X X R R
+X X X X R R R R
+frame:
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X R R
+X X X X X X R R
+X X X X X R R R
+frame:
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X R
+X X X X X X R R
+frame:
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X R
+frame:
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+X X X X X X X X
+
