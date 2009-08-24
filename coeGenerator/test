@@ -1,6 +1,6 @@
 positions:
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X O O O O O O O
@@ -9,7 +9,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X O O O O O O O
@@ -18,7 +18,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X O O O O O O
@@ -27,7 +27,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X O O O O O
@@ -36,7 +36,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X O O O O
@@ -45,7 +45,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X X O O O
@@ -54,7 +54,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X X X O O
@@ -63,7 +63,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X X X X O
@@ -72,7 +72,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X X X X X
@@ -81,7 +81,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X X X X O
@@ -90,7 +90,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X X X O O
@@ -99,7 +99,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X X O O O
@@ -108,7 +108,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X X O O O O
@@ -117,7 +117,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X X O O O O O
@@ -126,7 +126,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X X O O O O O O
@@ -135,7 +135,7 @@ O O O O O O O O
 O O O O O O O O
 O O O O O Q Y Q
 frame:
-X P X O O O O O 
+X P X O O O O F 
 O O O O O O O O
 O O O O O O O O
 X O O O O O O O
