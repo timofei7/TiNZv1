@@ -1,0 +1,145 @@
+coloral:
+frame:
+X X X X X X X X
+X X X A A X X X
+X X A T T A X X
+X A T W W T A X
+X A T W W T A X
+X X A T T A X X
+X X X A A X X X
+X X X X X X X X
+frame:
+P F G L L G F P
+F G L A A L G F
+G L A T T A L G
+L A T B B T A L
+L A T B B T A L
+G L A T T A L G
+F G L A A L G F
+P F G L L G F P
+frame:
+F G L A A L G F
+G L A T T A L G
+L A T B B T A L
+A T B F F B T A
+A T B F F B T A
+L A T B B T A L
+G L A T T A L G
+F G L A A L G F
+frame:
+G L A T T A L G
+L A T B B T A L
+A T B F F B T A
+T B F G G F B T
+T B F G G F B T
+A T B F F B T A
+L A T B B T A L
+G L A T T A L G
+frame:
+L A T B B T A L
+A T B F F B T A
+T B F G G F B T
+B F G L L G F B
+B F G L L G F B
+T B F G G F B T
+A T B F F B T A
+L A T B B T A L
+frame:
+A T B F F B T A
+T B F G G F B T
+B F G L L G F B
+F G L A A L G F
+F G L A A L G F
+B F G L L G F B
+T B F G G F B T
+A T B F F B T A
+frame:
+T B F G G F B T
+B F G L L G F B
+F G L A A L G F
+G L A T T A L G
+G L A T T A L G
+F G L A A L G F
+B F G L L G F B
+T B F G G F B T
+frame:
+B F G L L G F B
+F G L A A L G F
+G L A T T A L G
+L A T B B T A L
+L A T B B T A L
+G L A T T A L G
+F G L A A L G F
+B F G L L G F B
+frame:
+B F G L L G F B
+F G L A A L G F
+G L A T T A L G
+L A T B B T A L
+L A T B B T A L
+G L A T T A L G
+F G L A A L G F
+B F G L L G F B
+frame:
+T B F G G F B T
+B F G L L G F B
+F G L A A L G F
+G L A T T A L G
+G L A T T A L G
+F G L A A L G F
+B F G L L G F B
+T B F G G F B T
+frame:
+A T B F F B T A
+T B F G G F B T
+B F G L L G F B
+F G L A A L G F
+F G L A A L G F
+B F G L L G F B
+T B F G G F B T
+A T B F F B T A
+frame:
+L A T B B T A L
+A T B F F B T A
+T B F G G F B T
+B F G L L G F B
+B F G L L G F B
+T B F G G F B T
+A T B F F B T A
+L A T B B T A L
+frame:
+G L A T T A L G
+L A T B B T A L
+A T B F F B T A
+T B F G G F B T
+T B F G G F B T
+A T B F F B T A
+L A T B B T A L
+G L A T T A L G
+frame:
+F G L A A L G F
+G L A T T A L G
+L A T B B T A L
+A T B F F B T A
+A T B F F B T A
+L A T B B T A L
+G L A T T A L G
+F G L A A L G F
+frame:
+P F G L L G F P
+F G L A A L G F
+G L A T T A L G
+L A T B B T A L
+L A T B B T A L
+G L A T T A L G
+F G L A A L G F
+P F G L L G F P
+frame:
+X X X X X X X X
+X X X A A X X X
+X X A T T A X X
+X A T W W T A X
+X A T W W T A X
+X X A T T A X X
+X X X A A X X X
+X X X X X X X X
