@@ -87,6 +87,8 @@ def encodeColoral(char):
 	if char in COLORMAP.keys():
 		increment()
 		return True, COLORS[COLORMAP[char]]
+	else:
+		return False, ""
 
 #main
 countframes()
