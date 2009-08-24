@@ -95,9 +95,6 @@ BEGIN
 		makeSoundLogic <= "011";
 		makeSoundMove <= "101";
 		wait for Clk_period*12;
-		soundSelect <= '0';
-		wait for Clk_period*12;
-		soundEN <= '0';
       wait;
    end process;
 

@@ -27,7 +27,7 @@ entity GameLogicFSM is
 			  collisionData : in  STD_LOGIC_VECTOR (1 downto 0);
           -- shieldStatus : in  STD_LOGIC;
            logicEN : in  STD_LOGIC;
-           --gameOver : in  STD_LOGIC;
+           gameOver : in  STD_LOGIC;
 			 -- isEN : in STD_LOGIC;
            TESTOUT: out std_logic_vector(7 downto 0);
            disablePU : out  STD_LOGIC;
@@ -59,10 +59,26 @@ architecture Behavioral of GameLogicFSM is
 	type stateType is (Unshielded, DeathState, GetShield, Shielded, LoseToPU, LoseToEnemy);
    signal currState, nextState: stateType;
 
+   signal countvamp: unsigned(1 downto 0):="00";
+   signal vampTC: std_logic;
+
+   signal deathSig: std_logic:= '0';
 
 begin
 
 TESTOUT <= deathTest & disableSig & unshieldedState & deathStateSig & GetShieldState & ShieldedState & LoseToPUState & LoseToEnemyState; --FOR TESTING
+
+process(Clk)
+begin
+   if rising_edge(Clk) then
+      if deathSig = '0' then
+         countvamp <= "00";
+      elsif countvamp /= "10" then
+         countvamp <= countvamp +1;
+      end if;
+   end if;
+end process;
+death <= '1' when countvamp = "01" else '0';
 
 --Timer for shield disable
 --Timer starts when player hits enemy when shielded
@@ -88,9 +104,13 @@ process(Clk)
 begin
    if rising_edge(Clk) then
       if logicEN = '1' then
-         currState <= nextState;
+         if gameOver = '1' then
+            currState <= DeathState;
+         else
+            currState <= nextState;
+         end if;
       else
-         currState <= UnSHielded;
+         currState <= UnShielded;
       end if;
    else
       currState <= currState;
@@ -107,7 +127,7 @@ begin
 	nextState <= currState;							
    --Defaults
    disableSig <='0';
-   death <='0';
+   deathSig <='0';
    deathTest <= '0';
    --shieldSet <= shieldStatus;
    currPlayerColor <= "00";
@@ -119,7 +139,7 @@ begin
    LoseToPUState <= '0';
    LoseToEnemyState <= '0';
 	soundSig<= "000"; --for Noises module
-	soundSelect <= '1'; --for Noises module
+	soundSelect <= '0'; --for Noises module
    case currState is
       when Unshielded =>		--no shield
          --shieldSet <= '0';
@@ -133,7 +153,7 @@ begin
          end if;
       when DeathState => 	--game over or hit enemy without shield
          deathStateSig <= '1'; --TESTING
-         death <= '1';
+         deathSig <= '1';
          deathTest <= '1'; --for testing purposes REMOVE
 			soundSig <= "011";	--sound for beginning of death siren
 			soundSelect <= '1';	--for Noises module

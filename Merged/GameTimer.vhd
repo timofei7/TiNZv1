@@ -79,10 +79,28 @@ signal Ones : std_logic_vector(3 downto 0) := "0000";
 signal Tens : std_logic_vector(3 downto 0) := "0000";
 signal Hundreds : std_logic_vector(3 downto 0) := "0000";
 
+signal countvamp: unsigned(1 downto 0):="00";
+signal vampTC: std_logic;
+
+signal gameOverSig: std_logic:= '0';
+
 begin
 
 runTimer <= '1' when (sevenSegEN='1' and sevenSegSelector='0') else '0';
 decrementHundreds <= '1' when (DOUT10='1' and decrementTens='1') else '0';
+
+
+process(Clk)
+begin
+   if rising_edge(Clk) then
+      if gameOverSig = '0' then
+         countvamp <= "00";
+      elsif countvamp /= "10" then
+         countvamp <= countvamp +1;
+      end if;
+   end if;
+end process;
+gameOver <= '1' when countvamp = "01" else '0';
 
 
 OnesCounter: unitCounter 
@@ -129,13 +147,11 @@ AnodeDriverDevice: AnodeDriver PORT MAP(
 timeUp: process(Clk, Ones, Tens, Hundreds)
 begin
 	if rising_edge(Clk) then
-		if sevenSegEN='1' then
-			if Ones="0000" and Tens="0000" and Hundreds="0000" then
-				gameOver<='1';
-			else
-				gameOver<='0';
-			end if;
-		end if;
+      if Ones="0000" and Tens="0000" and Hundreds="0000" then
+         gameOverSig<='1';
+      else
+         gameOverSig<='0';
+      end if;
 	end if;
 end process timeUp;
 

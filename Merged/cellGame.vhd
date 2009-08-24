@@ -62,6 +62,7 @@ COMPONENT MainController
 		resetGameT : OUT std_logic;
 		resetPlayer : OUT std_logic;  
 		moveEN : OUT std_logic;
+      TESTOUT: out std_logic_vector(7 downto 0);
 	--	resetPU : OUT std_logic;		--This output directed through ~displayEN
 		displayEN : OUT std_logic;
 		gameLogicEN : OUT std_logic;
@@ -76,7 +77,7 @@ PORT(
    collisionData : IN std_logic_vector(1 downto 0);
    --shieldStatus : IN std_logic;
    logicEN : IN std_logic;
-   --gameOver : IN std_logic;
+   gameOver : IN std_logic;
    --isEN : IN std_logic;  
    TESTOUT: OUT std_logic_vector(7 downto 0);
    disablePU : OUT std_logic;
@@ -249,16 +250,18 @@ signal resetPlayer : std_logic := '0';
 signal moveEN : std_logic := '0';
 
 --Sound signals
-signal soundEN : std_logic := '1'; --HARDCODING for TESTING
+signal soundEN : std_logic := '0'; --HARDCODING for TESTING
 signal soundSelect : std_logic := '0';
-signal makeSoundLogic : std_logic_vector(2 downto 0) := "011";
-signal makeSoundMove : std_logic_vector(2 downto 0) := "011";
+signal makeSoundLogic : std_logic_vector(2 downto 0) := "000";
+signal makeSoundMove : std_logic_vector(2 downto 0) := "000";
 
 begin
 deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
 Xout<=playerX;
 Yout<=playerY;
+
+--TESTOUT <= "000000" & gameOver & death;
 
 endGame <= death or gameOver;
 --resetDisplay <= not(displayEN); --there are 2 versions...
@@ -275,10 +278,11 @@ GameController: MainController PORT MAP(
 		resetGameT => resetTimer,
 		resetPlayer => resetPlayer,
 		moveEN => moveEN,
+      TESTOUT => OPEN,
 	--	resetPU => resetDisplay,
 		displayEN => displayEN,
 		gameLogicEN => logicEN,
-		soundEN => OPEN, --soundEN,
+		soundEN => soundEN,
 		sevenSegSelector => sevenSegSelector
 	);
 
@@ -287,13 +291,13 @@ thegamelogic: GameLogicFSM PORT MAP(
 		collisionData => collisionData,
 		--shieldStatus => shieldStatus, --BOGUS
 		logicEN => logicEN,
-		--gameOver => gameOver,
+		gameOver => gameOver,
 		--isEN => collisiondata(1),
-      TESTOUT => OPEN,
+      TESTOUT => TESTOUT,
 		disablePU => disablePU,
 		death => death,
-		makeSoundLogic => OPEN, --makeSoundLogic,
-		soundSelect => OPEN, --soundSelect,
+		makeSoundLogic => makeSoundLogic,
+		soundSelect => soundSelect,
 		--shieldSet => shieldSet, --BOGUS
 		playerColor => playerSelector
 	);
@@ -318,7 +322,7 @@ thenoises: Noises PORT MAP(
 		makeSoundLogic => makeSoundLogic,
 		makeSoundMove => makeSoundMove,
 		NoiseOut => NoiseOut,
-		TESTOUT => TESTOUT
+		TESTOUT => OPEN
 	);
 
 
@@ -339,7 +343,7 @@ theplay: Play PORT MAP(
 		sevenSegEN => sevenSegEN,
 		sevenSegSelector => sevenSegSelector,
 		gameOver => gameOver,
-		makeSoundMove => OPEN, --makeSoundMove,
+		makeSoundMove => makeSoundMove,
 		an => an,
 		seg => seg
 	);

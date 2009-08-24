@@ -33,6 +33,7 @@ entity MainController is
            deathDone : in  STD_LOGIC;
 			  WIN : in STD_LOGIC;
            seqReset : out  STD_LOGIC;
+           TESTOUT: out std_logic_vector(7 downto 0);
            displaySelector : out  STD_LOGIC_VECTOR(1 downto 0);
            sevenSegEN : out  STD_LOGIC;
            resetGameT : out  STD_LOGIC;
@@ -46,17 +47,32 @@ entity MainController is
 end MainController;
 
 architecture Behavioral of MainController is
-	constant NCLKDIV: integer := 28;					--assuming clock freq of 50 MHz
+	constant NCLKDIV: integer := 2; --28					--assuming clock freq of 50 MHz
    constant MAXCLKDIV: integer := 2**NCLKDIV-1; -- max count of clock divider, 1...11
 	
 	signal startResetTimer : std_logic := '0';
 	signal gameReset : std_logic := '0';
 	signal gameResetCount : unsigned(NCLKDIV-1 downto 0) := (others=>'0');
 
-	type stateType is (Start, IntroDisplay, Reset, Play, StartDeath, DeathDisplay, Waiting);
+	type stateType is (Start, IntroDisplay, Reset, Play, StartDeath, DeathDisplay, Waiting, ResetGameTimer);
    signal currState, nextState: stateType;
+   
+   signal teststate: std_logic_vector(2 downto 0):= "000";
+   signal statesig: std_logic_vector(2 downto 0):= "000";
 
 begin
+
+TESTOUT <= "0000" & death & teststate;
+process(Clk)
+   begin
+      if rising_edge(Clk) then
+         if teststate = statesig then
+            teststate <= teststate;
+         else
+            teststate <= statesig;
+         end if;
+      end if;
+end process;
 
 --Timer for game reset
 --Timer starts FSM enters Waiting state
@@ -103,11 +119,14 @@ begin
 	sevenSegSelector <= '0';
 	startResetTimer <= '0';
 	soundEN <= '0';
+   statesig <= "000"; --FOR TESTING ONLY
 	case currState is
 		when Start =>
 			seqReset <= '1';
 			nextState <= IntroDisplay;
+         statesig <= "000";
 		when IntroDisplay =>
+         statesig <= "001";
 			displaySelector <= "01";
 			displayEN <= '1';
 			if introDone='1' then
@@ -116,13 +135,18 @@ begin
 				nextState <= IntroDisplay;
 			end if;
 		when Reset =>
+         statesig <= "010";
 			sevenSegEN <= '1';
 			resetGameT <= '1';
 			resetPlayer <= '1';
 			--resetPU <= '1';
 			seqReset <= '1';
-			nextState <= Play;
+         nextState <= Play;
+--			nextState <= Chilling;
+--      when Chilling =>
+--         nextState <= Play;
 		when Play =>
+         statesig <= "011";
 			sevenSegEN <= '1';
 			displayEN <= '1';
 			gameLogicEN <= '1';
@@ -136,9 +160,13 @@ begin
 				nextState <= Play;
 			end if;
 		when StartDeath =>
+         statesig <= "100";
+         gameLogicEN <= '1';
+         soundEN <= '1';
 			seqReset <= '1';
 			nextState <= DeathDisplay;
 		when DeathDisplay =>
+         statesig <= "101";
 			displaySelector <= "10";
 			displayEN <= '1';
 			soundEN <= '1';
@@ -148,13 +176,14 @@ begin
 				nextState <= DeathDisplay;
 			end if;
 		when Waiting =>
+         statesig <= "110";
 			displayEN <= '1';
 			displaySelector <= "10";
 			sevenSegEN <= '1';
 			sevenSegSelector <= '1';
 			startResetTimer <= '1';
 			if gameReset='1' then
-				nextState <= Start;
+				nextState <= Reset;
 			else
 				nextState <= Waiting;
 			end if;

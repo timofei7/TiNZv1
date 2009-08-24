@@ -66,6 +66,7 @@ begin
 	if rising_edge(Clk) then
 		if rst = '1' then
 			D <= "000";
+         soundMove <= "000";
 		else
 			if UP='1' and DOWN='0' then
 				if D="111" then
@@ -85,6 +86,7 @@ begin
 				end if;
 			else 
 				D <= D;
+            soundMove <= "000";
 			end if;
 		end if;
 	end if;

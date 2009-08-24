@@ -46,13 +46,6 @@ PORT(
    );
 END COMPONENT;
 
-COMPONENT ClockDivider
-GENERIC (DIV : integer);
-	PORT(
-		Clk : IN std_logic;          
-		slowCE : OUT std_logic
-		);
-	END COMPONENT;
 
 
 signal freqout: std_logic_vector(16 downto 0);
@@ -60,10 +53,9 @@ signal NoiseON : std_logic := '0';
 signal makeSound : std_logic_vector(2 downto 0) := "000";
 signal NoiseType : std_logic_vector(2 downto 0) := "000";
 
-signal slowTransition : std_logic := '0';
 
 --Timer signals for death siren
-constant NCLKDIV_SIREN: integer := 4; 					--assuming clock freq of 50 MHz
+constant NCLKDIV_SIREN: integer := 28; 					--assuming clock freq of 50 MHz
 constant MAX_SIREN_CNT: integer := 2**NCLKDIV_SIREN-1; -- max count of clock divider, 1...11
 
 signal startSirenTimer : std_logic := '0';
@@ -71,21 +63,38 @@ signal sirenDoneTimer : unsigned(NCLKDIV_SIREN-1 downto 0) := (others=>'0');
 signal sirenDone : std_logic := '0';
 
 --Timer signals for oscillating between freq of death siren
-constant NCLKDIV_OSC: integer := 2; 					--assuming clock freq of 50 MHz
+constant NCLKDIV_OSC: integer := 24; 					--assuming clock freq of 50 MHz
 constant MAX_OSC_CNT: integer := 2**NCLKDIV_OSC-1; -- max count of clock divider, 1...11
 	
 signal startOscillateTimer : std_logic := '0';
 signal sirenOscillateTimer : unsigned(NCLKDIV_OSC-1 downto 0) := (others=>'0');
 signal sirenOscillate : std_logic := '0';
 
+--Timer signals beep times
+constant NCLKDIV_BEEP: integer := 24; 					--assuming clock freq of 50 MHz
+constant MAX_BEEP_CNT: integer := 2**NCLKDIV_BEEP-1; -- max count of clock divider, 1...11
+	
+signal startBeepTimer : std_logic := '0';
+signal beepTimer : unsigned(NCLKDIV_BEEP-1 downto 0) := (others=>'0');
+signal beepDone : std_logic := '0';
+
+--Timer signals beep times
+constant NCLKDIV_SHBEEP: integer := 10; 					--assuming clock freq of 50 MHz
+constant MAX_SHBEEP_CNT: integer := 2**NCLKDIV_SHBEEP-1; -- max count of clock divider, 1...11
+	
+signal startSHBeepTimer : std_logic := '0';
+signal shbeepTimer : unsigned(NCLKDIV_SHBEEP-1 downto 0) := (others=>'0');
+signal shbeepDone : std_logic := '0';
+
 --State machine states, signals
 type stateType is (Quiet, GotPU, StuckandLostPU, DeathSiren1, DeathSiren2, Move);
 signal currState, nextState: stateType;
 
+signal soundsig: std_logic_vector(2 downto 0):="000";
 
 begin
 
-TESTOUT <= '0' & NoiseON & NoiseType & makeSoundMove;
+TESTOUT <= soundSelect & NoiseON & makeSoundLogic & soundsig;
 
 noisemaker: Noise PORT MAP(
 		Clk => Clk,
@@ -93,13 +102,18 @@ noisemaker: Noise PORT MAP(
 		FreqCount => freqout,
 		SIGOUT => NoiseOut
 	);
-	
-slowFSM: ClockDivider 
-GENERIC MAP(Div => 2)
-PORT MAP(
-	Clk => Clk,
-	slowCE => slowTransition
-);
+
+
+process(Clk)
+   begin
+      if rising_edge(Clk) then
+         if makeSoundMove = soundsig and makeSOundMove /= "000" then
+            soundsig <= soundsig;
+         else
+            soundsig <= makeSOundMove;
+         end if;
+      end if;
+end process;
 
 
 process(NoiseType)
@@ -137,26 +151,25 @@ end process chooseSound;
 stateTransition:process(Clk)
 begin
    if rising_edge(Clk) then
-		if slowTransition='1' then
-			if soundEN = '1' then
-				currState <= nextState;
-			else
-				currState <= Quiet;
-			end if;
-		end if;
+      if soundEN = '1' then
+         currState <= nextState;
+      else
+         currState <= Quiet;
+      end if;
    else
       currState <= currState;
    end if;
 end process stateTransition;
 
 
-soundFSM: process(currState, makeSound, sirenOscillate, sirenDone)
+soundFSM: process(currState, makeSound, sirenOscillate, sirenDone, beepDone)
 begin
 	--Defaults
 	NoiseON <= '0';
 	NoiseType <= "000";
 	startSirenTimer <= '0';
 	startOscillateTimer <= '0';
+   startBeepTimer <= '0';
 	nextState <= Quiet;
 	case currState is
 		when Quiet =>
@@ -174,11 +187,36 @@ begin
 		when StuckandLostPU =>
 			NoiseON <= '1';
 			NoiseType <= "001";
-			--nextState <= Quiet;
+         startBeepTimer <= '1';
+         if beepDone = '1' then 
+            nextState <= Quiet;
+         else
+            nextState <= StuckandLostPU;
+         end if;		
+      when Move =>
+			NoiseON <= '1';
+			NoiseType <= "101";
+         startSHBeepTimer <= '1';
+         if shbeepDone = '1' then 
+            nextState <= Quiet;
+         elsif makeSound="001" then  --move should be interruptable by other sounds
+				nextState <= StuckandLostPU;
+			elsif makeSound="010" then
+				nextState <= GotPU;
+			elsif makeSound="011" then
+				nextState <= DeathSiren1;
+			else
+            nextState <= Move;
+         end if;
 		when GotPU =>
 			NoiseON <= '1';
 			NoiseType <= "010";
-			--nextState <= Quiet;
+         startBeepTimer <= '1';
+         if beepDone = '1' then 
+            nextState <= Quiet;
+         else
+            nextState <= GotPU;
+         end if;
 		when DeathSiren1 =>
 			NoiseON <= '1';
 			NoiseType <= "011";
@@ -196,10 +234,12 @@ begin
 			NoiseType <= "010";
 			startSirenTimer <= '1';
 			startOscillateTimer <= '1';
-			if sirenOscillate='1' then
+			if sirenOscillate='1' and sirenDone='0' then
 				nextState <= DeathSiren1;
-			else
+			elsif sirenOscillate='0' and sirenDone='0' then
 				nextState <= DeathSiren2;
+         else
+            nextState <= Quiet;
 			end if;
 		when others =>
 			nextState <= Quiet;
@@ -242,6 +282,37 @@ end process oscillatingSirenTimer;
 sirenOscillate <= '1' when sirenOscillateTimer = MAX_OSC_CNT else '0';
 
 
+--Timer to time beeps
+beepTimerProcess: process(Clk, startBeepTimer)
+   begin 
+		if startBeepTimer='1' then
+			if rising_edge(Clk) then 
+				BeepTimer <= BeepTimer+1;
+			else
+				BeepTimer <= BeepTimer;
+			end if;
+		else 
+			BeepTimer <= (others=>'0');
+		end if;
+end process beepTimerProcess; 
+-- Clock enable pulse, once per 2^NCLKDIV_OSC
+beepDone <= '1' when BeepTimer = MAX_BEEP_CNT else '0';
+
+--Timer to time beeps
+shbeepTimerProcess: process(Clk, startSHBeepTimer)
+   begin 
+		if startSHBeepTimer='1' then
+			if rising_edge(Clk) then 
+				shBeepTimer <= shBeepTimer+1;
+			else
+				shBeepTimer <= shBeepTimer;
+			end if;
+		else 
+			shBeepTimer <= (others=>'0');
+		end if;
+end process shbeepTimerProcess; 
+-- Clock enable pulse, once per 2^NCLKDIV_OSC
+shbeepDone <= '1' when shBeepTimer = MAX_SHBEEP_CNT else '0';
 
 
 end Behavioral;

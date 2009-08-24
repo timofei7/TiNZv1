@@ -43,18 +43,20 @@ ARCHITECTURE behavior OF MainControllerTB IS
          introDone : IN  std_logic;
          death : IN  std_logic;
          deathDone : IN  std_logic;
+         WIN : IN std_logic;
          seqReset : OUT  std_logic;
-         resetDisplay : OUT  std_logic;
+         TESTOUT: OUT  std_logic_vector(7 downto 0);
          displaySelector : OUT  std_logic_vector(1 downto 0);
          sevenSegEN : OUT  std_logic;
          resetGameT : OUT  std_logic;
          resetPlayer : OUT  std_logic;
-         resetPU : OUT  std_logic;
+         moveEN : OUT std_logic;
          displayEN : OUT  std_logic;
          gameLogicEN : OUT  std_logic;
+         soundEN : OUT std_logic;
          sevenSegSelector : OUT  std_logic
         );
-    END COMPONENT;
+   
     
 
    --Inputs
@@ -62,15 +64,17 @@ ARCHITECTURE behavior OF MainControllerTB IS
    signal introDone : std_logic := '0';
    signal death : std_logic := '0';
    signal deathDone : std_logic := '0';
+   signal WIN : std_logic := '0';
 
  	--Outputs
    signal seqReset : std_logic;
-   signal resetDisplay : std_logic;
+   signal TESTOUT : std_logic_vector(7 downto 0);
+   signal moveEN : std_logic;
    signal displaySelector : std_logic_vector(1 downto 0);
    signal sevenSegEN : std_logic;
    signal resetGameT : std_logic;
    signal resetPlayer : std_logic;
-   signal resetPU : std_logic;
+   signal soundEN : std_logic;
    signal displayEN : std_logic;
    signal gameLogicEN : std_logic;
    signal sevenSegSelector : std_logic;
@@ -87,12 +91,12 @@ BEGIN
           death => death,
           deathDone => deathDone,
           seqReset => seqReset,
-          resetDisplay => resetDisplay,
+          moveEN => moveEN,
           displaySelector => displaySelector,
           sevenSegEN => sevenSegEN,
           resetGameT => resetGameT,
           resetPlayer => resetPlayer,
-          resetPU => resetPU,
+          soundEN => soundEN,
           displayEN => displayEN,
           gameLogicEN => gameLogicEN,
           sevenSegSelector => sevenSegSelector
