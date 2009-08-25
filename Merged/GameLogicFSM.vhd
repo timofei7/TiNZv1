@@ -25,14 +25,11 @@ use IEEE.NUMERIC_STD.ALL;
 entity GameLogicFSM is
     Port ( Clk: in STD_LOGIC;
 			  collisionData : in  STD_LOGIC_VECTOR (1 downto 0);
-          -- shieldStatus : in  STD_LOGIC;
            logicEN : in  STD_LOGIC;
            gameOver : in  STD_LOGIC;
-			 -- isEN : in STD_LOGIC;
            TESTOUT: out std_logic_vector(7 downto 0);
            disablePU : out  STD_LOGIC;
            death : out  STD_LOGIC;
-          -- shieldSet : out  STD_LOGIC;
 			  makeSoundLogic : out STD_LOGIC_VECTOR(2 downto 0); --for Noises module
 			  soundSelect : out STD_LOGIC; --for Noises module, gives priority to sounds from GameLogic
 			  playerColor : out STD_LOGIC_VECTOR (1 downto 0));
@@ -56,12 +53,10 @@ architecture Behavioral of GameLogicFSM is
    signal deathTest : std_logic := '0';
 	signal unshieldedState, deathStateSig, GetShieldState, ShieldedState, LoseToPUState, LoseToEnemyState : std_logic;
 
-	type stateType is (Unshielded, DeathState, GetShield, Shielded, LoseToPU, LoseToEnemy);
+	type stateType is (Unshielded, DeathState, GetShield, Shielded, LoseToPU, LoseToEnemy, DoNothing, WaitBeforeLose);
    signal currState, nextState: stateType;
 
    signal countvamp: unsigned(1 downto 0):="00";
-   signal vampTC: std_logic;
-
    signal deathSig: std_logic:= '0';
 
 begin
@@ -111,7 +106,7 @@ begin
             currState <= nextState;
          end if;
       else
-         currState <= UnShielded;
+         currState <= DoNothing; --do nothing if logic disabled (is this causing problems?)
       end if;
    else
       currState <= currState;
@@ -142,8 +137,13 @@ begin
 	soundSig<= "000"; --for Noises module
 	soundSelect <= '0'; --for Noises module
    case currState is
+      when DoNothing =>
+         if logicEN = '1' then
+            nextState <= Unshielded;
+         else
+            nextState <= currState; --this is a deadend state
+         end if;
       when Unshielded =>		--no shield
-         --shieldSet <= '0';
          unshieldedState <= '1'; --TeSTING
          if (collisionData="00" or collisionData="01") then
             nextState <= Unshielded;
@@ -161,7 +161,6 @@ begin
          nextState <= DeathState;
       when GetShield =>		--got powerup while unshielded
          getShieldState <= '1'; --TESTING
-         --shieldSet <= '1';
          disableSig <= '1';
          currPlayerColor <= "01";
 			soundSig <= "010";  --sound for getting power-up
@@ -175,15 +174,16 @@ begin
          if (collisionData ="00" or collisionData="01") then
             nextState <= Shielded;
          elsif collisionData="11" then
-            nextState <= LoseToEnemy;
+            nextState <= WaitBeforeLose;
          elsif collisionData="10" and shieldDepleted='1' then
             nextState <= LoseToPU;
          end if;
+      when WaitBeforeLose =>
+         nextState <= LoseToEnemy;  --allow shieldtimer to reset
       when LoseToEnemy =>	--lose shield by hitting enemy while shielded
          LoseToEnemyState <= '1'; --TESTING
          currPlayerColor <= "10";
          disableSig <= '1';
-         --shieldSet <= '1';
          startShieldTimer <= '1';
 			soundSig <= "001";	--sound for losing power-up
 			soundSelect <= '1'; --for Noises module

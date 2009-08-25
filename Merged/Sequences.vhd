@@ -72,19 +72,21 @@ architecture Behavioral of Sequences is
    signal wout : std_logic_vector(7 downto 0);
    
    signal CE:       std_logic := '0';                    -- slow clock enable
-   signal frame : unsigned(3 downto 0) := (others => '0');
+   signal frame : unsigned(4 downto 0) := (others => '0');
+   signal framesm: unsigned(3 downto 0);
    signal seqDoneSig: std_logic:= '0';
    signal rowcol: std_logic_vector(5 downto 0):= "000000";
-   signal sigh: std_logic_vector(3 downto 0);
+   signal sigh: std_logic_vector(4 downto 0);
 
 begin
 
 sigh <= std_logic_vector(frame);
 TESTOUT <= sigh(1 downto 0) & row & col;
 rowcol <= row & col;
+framesm <= frame(3 downto 0);
 
 clockdivs: ClockDivider
-   GENERIC MAP(Div => 24) -- the clock divider value DON"T FORGET TO SET THIS!
+   GENERIC MAP(Div => 24) -- the clock divider value 24 is good
    PORT MAP(Clk => Clk, slowCE => CE);
 deathseq : DeathROM
 		port map (
@@ -102,7 +104,7 @@ winseq : WinROM
 			addra => addr,
 			douta => wout);
 
-addr <= std_logic_vector(frame) & rowcol; --create the address from the row col being asked for and the current frame;
+addr <= std_logic_vector(framesm) & rowcol; --create the address from the row col being asked for and the current frame;
 deathColor <= dout;
 introColor <= iout;
 wincolor <= wout;
@@ -113,13 +115,13 @@ process(Clk)
       if rising_edge(Clk) then
          if seqReset = '1' then
             frame <= (others => '0');
-         elsif CE = '1' and seqDoneSig = '0' then --check this
+         elsif CE = '1' and frame /= "10000" then --check this
             frame <= frame +1;
          else frame <= frame;
          end if;
       end if;
 end process FrameCounter;
-seqDoneSig <= '1' when frame = "1111" else '0'; --say when we finish a sequence
+seqDoneSig <= '1' when frame = "10000" else '0'; --say when we finish a sequence
 seqDone <= seqDoneSig;          
           
 end Behavioral;

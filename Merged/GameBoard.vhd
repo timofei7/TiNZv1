@@ -139,10 +139,10 @@ CollisionData <= enabled & doutb(6);  --grab the relevant collision bits the ena
 FrameCounter: --animate the frames
 process(Clk)
    begin
-      if rising_edge(Clk) and slowFrame = '1' then
+      if rising_edge(Clk) then
          if SeqReset = '1' then
             frameCount <= (others => '0');
-         else
+         elsif  slowFrame = '1' then
             if frameDirection = '0' then
                frameCount <= frameCount - 1;
             else

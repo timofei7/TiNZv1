@@ -162,7 +162,7 @@ begin
 end process stateTransition;
 
 
-soundFSM: process(currState, makeSound, sirenOscillate, sirenDone, beepDone)
+soundFSM: process(currState, makeSound, sirenOscillate, sirenDone, beepDone, shbeepDone)
 begin
 	--Defaults
 	NoiseON <= '0';
@@ -170,6 +170,7 @@ begin
 	startSirenTimer <= '0';
 	startOscillateTimer <= '0';
    startBeepTimer <= '0';
+   startSHBeepTimer <= '0';
 	nextState <= Quiet;
 	case currState is
 		when Quiet =>

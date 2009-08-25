@@ -35,12 +35,12 @@ entity AttrLookup is
 end AttrLookup;
 
 architecture Behavioral of AttrLookup is
-     constant enemy1Color : std_logic_vector(7 downto 0) := "11100000";  --bright red enemies
-     constant enemy2Color : std_logic_vector(7 downto 0) := "10000000";  --dark red enemies
-     constant enemy3Color : std_logic_vector(7 downto 0) := "10000010";  --dark purplish enemies
-     constant pu1Color : std_logic_vector(7 downto 0) := "10010011"; --light blue pups
-     constant pu2Color : std_logic_vector(7 downto 0) := "00000010"; --bright blue pups
-     constant pu3Color : std_logic_vector(7 downto 0) := "00000011"; --brighter blue pups
+     constant enemy1Color : std_logic_vector(7 downto 0) := "11100000";  --red enemies
+     constant enemy2Color : std_logic_vector(7 downto 0) := "11111100";  --yellow enemies
+     constant enemy3Color : std_logic_vector(7 downto 0) := "11101000";  --orange enemies
+     constant pu1Color : std_logic_vector(7 downto 0) := "00000011"; --pure blue pups
+     constant pu2Color : std_logic_vector(7 downto 0) := "00000010"; --darker blue pups
+     constant pu3Color : std_logic_vector(7 downto 0) := "00000001"; --dark blue pups
      constant emptyColor : std_logic_vector(7 downto 0) := "00000000"; --blanks
      constant finishColor : std_logic_vector(7 downto 0) := "11111111"; --finish line color
      
@@ -53,6 +53,7 @@ architecture Behavioral of AttrLookup is
      constant pu3addr : std_logic_vector(3 downto 0) := x"6";
      constant emptyaddr : std_logic_vector(3 downto 0) := x"0"; 
      constant finishaddr : std_logic_vector(3 downto 0) := x"7";
+     constant finishEaddr : std_logic_vector(3 downto 0) := x"8";
      
      signal enemy1 : std_logic := '1'; 
      signal enemy2 : std_logic := '1';  
@@ -94,7 +95,7 @@ begin
          pu2 <= '1';
          pu3 <= '1';
          empty <= '0';
-         finish <= '0';
+         finish <= '1';
       elsif disablePU = '1' then
          case WriteAddr is
             when x"1" => enemy1 <= '1';
@@ -104,7 +105,7 @@ begin
             when x"5" => pu2 <= '0';
             when x"6" => pu3 <= '0'; --
             when x"0" => empty <= '0';
-            when x"7" => finish <= '0';
+            when x"7" => finish <= '1';
             when others => empty <= '0';
          end case;
       end if;

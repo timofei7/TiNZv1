@@ -23,7 +23,7 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity cellGame is
     Port ( Clk : in  STD_LOGIC;
-           ResetALL : in  STD_LOGIC;
+           ResetALL : in  STD_LOGIC; --needs more work, do we need it?
            MOSI : out  STD_LOGIC;
            SCLK : out  STD_LOGIC;
            CS : out  STD_LOGIC;
@@ -52,7 +52,8 @@ COMPONENT MainController
 		death : IN std_logic;
 		seqDone : IN std_logic;
 		WIN : IN std_logic;
-      ResetALL: IN std_Logic;
+      ResetALL: IN std_logic;
+      GameOver: IN std_logic;
       Level : OUT std_logic_vector(1 downto 0);
 		seqReset : OUT std_logic;
 		displaySelector : OUT std_logic_vector(1 downto 0);
@@ -125,14 +126,14 @@ PORT(
 	moveEN : IN std_logic;
    resetGameT : IN std_logic;
    TESTOUT: out std_logic_vector(7 downto 0);
+   SpeedRate: IN std_logic_vector(1 downto 0);
    sevenSegEN : IN std_logic;
    sevenSegSelector : IN std_logic;          
    XAnalogOut : OUT std_logic;
    YAnalogOut : OUT std_logic;
    playerX : OUT std_logic_vector(2 downto 0);
    playerY : OUT std_logic_vector(2 downto 0);
-   RandomizeDirection: in std_logic;
-   ResetRandomize : in std_logic;
+   RandomizeDirection: in std_logic_vector(1 downto 0);
    gameOver : OUT std_logic;
    an : OUT std_logic_vector(3 downto 0);
    seg : OUT std_logic_vector(0 to 6);
@@ -259,7 +260,6 @@ signal makeSoundMove : std_logic_vector(2 downto 0) := "000";
 
 signal Level: std_logic_vector(1 downto 0):= "00"; --FOR TESTING -- connect to LOGIC
 
-signal ResetRandomize: std_logic:= '0';  --we might never need to rest as the counter rolls over... 
 
 begin
 
@@ -269,7 +269,6 @@ deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
 Xout<=playerX;
 Yout<=playerY;
-
 
 --TESTOUT <= "000000" & gameOver & death;
 
@@ -282,6 +281,7 @@ GameController: MainController PORT MAP(
 		death => endGame,
 		WIN => WIN,
       ResetALL => ResetALL,
+      GameOver => GameOver,
       Level => Level,
 		seqReset => OPEN,
 		displaySelector => selectBoard,
@@ -290,7 +290,6 @@ GameController: MainController PORT MAP(
 		resetPlayer => resetPlayer,
 		moveEN => moveEN,
       TESTOUT => OPEN,
-	--	resetPU => resetDisplay,
 		displayEN => displayEN,
 		gameLogicEN => logicEN,
 		soundEN => soundEN,
@@ -302,7 +301,7 @@ thegamelogic: GameLogicFSM PORT MAP(
 		collisionData => collisionData,
 		logicEN => logicEN,
 		gameOver => gameOver,
-      TESTOUT => TESTOUT,
+      TESTOUT => OPEN,
 		disablePU => disablePU,
 		death => death,
 		makeSoundLogic => makeSoundLogic,
@@ -314,7 +313,7 @@ thesequences: Sequences PORT MAP(
 		Clk => Clk,
 		row => row,
       col => col,
-      TESTOUT => OPEN,
+      TESTOUT => TESTOUT,
 		seqReset => ResetDisplay,
 		seqDone => seqDone,
 		deathColor => deathColor,
@@ -342,12 +341,12 @@ theplay: Play PORT MAP(
 		XAnalogOut => XAnalogOUt,
 		YAnalogOut => YAnalogOut,
       TESTOUT => OPEN,
+      SpeedRate => Level, --direct correspondence 
 		resetPlayer => ResetPlayer,
 		moveEN => moveEN,
 		playerX => playerX,
 		playerY => playerY,
-      RandomizeDirection => WIN, --randomize on win
-      ResetRandomize => ResetRandomize,
+      RandomizeDirection => Level, --randomize on win
 		resetGameT => resetTimer,
 		sevenSegEN => sevenSegEN,
 		sevenSegSelector => sevenSegSelector,

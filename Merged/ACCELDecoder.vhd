@@ -26,8 +26,8 @@ entity ACCELDecoder is
     Port ( 
            Clk : in  STD_LOGIC; 
            TESTOUT: out std_logic_vector(7 downto 0);
-           Randomize: in std_logic;
-           ResetRandomize : in std_logic;
+           SpeedRate: in std_logic_vector(1 downto 0);
+           Randomize: in std_logic_vector(1 downto 0);
            Xin : in  STD_LOGIC;
            Yin : in  STD_LOGIC;
 			  XAnalogIn : in  STD_LOGIC;
@@ -59,7 +59,8 @@ architecture Behavioral of ACCELDecoder is
 	COMPONENT ThresHysteresis
 	PORT(
 		Clk : IN std_logic;
-		SIN : IN std_logic_vector(7 downto 0);          
+		SIN : IN std_logic_vector(7 downto 0);
+      SpeedRate: IN std_logic_vector(1 downto 0);
 		UP : OUT std_logic;
 		DOWN : OUT std_logic
 		);
@@ -105,8 +106,6 @@ architecture Behavioral of ACCELDecoder is
 	signal doneX: std_logic:= '0';
    signal doneY: std_logic:= '0';
    
-   -- this is for randomizing directions wooot!
-   signal axisSwitcher: unsigned(1 downto 0):= "00";
    signal xMinusSwap: std_logic;
    signal yMinusSwap: std_logic;
    signal xPlusSwap: std_logic;
@@ -114,23 +113,10 @@ architecture Behavioral of ACCELDecoder is
     
 begin
 
---randomizing directions to make the game harder!
--- this is a counter for which randomizing to do
-process(Clk)
+--randomize haha the directions of the accelerometer
+process(xminusswap, yminusswap, xplusswap, yplusswap, Randomize)
    begin
-      if rising_edge(Clk) then
-         if ResetRandomize = '1' then
-            axisSwitcher <= (others => '0');
-         elsif Randomize = '1' then
-            axisSwitcher <= axisSwitcher + 1;
-         end if;
-      end if;
-end process;
-
---
-process(xminusswap, yminusswap, xplusswap, yplusswap)
-   begin
-      case axisSwitcher is
+      case Randomize is
          when "00" =>  --normal
             xminus <= xminusswap;
             yminus <= yminusswap;
@@ -182,6 +168,7 @@ YAnalogOut <= YAnalogIn;
 hysX: ThresHysteresis PORT MAP(
 		Clk => Clk,
 		SIN => Y, --swap with X, Y gives correct direction
+      SpeedRate => SpeedRate,
 		UP => xminusswap,
 		DOWN => xplusswap
 	);
@@ -189,6 +176,7 @@ hysX: ThresHysteresis PORT MAP(
 hysY: ThresHysteresis PORT MAP(
 		Clk => Clk,
 		SIN => X, --swap with Y, X gives correct direction
+      SpeedRate => SpeedRate,
 		UP => yminusswap,
 		DOWN => yplusswap
 	);
@@ -233,12 +221,6 @@ divisorX <= t2x;
 
 dividendY <= t1y;
 divisorY <=t2y;
-
---X <= fractionalX;
---Y <= fractionalY;
-
-
-
 
 
 

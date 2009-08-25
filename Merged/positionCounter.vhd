@@ -33,27 +33,11 @@ entity positionCounter is
 end positionCounter;
 
 architecture Behavioral of positionCounter is
-	-- # bits in clock divider  
-	-- Output frequency = Input frequency / 2^NCLKDIV
-	--NCLKDIV=25 with 50 MHz clock gives 50 MHz / 2^25 = 1.49 Hz
---	constant NCLKDIV:	integer := 1;	 
---	constant MAXCLKDIV: integer := 2**NCLKDIV-1;	-- max count of clock divider, 1...11
-
-	-- internal signals
-	--signal clkdivcount: 	unsigned(NCLKDIV-1 downto 0);	-- clock divider count value
 	signal D : unsigned (2 downto 0) := "000";
 	signal soundMove : std_logic_vector(2 downto 0) := "000";
 	
 	
 begin
-
---Clock signal
---ClockDivider: process( Clk )	
---	begin 
---		if rising_edge(Clk) then 
---			clkdivcount <= clkdivcount+1;	
---		end if;
---	end process ClockDivider; 
 	
 
 --3-bit up/down counter

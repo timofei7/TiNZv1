@@ -28,6 +28,7 @@ entity MainController is
            seqDone : in  STD_LOGIC;
 			  WIN : in STD_LOGIC;
            ResetALL : in STD_LOGIC;
+           GameOver : in STD_LOGIC;
            Level    : out  STD_LOGIC_VECTOR(1 downto 0);
            seqReset : out  STD_LOGIC;
            TESTOUT: out std_logic_vector(7 downto 0);
@@ -36,7 +37,6 @@ entity MainController is
            resetGameT : out  STD_LOGIC;
            resetPlayer : out  STD_LOGIC;
 			  moveEN : out STD_LOGIC;
-           --resetPU : out  STD_LOGIC;	--not(displayEN) can take care of this
            displayEN : out  STD_LOGIC;
            gameLogicEN : out  STD_LOGIC;
 			  soundEN : out STD_LOGIC; 	--for Noises module
@@ -44,7 +44,7 @@ entity MainController is
 end MainController;
 
 architecture Behavioral of MainController is
-	constant NCLKDIV: integer := 2; --28					--assuming clock freq of 50 MHz
+	constant NCLKDIV: integer := 28;					--assuming clock freq of 50 MHz
    constant MAXCLKDIV: integer := 2**NCLKDIV-1; -- max count of clock divider, 1...11
 	
 	signal startResetTimer : std_logic := '0';
@@ -62,13 +62,14 @@ architecture Behavioral of MainController is
 begin
 
 TESTOUT <= "0000" & death & teststate;
+
 Level <= std_logic_vector(LevelSig);
 
 --level counter
 process(Clk)
    begin
       if rising_edge(Clk) then
-         if death = '1' then  --reset to level 1 if you die
+         if gameOver = '1' then  --reset to level 1 if you die
             LevelSig <= "00";
          elsif WIN = '1' then --increment da level!  we just roll over to level 0 if person is awesome
             LevelSig <= LevelSig + 1; --implement something cooler like switching accelerometer axis!
@@ -111,7 +112,7 @@ stateUpdate: process(Clk)
 begin
    if rising_edge(Clk) then
       if resetALL = '1' then
-         currState <= Reset;
+         currState <= Reset; --reset stuffs
       else
          currState <= nextState;
       end if;
@@ -131,7 +132,6 @@ begin
 	resetGameT <= '0';
 	resetPlayer <= '0';
 	moveEN <= '0';
---	resetPU <= '0';
 	displayEN <= '0';
 	gameLogicEN <= '0';
 	sevenSegSelector <= '0';
@@ -157,7 +157,6 @@ begin
 			sevenSegEN <= '1';
 			resetGameT <= '1';
 			resetPlayer <= '1';
-			--resetPU <= '1';
 			seqReset <= '1';
          nextState <= Play;
 		when Play =>
@@ -191,7 +190,6 @@ begin
 				nextState <= DeathDisplay;
 			end if;
       when StartWin =>
-         --statesig <= "111";
          gameLogicEN <= '1';
          soundEN <= '1';
 			seqReset <= '1';

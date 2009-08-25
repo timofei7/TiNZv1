@@ -23,6 +23,7 @@ use ieee.numeric_std.all;
 
 entity ThresHysteresis is
     Port ( Clk : in  STD_LOGIC;
+           SpeedRate : in STD_LOGIC_VECTOR(1 downto 0);
            SIN : in  STD_LOGIC_VECTOR (7 downto 0);
            UP : out  STD_LOGIC;
            DOWN : out  STD_LOGIC);
@@ -40,15 +41,24 @@ architecture Behavioral of ThresHysteresis is
 --constant downh: unsigned(7 downto 0) := "11000111"; 
 --constant downt: unsigned(7 downto 0) := "10110101"; 
 
-constant upt: unsigned(7 downto 0)   := "10111011";  --this is in digilab with averaging
-constant uph: unsigned(7 downto 0)   := "10011111";  --and pretty heavy tilt
-constant downh: unsigned(7 downto 0) := "01101111"; 
-constant downt: unsigned(7 downto 0) := "01001110"; 
+--constant upt: unsigned(7 downto 0)   := "10111011";  --this is in digilab with averaging
+--constant uph: unsigned(7 downto 0)   := "10011111";  --and pretty heavy tilt
+--constant downh: unsigned(7 downto 0) := "01101111"; 
+--constant downt: unsigned(7 downto 0) := "01001110"; 
+
+constant upt: unsigned(7 downto 0)   := "10110000";  --this is in digilab with some by hand reduction of above
+constant uph: unsigned(7 downto 0)   := "10011100";  --and pretty heavy tilt
+constant downh: unsigned(7 downto 0) := "01101100"; 
+constant downt: unsigned(7 downto 0) := "01011111"; 
 
 signal sins: unsigned(7 downto 0);
 signal waitReset: std_logic;
 signal waitcount: unsigned(24 downto 0) := (others => '0');
-constant waitcountfinal: unsigned(24 downto 0) := (others => '1');
+constant waitcountfinal1: unsigned(24 downto 0) := "1111111111111111111111111"; --slower
+constant waitcountfinal2: unsigned(24 downto 0) := "0111111111111111111111111"; --slow
+constant waitcountfinal3: unsigned(24 downto 0) := "0011111111111111111111111"; --fast
+constant waitcountfinal4: unsigned(24 downto 0) := "0001111111111111111111111"; --faster
+signal waitcountfinal: unsigned(24 downto 0):= (others => '0');
 signal waitTC : std_logic;
 
 type state_type is (sStart, sSendUP, sSendDOWN, sWaitU, sWaitD);	-- state machine
@@ -57,9 +67,26 @@ signal curr_state, next_state: state_type;
 
 begin
 
+process(SpeedRate)
+begin
+   case SpeedRate is
+      when "00" =>
+         waitcountfinal <= waitcountfinal1;
+      when "01" =>
+         waitcountfinal <= waitcountfinal2;
+      when "10" =>
+         waitcountfinal <= waitcountfinal3;
+      when "11" =>
+         waitcountfinal <= waitcountfinal4;
+      when others =>
+         waitcountfinal <= waitcountfinal1;
+   end case;
+end process;
+
+
 sins <= unsigned(SIN);
 
-
+--this is the timer responsible for the move repeat rate!
 waitcounter:
 process(Clk)
    begin
@@ -73,7 +100,7 @@ process(Clk)
 end process;
 waitTC <= '1' when waitcount = waitcountfinal else '0';
 
-
+--hysteresis
 Detect:
 process(curr_state, sins, waitTC)
    begin
@@ -98,14 +125,12 @@ process(curr_state, sins, waitTC)
             waitReset <= '1';
             next_state <= sWaitD;
          when sWaitD =>
-				--DOWN <= '1'; --for testing
             if sins >= downh then
                next_state <= sStart;
             elsif waitTC = '1' then
                next_state <= sSendDown;
             end if;
          when sWaitU =>
-				--UP <= '1';--for testing
             if sins <= uph then
                next_state <= sStart;
             elsif waitTC = '1' then
