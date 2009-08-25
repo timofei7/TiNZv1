@@ -11,34 +11,34 @@ W L W L W W W W
 W W L W W W W W 
 
 frame:
-O O O O O O O O 
-O O O O O O O O 
-O O O O O O O O  
-O O O O O O P O   
-O O O O O T O O 
-M O O O A O O O 
-O R O B O O O O  
-O O F O O O O O 
-
-frame:
-M M M M M M M M  
-M M M M M M M M 
-M M M M M M M M 
-M M M M M M M M  
-M M M M M P M M  
-R M M M T M M M 
-M F M A M M M M 
-M M B M M M M M   
+L L L L L L L L 
+L L L L L L L L 
+L L L L L L L L 
+L L L L L L P L   
+L L L L L T L L 
+L L L L B L L L 
+L R L F L L L L  
+L L A L L L L L 
 
 frame:
 R R R R R R R R 
 R R R R R R R R 
 R R R R R R R R 
 R R R R R R R R 
-R R R R R R R R 
-F R R R P R R R 
-R B R T R R R R 
-R R A R R R R R 
+R R R R R P R R 
+R R R R T R R R 
+R A R B R R R R 
+R R F R R R R R 
+
+frame:
+A A A A A A A A
+A A A A A A A A
+A A A A A A A A
+A A A A A A A A
+A A A A A A A A
+A A A A P A A A
+A F A T A A A A
+A A B A A A A A
 
 frame:
 F F F F F F F F
@@ -46,8 +46,8 @@ F F F F F F F F
 F F F F F F F F
 F F F F F F F F
 F F F F F F F F
-B F F F F F F F
-F A F P F F F F
+F F F F F F F F
+F B F P F F F F
 F F T F F F F F
 
 frame:
@@ -56,69 +56,69 @@ B B B B B B B B
 B B B B B B B B
 B B B B B B B B
 B B B B B B B B
-A B B B B B B B 
+B B B B B B B B 
 B T B B B B B B
 B B P B B B B B
 
 frame:
-A A A A A A A A
-A A A A A A A A
-A A A A A A A A
-A A A A A A A A
-A A A A A A A A
-T A A A A A A A
-A P A A A A A A
-A A A A A A A A
-
-frame:
 T T T T T T T T
 T T T T T T T T
 T T T T T T T T
 T T T T T T T T
 T T T T T T T T
-P T T T T T T T
 T T T T T T T T
+T P T T T T T T
 T T T T T T T T
 
 frame:
-X X X X X X X X
-X X X X X X X X
-X X L A X A F X
-X F A F A F A F
-A A F P F F A A
-X A F P P F A X
-X A F P P F A X
-X A A A F A A X
+P P P P P P P P 
+P P P P P P P P 
+P P P P P P P P 
+P P P P P P P P 
+P P P P P P P P 
+P P P P P P P P 
+P P P P P P P P 
+P P P P P P P P 
 
 frame:
-X X X X X X X X
-X L A A X A X X
-X X F F A F F X
-A A F P F F A A
-X A F P P F A X
-X A F P P F A X
-X A A A F A A X
-X A X X A X X X
+F F F F F F F F
+F P P P P P P F
+F P B B B B P F
+F P B S S B P F
+F P B S S B P F
+F P B B B B P F
+F P P P P P P F
+F F F F F F F F
 
 frame:
-L X X X X X X X
-X A A A A A A X
-X A F F F F F X
-X A F P P F A X
-X A F P P F A X
-X A F F F F A X
-X A A A A A A X
-X X X X X X X X
+A A A A A A A A
+A F F F F F F A
+A F P P P P F A
+A F P B B P F A
+A F P B B P F A
+A F P P P P F A
+A F F F F F F A
+A A A A A A A A
 
 frame:
-X X X X X X X X
-X X X X X X X X
-X X A A A A X X
-X X A W W A X X
-X X A W W A X X
-X X A A A A X X
-X X X X X X X X
-X X X X X X X X
+T T T T T T T T 
+T A A A A A A T
+T A F F F F F T
+T A F P P F A T
+T A F P P F A T
+T A F F F F A T
+T A A A A A A T
+T T T T T T T T 
+
+frame:
+B B B B B B B B 
+B T T T T T T B
+B T A A A A T B
+B T A F F A T B
+B T A F F A T B
+B T A A A A T B
+B T T T T T T B
+B B B B B B B B 
 
 frame:
 W W W W W W W W
