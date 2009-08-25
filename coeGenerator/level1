@@ -1,161 +1,165 @@
+<<<<<<< .mine
 positional:
-frame: 16
-O O O O O X O F
-O O O O O X O O
-O O O O O X O O
-O P O O O O O O
-O O O O O O O O 
-O O O O O O O O
-O O O O X X X O
-O O O O X P X O
 
-frame: 15
-O O O O O X O F
-O O O O O X O O
-O O O O O X O O
-O P O O O O O O
-O O O O O O O O 
-O O O O O O O O
-O O O O X X X O
-O O O O X P X O
-
-
-frame: 14
-O O O O O O O F
-O O O O O X O O
-O O O O O X O O
-O P O O O X O O
-O O O O O O O O 
+=======
+positional:
+>>>>>>> .r73
+frame: 10
+O O O Z Z Z O O
+Z Z Z O O O X X
+X X X O O O X P
+X F X O O O X X
+X X X Z Z O O O 
 O O O O O X O O
 O O O X O O O X
-O Y O O X P X O
+O O O O X P X O
 
-frame: 13
-O O O O O O O F
-O O O O O O O O
+frame: 9
+O O O Z Z Z O O
+Z Z Z O O O X X
+X X X O O O X P
+X F X O O O X X
+X X X Z Z O O O 
 O O O O O X O O
-O P O O O X X O
-O O O O O O O O 
+O O O X O O O X
+O O O O X P X O
+
+frame: 10
+O O O Z Z Z O O
+Z Z Z O O O X X
+X X X O O O X P
+X F X O O O X X
+X X X Z Z O O O 
 O O O O O X O O
-O Y O X O O O X
+O O O X O O O X
+O O O O X P X O
+
+frame: 9
+O O O Z Z Z O O
+Z Z Z O O O X X
+X X X O O O X P
+X F X O O O X X
+X X X Z Z O O O 
+O O O O O X O O
+O O O X O O O X
 O O O O X P X O
 
 frame: 12
-O O O O O O O F
-O O O O O O O O
-O O O O O O O O
-O P O O O X X X
-O O O O O O O O 
-O Y O O O X O O
+O O O Z Z Z O O
+Z Z X O O O X X
+X X O O O O X P
+X F O X O O X X
+X X O Z Z O O O 
+O O X O O X O O
 O O O X O O O X
 O O O O X P X O
 
 frame: 11
-O O O O O O O F
-O O O O O O O O
-O O O O O X O O
-O P O O O X X O
-O Y O O O O O O 
-O O O O O O O O
-Y Y Y O X X X O
-O Y O O X P X O
+O O O Z Z Z O O
+Z Z X O O O X X
+X X O O O O X P
+X F O X O O X X
+X X O Z Z O O O 
+O O X O O X O O
+O O O X O O O X
+O O O O X P X O
 
 frame: 10
-O O O O O O O F
-O O O O O X O O
-O O O O O X O O
-P Y O O O X O O
-O O O O O O O O 
-O O X O O O O O
-O O O O X X X O
-O Y O O X P X O
+O O O Z Z Z O O
+Z Z X O O O X X
+X X O O O O X P
+X F O X O O X X
+X X O Z Z O O O 
+O O X O O X O O
+O O O X O O O X
+O O O O X P X O
 
 frame: 9
-O O O O O X O F
-O O O O O X O O
-O Y O O O X O O
-O P O O O O O O
-O O X O O O O O 
-O O O O O O O O
-O Y O O X X X O
-O O O X O P O X
+O O O Z Z Z O O
+Z Z X O O O X X
+X X O O O O X P
+X F O X O O X X
+X X O Z Z O O O 
+O O X O O X O O
+O O O X O O O X
+O O O O X P X O
 
 frame: 8
-O O O O O X O F
-O Y O O O X O O
-O O O O O X O O
-O P X O O O O O
-O O O O O O O O 
-O Y O O O O O O
+O O O Z Z Z X O
+Z Z X O O O O X
+X X O O O X O P
+X F O X O O O X
+X X O Z Z O X O 
+O O X O O Z O O
 O O O O X X X O
-O O O X O P O X
+O O O O X P X O
 
 frame: 7
-O Y O O O O O F
-O O O O O X O O
-O O X O O X O O
-O P O O O X O O
-O Y O O O O O O 
-O O O O O O O O
+O O O Z Z Z X O
+Z Z X O O O O X
+X X O O O X O P
+X F O X O O O X
+X X O Z Z O X O 
+O O X O O Z O O
 O O O O X X X O
 O O O O X P X O
 
 frame: 6
-O O O O O O O F
-O O X O O O O O
-O O O O O X O O
-O Y P O O X X O
-O O O O O O O O 
-O O O O O X O O
-O O O X O O O X
+O O O Z Z Z X O
+Z Z X O O O O X
+X X O O O X O P
+X F O X O O O X
+X X O Z Z O X O 
+O O X O O Z O O
+O O O O X X X O
 O O O O X P X O
 
 frame: 5
-O O X O O O O F
-O O O O O O O O
-O Y O O O O O O
-O P O O O X X X
-O O O O O O O O 
-O O O O O X O O
-O O O X O O O X
+O O O Z Z Z X O
+Z Z X O O O O X
+X X O O O X O P
+X F O X O O O X
+X X O Z Z O X O 
+O O X O O Z O O
+O O O O X X X O
 O O O O X P X O
 
 frame: 4
-O O O O O O O F
-O Y O O O O O O
-O O O O O O O O
-O P O O O X X X
-O O O O O O O O 
-O O O O O X O O
-O O O X O O O X
+O O O Z Z Z X O
+Z Z X O O O O X
+X X O O O X O P
+X F O X O O O X
+X X O Z Z O X O 
+O O X O O Z O O
+O O O O X X X O
 O O O O X P X O
 
 frame: 3
-O Y O O O O O F
-O O O O O O O O
-O O O O O X O O
-O P O O O X X O
-O O O O O O O O 
-O O O O O X O O
-O O O X O O O X
+O O O Z Z Z X O
+Z Z X O O O O X
+X X O O O X O P
+X F O X O O O X
+X X O Z Z O X O 
+O O X O O Z O O
+O O O O X X X O
 O O O O X P X O
 
 frame: 2
-O O O O O O O F
-O O O O O X O O
-O O O O O X O O
-O P O O O X O O
-O O O O O O O O 
-O O O O O O O O
+O O O Z Z Z X O
+Z Z Z O O O O X
+X X X O O X O P
+X F X O O O O X
+X X X Z Z O X O 
+O O O O O Z O O
 O O O O X X X O
 O O O O X P X O
 
 frame: 1
-O O O O O X O F
-O O O O O X O O
-O O O O O X O O
-O P O O O O O O
-O O O O O O O O 
-O O O O O O O O
+O O O Z Z Z X O
+Z Z Z O O O O X
+X X X O O X O P
+X F X O O O O X
+X X X Z Z O X O 
+O O O O O Z O O
 O O O O X X X O
 O O O O X P X O
