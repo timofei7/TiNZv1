@@ -9,9 +9,9 @@ PREFIX=";; this is memory inits for %s\n;;remember that the frames are defined 0
 # from http://en.wikipedia.org/wiki/Web_colors#Web-safe_colors bottom of page
 COLORS = {"black":"00000000","gray":"01101110","silver":"01001001","white":"11111111","maroon":"10000000","red":"11100000",
 	"purple":"01100011","fuchsia":"11100011","green":"00010100","lime":"00011100","olive":"10010000",
-	"yellow":"11111100","navy":"00000001","blue":"00000011","teal":"00001010","aqua":"00011111"}
+	"yellow":"11111100","navy":"00000001","blue":"00000011","teal":"00001010","aqua":"00011111", "orange":"11111100"}
 # this is what we use in the definition files
-COLORMAP = {"X":"black","E":"grey","S":"silver","W":"white","M":"maroon","R":"red","P":"purple","F":"fuchsia","G":"green","L":"lime","O":"olive","Y":"yellow","N":"navy","B":"blue","T":"teal","A":"aqua"}
+COLORMAP = {"X":"black","E":"grey","S":"silver","W":"white","M":"maroon","R":"red","P":"purple","F":"fuchsia","G":"green","L":"lime","O":"olive","Y":"yellow","N":"navy","B":"blue","T":"teal","A":"aqua", "K":"orange"}
 
 # [1 bit occupied][1 bit enemy or powerup][6 bit identifier]
 idents ={"enemy1":"000001", "enemy2":"000010", "enemy3":"000011", "powerup1":"000100", "powerup2":"000101", "powerup3":"000110", "finish":"000111","blank": "000000"}
