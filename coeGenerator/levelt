@@ -29,28 +29,28 @@ O O O X X X O O
 O O X X F X X O
 frame: 13 
 P Q R R P P Q Q
-O Z Z O O O O O
+O Z Z O O O Z Z
 Z O O Z Y Z O O
-O O O O Y O Z O 
-O O O O Y O O Z
+O O O O Y O O O 
+O O O O Y O O O
 O O O O Y O O O
 O O O X X X O O
 O O X X F X X O
 frame: 12 
 P Q R R P P Q Q
-O Z Z O O O O O
-X O O Z Y Z O O
-O O O O Y O Z O 
-O O O O Y O O X
+O Z Z O O O Z Z
+Z O O Z Y Z O O
+O O O O Y O O O 
+O O O O Y O O O
 O O O O Y O O O
 O O O X X X O O
 O O X X F X X O
 frame: 11 
 P Q R R P P Q Q
-O Z Z O O O O O
+O Z Z O O O Z Z
 Z O O Z Y Z O O
-O O O O Y O Z O 
-O O O O Y O O Z
+O O O O Y O O O 
+O O O O Y O O O
 O O O O Y O O O
 O O O X X X O O
 O O X X F X X O
@@ -67,8 +67,8 @@ frame: 9
 P Q R R P P Q Q
 O O O O O O O O
 O O O O O O O O
-O O O Z O Z O O 
-O O O O Y O O O
+O O X Z O Z X O 
+O X O O Y O O X
 O O O O Y O O O
 O O O X X X O O
 O O X X F X X O
@@ -76,19 +76,19 @@ frame: 8
 P Q R R P P Q Q
 O O O O O O O O
 O O O Z O Z O O
-O O O O Y O Y X 
-O O Y Y Y Y O O
-O Z O O Y O O O
-X O O X X X O O
+O Z Y O Y O Z O 
+X O O Y Y Y O X
+O O O O Y O O O
+O O O X X X O O
 O O X X F X X O
 frame: 7
 P Q R R P P Q Q
 O O O O O O O O
 O O O Z O Z O O
-O O O O Y O Y Z 
-O O Y Y Y Y O O
-O Z O O Y O O O
-Z O O X X X O O
+O Y Y O Y O Y O 
+Z O O Y Y Y O Z
+O O O O Y O O O
+O O O X X X O O
 O O X X F X X O
 frame: 6
 P Q R R P P Q Q
@@ -121,10 +121,10 @@ frame: 3
 P Q R R P P Q Q
 O O O O O O O O
 O O O O O O O O
-R Z Z O O O O O 
-R O O Y O Y Z O
-O O O O Y O O R
-O O O X X X O R
+O Z Z O O O O O 
+X O O Y O Y Z O
+O O O O Y O O X
+O O O X X X O O
 O O X X F X X O
 frame: 2
 P Q R R P P Q Q
