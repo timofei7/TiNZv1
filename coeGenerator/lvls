@@ -1,0 +1,325 @@
+positional:
+
+frame: 10
+O O O O O O O O
+O O O O O O X X
+X X X O O O X P
+X F X O O O X X
+X X X O O O O O 
+O O O O O X O O
+O O O X O O O X
+O O O O X P X O
+
+frame: 9
+O O O O O O O O
+O O O O O O X X
+X X X O O O X P
+X F X O O O X X
+X X X O O O O O 
+O O O O O X O O
+O O O X O O O X
+O O O O X P X O
+
+frame: 10
+O O O O O O O O
+O O O O O O X X
+X X X O O O X P
+X F X O O O X X
+X X X O O O O O 
+O O O O O X O O
+O O O X O O O X
+O O O O X P X O
+
+frame: 9
+O O O O O O O O
+O O O O O O X X
+X X X O O O X P
+X F X O O O X X
+X X X O O O O O 
+O O O O O X O O
+O O O X O O O X
+O O O O X P X O
+
+frame: 12
+O O O O O O O O
+O O X O O O X X
+X X O O O O X P
+X F Z X O O X X
+X X O O O O O O 
+O O X O O X O O
+O O O X O O O X
+O O O O X P X O
+
+frame: 11
+O O O O O O O O
+O O X O O O X X
+X X O O O O X P
+X F Z X O O X X
+X X O O O O O O 
+O O X O O X O O
+O O O X O O O X
+O O O O X P X O
+
+frame: 10
+O O O O O O O O
+O O X O O O X X
+X X O O O O X P
+X F Z X O O X X
+X X O O O O O O 
+O O X O O X O O
+O O O X O O O X
+O O O O X P X O
+
+frame: 9
+O O O O O O O O
+O O X O O O X X
+X X O O O O X P
+X F Z X O O X X
+X X O O O O O O 
+O O X O O X O O
+O O O X O O O X
+O O O O X P X O
+
+frame: 8
+O O O O O O X O
+O O X O O O O X
+X X O O O X O P
+X F Z X O O O X
+X X O O O O X O 
+O O X O O O O O
+O O O O X X X O
+O O O O X P X O
+
+frame: 7
+O O O O O O X O
+O O X O O O O X
+X X O O O X O P
+X F Z X O O O X
+X X O O O O X O 
+O O X O O O O O
+O O O O X X X O
+O O O O X P X O
+
+frame: 6
+O O O O O O X O
+O O X O O O O X
+X X O O O X O P
+X F Z X O O O X
+X X O O O O X O 
+O O X O O O O O
+O O O O X X X O
+O O O O X P X O
+
+frame: 5
+O O O O O O X O
+O O X O O O O X
+X X O O O X O P
+X F Z X O O O X
+X X O O O O X O 
+O O X O O O O O
+O O O O X X X O
+O O O O X P X O
+
+frame: 4
+O O O O O O X O
+O O X O O O O X
+X X O O O X O P
+X F Z X O O O X
+X X O O O O X O 
+O O X O O O O O
+O O O O X X X O
+O O O O X P X O
+
+frame: 3
+O O O O O O X O
+O O X O O O O X
+X X O O O X O P
+X F Z X O O O X
+X X O O O O X O 
+O O X O O O O O
+O O O O X X X O
+O O O O X P X O
+
+frame: 2
+O O O O O O X O
+O O O O O O O X
+X X X O O X O P
+X F X O O O O X
+X X X O O O X O 
+O O O O O O O O
+O O O O X X X O
+O O O O X P X O
+
+frame: 1
+O O O O O O X O
+O O O O O O O X
+X X X O O X O P
+X F X O O O O X
+X X X O O O X O 
+O O O O O O O O
+O O O O X X X O
+O O O O X P X Opositional:
+
+frame: 16
+O O O O O O O O
+O O O O F O X O
+P P O O O X O X 
+X X X X O O O O
+X O O O O O O O
+O X O O O O O O
+O O X O O O O O
+O O O O O O O O
+
+frame: 15
+O O O O O O O O
+O O O O F O X O
+P P O O O X O X 
+X X X X O O O O
+X Y Y Y Y Y Y Y
+O X O O O O O O
+O O X O O O O O
+O O O O O O O O
+
+frame: 14
+O O O O O O O O
+O O O O F O X O
+P P O O O X O X 
+X X X X O O O O
+X O O O O O O O
+O X O O O O O O
+O O X O O O O O
+O O O O O O O O
+
+frame: 13
+O O O O O O O O
+O O O O F O X O
+P P O O O X O X 
+X X X X O O O O
+X X X X O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 12
+O O O O O O O O
+O O O O F O X O
+P O O O O X O X 
+X X X O O O O O
+X X X O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 11
+O O O O O O O O
+O O O O F O X O
+O O O O O X O X 
+X X O O O O O O
+X X O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 10
+O O O O O O O O
+O O O O F O X O
+O O O O O X O X 
+X O O O O O O O
+X O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 9
+O O O O O O O O
+O O O O F O X O
+O O O O O X O X 
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 8
+O O X O O O O O
+O X O O F O X O
+X O O O O X O X
+Z Z Z O O O O O
+X O O O O O O O 
+O X O O O O O O
+O O X O O O O O
+O O O O O O O O
+
+frame: 7
+O O O O O O O O
+O X O O F O X O
+X O O O O X O X
+Z Z O O O O O O
+X O O O O O O O 
+O X O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 6
+O O O O O O O O
+O O O O F O X O
+X O O O O X O X 
+Z O O O O O O O
+X O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 5
+O O O O O O O O
+O O O O F O X O
+O O O O O X O X 
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 4
+O O O O O O O O
+O O O O O O X O
+O O O O O F O X 
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+
+frame: 3
+
+O O O O O O O O
+O O O O O O F O
+O O O O O O O X 
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 2
+
+O O O O O O O O
+O O O O O O O O
+O O O O O O O F 
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 1
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O 
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
