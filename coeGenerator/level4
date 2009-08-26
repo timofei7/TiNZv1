@@ -1,0 +1,162 @@
+positional:
+
+frame: 16
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O R O O O O
+O O R P R O O O
+O Z Y Z Y Z O O
+R O O P O O R P
+
+frame: 15
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O R O O O
+O O O R P R O O
+O O Y Z Y Z Y O
+O R P O O R P R
+
+frame: 14
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O R O O O O
+O O R P R O O O
+O Z Y Z Y Z O O
+O O P O O O P O
+R O R O O R R O
+
+frame: 13
+O O O O O O O O
+O O O O O O O O
+O O O O R O O O
+O O O R P R O O
+O O Y Z Y Z Y O
+O O P O O O P O
+O O O O O R O O
+O R O R O R O O
+
+frame: 12
+O O O O O O O O
+O O O O O R O O
+O O O O R P R O
+O O O Z Y Z Y Z
+O O O O F O P O
+O O O R O R O O
+O O O O O O O O
+O O R O R O O O
+
+frame: 11
+O O O O R O O O
+O O O R P R O O
+O O Y Z Y Z Y O
+O O O R O R O O
+O O O F O O O O
+O O R O R O O O
+O O O O O O O O
+O O O O O O O O
+
+
+frame: 10
+O O O R O O O O
+O O R P R O O O
+O Z Y Z Y Z O O
+O O R F R O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+O O O O O O O O
+
+frame: 9
+O O O O P O O O 
+O O O P R P O O 
+O O Z Y Z Y Z O 
+O O O Z Z O O O 
+O O Z Y Y Z O O 
+O Z O Y Y O Z O 
+Z O O Y Y O O Z 
+O O O Y Y O O O 
+
+frame: 8
+O O O O P O O O 
+O O O R R R O O 
+O O R Y R Y R O 
+O O O O Z O O O 
+O O O O O F O O 
+O O O O O O Z O 
+O O O O O O O Z 
+O O O O O O O O 
+
+frame: 7
+O O O O P O O O 
+O O O R R R O O 
+O O Z R Z R Z O 
+O O O O Y O O O 
+O O O O Y O O O 
+O O O O F O O O 
+O O O O Y O O O 
+O O O O Y O O O 
+
+frame: 6
+O O O O P O O O 
+O O O R R R O O 
+O O R Y R Y R O 
+O O O Z O O O O 
+O O F O O O O O 
+O Z O O O O O O 
+Z O O O O O O O 
+O O O O O O O O 
+
+frame: 5
+O O O O R O O O 
+O O O R R R O O 
+O O R R R R R O 
+O O O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
+
+frame: 4
+O O O O P O O O 
+O O O R P R O O 
+O O R R P R R O 
+O O Y O Z O O O 
+O O O Z F Z O O 
+O O Z Z Z Z Z O 
+O O O O O O O O 
+O O O O O O O O 
+
+frame: 3
+O O O O P O O O 
+O O O R P R O O 
+O O R R P R R O 
+O Y O O Z O O O 
+O O O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
+
+frame: 2
+O O O P R R O O 
+O O R R R P R O 
+O O O O Z O O O 
+O O O Z F Z O O 
+O Y O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
+
+frame: 1
+O O R R R R P O 
+O O O O Z O O O 
+O O O O O O O O 
+O O O O O O O O 
+Y O O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
+O O O O O O O O 
