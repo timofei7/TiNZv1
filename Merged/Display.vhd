@@ -37,6 +37,10 @@ entity Display is
 			  selectDisplay : in STD_LOGIC_VECTOR(1 downto 0);
 			 -- colorReady : in STD_LOGIC;
            displayDone : in STD_LOGIC;	--from LED driver
+			  heatSeekerColor : IN STD_LOGIC_VECTOR(7 downto 0); --from Heatseeker Module
+			  heatSeekerX : IN STD_LOGIC_VECTOR(2 downto 0);
+			  heatSeekerY : IN STD_LOGIC_VECTOR(2 downto 0);
+			  activeSeeker : IN STD_LOGIC;
            getRow : out  STD_LOGIC_VECTOR(2 downto 0);
            getColumn : out  STD_LOGIC_VECTOR(2 downto 0);
 			--  getColor : out STD_LOGIC;
@@ -165,14 +169,17 @@ getRow <= std_logic_vector(row);
 getColumn <= std_logic_vector(col);
 
 
-DisplaySelector: process(selectDisplay, playerX, playerY, row, col, playerColor, colorByte, introByte, deathByte, winByte)
+DisplaySelector: process(selectDisplay, playerX, playerY, row, col, playerColor, colorByte, introByte, deathByte, winByte, activeSeeker, heatSeekerX, heatSeekerY)
 begin
 	if selectDisplay="00" then
 		if row=unsigned(playerX) and col=unsigned(playerY) then
 			colorSelected <= playerColor;
-		else 
+		elsif row=unsigned(heatSeekerX) and col=unsigned(heatSeekerY) and activeSeeker='1' then
+			colorSelected <= heatSeekerColor;
+		else
 			colorSelected <= colorByte;
 		end if;
+		
 	elsif selectDisplay="01" then
 		colorSelected <= introByte;
 	elsif selectDisplay="10" then

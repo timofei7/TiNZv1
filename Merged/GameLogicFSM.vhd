@@ -27,6 +27,9 @@ entity GameLogicFSM is
 			  collisionData : in  STD_LOGIC_VECTOR (1 downto 0);
            logicEN : in  STD_LOGIC;
            gameOver : in  STD_LOGIC;
+			  activeSeeker : in STD_LOGIC; --from HeatSeeker Module
+			  seekerHit : IN STD_LOGIC; --from HeatSeeker Module
+			  initHeatSeeker : OUT STD_LOGIC; --to HeatSeeker Module
            TESTOUT: out std_logic_vector(7 downto 0);
            disablePU : out  STD_LOGIC;
            death : out  STD_LOGIC;
@@ -76,6 +79,7 @@ begin
 end process;
 death <= '1' when countvamp = "01" else '0';
 
+
 --Timer for shield disable
 --Timer starts when player hits enemy when shielded
 shieldDisableTimer: process(Clk, startShieldTimer)
@@ -100,7 +104,7 @@ process(Clk)
 begin
    if rising_edge(Clk) then
       if logicEN = '1' then
-         if gameOver = '1' then
+         if gameOver = '1' or (activeSeeker='1' and seekerHit='1') then
             currState <= DeathState;
          else
             currState <= nextState;
@@ -118,7 +122,7 @@ disablePU <= disableSig;
 makeSoundLogic <= soundSig;
 
 --FSM for GameLogic
-GameLogic: process(currState, collisionData, logicEN, shieldDepleted)
+GameLogic: process(currState, collisionData, logicEN, shieldDepleted, activeSeeker)
 begin
 	nextState <= currState;							
    --Defaults
@@ -136,6 +140,7 @@ begin
    LoseToEnemyState <= '0';
 	soundSig<= "000"; --for Noises module
 	soundSelect <= '0'; --for Noises module
+	initHeatSeeker <= '0';
    case currState is
       when DoNothing =>
          if logicEN = '1' then
@@ -165,6 +170,9 @@ begin
          currPlayerColor <= "01";
 			soundSig <= "010";  --sound for getting power-up
 			soundSelect <= '1'; --for Noises module
+			if activeSeeker='0' then
+				initHeatSeeker <= '1';
+			end if;
          nextState <= Shielded;
       when Shielded =>		--shielded
          shieldedState <= '1'; --TESTING
