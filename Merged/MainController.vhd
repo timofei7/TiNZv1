@@ -30,10 +30,12 @@ entity MainController is
            ResetALL : in STD_LOGIC;
            GameOver : in STD_LOGIC;
            Level    : out  STD_LOGIC_VECTOR(1 downto 0);
+           LevelDifficulty: out STD_LOGIC_VECTOR(1 downto 0);
            seqReset : out  STD_LOGIC;
            TESTOUT: out std_logic_vector(7 downto 0);
            displaySelector : out  STD_LOGIC_VECTOR(1 downto 0);
            sevenSegEN : out  STD_LOGIC;
+           winSound : out std_logic;
            resetGameT : out  STD_LOGIC;
            resetPlayer : out  STD_LOGIC;
 			  moveEN : out STD_LOGIC;
@@ -51,13 +53,14 @@ architecture Behavioral of MainController is
 	signal gameReset : std_logic := '0';
 	signal gameResetCount : unsigned(NCLKDIV-1 downto 0) := (others=>'0');
 
-	type stateType is (Start, IntroDisplay, Reset, Play, StartDeath, DeathDisplay, StartWin, WinDisplay, Waiting, ResetGameTimer);
+	type stateType is (Start, IntroDisplay, Reset, Play, StartDeath, DeathDisplay, StartWin, WinDisplay, Waiting);
    signal currState, nextState: stateType;
    
    signal teststate: std_logic_vector(2 downto 0):= "000";
    signal statesig: std_logic_vector(2 downto 0):= "000";
    
    signal LevelSig: unsigned(1 downto 0):= "00";
+   signal LevelDifficultySig: unsigned(1 downto 0):= "00";
 
 begin
 
@@ -65,13 +68,17 @@ TESTOUT <= "0000" & death & teststate;
 
 Level <= std_logic_vector(LevelSig);
 
---level counter
+
+--level and difficulty counter
 process(Clk)
    begin
       if rising_edge(Clk) then
-         if gameOver = '1' then  --reset to level 1 if you die
-            LevelSig <= "00";
-         elsif WIN = '1' then --increment da level!  we just roll over to level 0 if person is awesome
+--         if gameOver = '1' then  --reset to level 1 if you timeout
+--            LevelSig <= "00";
+         if WIN = '1' then --increment da level!  we just roll over to level 0 if person is awesome
+            if LevelSig = "11" then
+               LevelDifficultySig <= LevelDifficultySig + 1;
+            end if;
             LevelSig <= LevelSig + 1; --implement something cooler like switching accelerometer axis!
          end if;
       end if;
@@ -137,6 +144,7 @@ begin
 	sevenSegSelector <= '0';
 	startResetTimer <= '0';
 	soundEN <= '0';
+   winSound <= '0'; --this is hack.... rethink
    statesig <= "000"; --FOR TESTING ONLY
 	case currState is
 		when Start =>
@@ -199,6 +207,7 @@ begin
 			displaySelector <= "11";
 			displayEN <= '1';
 			soundEN <= '1';
+         winSound <= '1';
 			if seqDone='1' then
 				nextState <= Waiting;
 			else 

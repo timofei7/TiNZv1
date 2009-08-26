@@ -33,13 +33,12 @@ entity Play is
       
       TESTOUT: out std_logic_vector(7 downto 0);
       SpeedRate: IN std_logic_vector(1 downto 0);
+      LevelDifficulty: in STD_LOGIC_VECTOR(1 downto 0);
       
       resetPlayer : IN std_logic; --resets player pos
 		moveEN : IN std_logic;		--enables move signals
       playerX : OUT std_logic_vector(2 downto 0); --current pos
       playerY : OUT std_logic_vector(2 downto 0); --''
-      
-      RandomizeDirection: in std_logic_vector(1 downto 0);
       
       resetGameT : IN std_logic;
       sevenSegEN : IN std_logic;
@@ -62,7 +61,7 @@ PORT(
    Yin : IN std_logic;
    TESTOUT: out std_logic_vector(7 downto 0); --for testing
    SpeedRate: in std_logic_vector(1 downto 0);
-   Randomize: in std_logic_vector(1 downto 0);
+   LevelDifficulty: in STD_LOGIC_VECTOR(1 downto 0);
    XAnalogIn : IN std_logic;
    YAnalogIn : IN std_logic;
    XAnalogOut : OUT std_logic;
@@ -129,7 +128,7 @@ theaccelerometer: ACCELDecoder PORT MAP(
 		Yin => Yin,
       TESTOUT => OPEN,
       SpeedRate => SpeedRate,
-      Randomize => RandomizeDirection,
+      LevelDifficulty => LevelDifficulty,
 		XAnalogIn => XAnalogIn,
 		YAnalogIn => YAnalogIn,
 		XAnalogOut => XAnalogOut,

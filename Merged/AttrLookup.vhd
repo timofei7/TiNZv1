@@ -35,12 +35,12 @@ entity AttrLookup is
 end AttrLookup;
 
 architecture Behavioral of AttrLookup is
-     constant enemy1Color : std_logic_vector(7 downto 0) := "11100000";  --red enemies
-     constant enemy2Color : std_logic_vector(7 downto 0) := "11111100";  --yellow enemies
-     constant enemy3Color : std_logic_vector(7 downto 0) := "11101000";  --orange enemies
-     constant pu1Color : std_logic_vector(7 downto 0) := "00000011"; --pure blue pups
-     constant pu2Color : std_logic_vector(7 downto 0) := "00000010"; --darker blue pups
-     constant pu3Color : std_logic_vector(7 downto 0) := "00000001"; --dark blue pups
+     constant enemy1Color : std_logic_vector(7 downto 0) := "11100000"; --red enemies X
+     constant enemy2Color : std_logic_vector(7 downto 0) := "11111100";  --yellow enemies Y
+     constant enemy3Color : std_logic_vector(7 downto 0) := "11101000";  --orange enemies Z
+     constant pu1Color : std_logic_vector(7 downto 0) := "00000011"; --pure blue pups P
+     constant pu2Color : std_logic_vector(7 downto 0) := "00000010"; --darker blue pups Q
+     constant pu3Color : std_logic_vector(7 downto 0) := "00000001"; --dark blue pups R
      constant emptyColor : std_logic_vector(7 downto 0) := "00000000"; --blanks
      constant finishColor : std_logic_vector(7 downto 0) := "11111111"; --finish line color
      

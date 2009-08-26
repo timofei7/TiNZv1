@@ -25,13 +25,12 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity Noises is
     Port ( Clk : IN  STD_LOGIC;
-           --NoiseType : IN  STD_LOGIC_VECTOR (2 downto 0); --now a signal rather than port
 			  soundEN : IN STD_LOGIC;		 --enables sound, sent from Controller
 			  soundSelect : IN STD_LOGIC;  --chooses between sound cmd from GameLogic or Player
 			  makeSoundLogic : IN STD_LOGIC_VECTOR(2 downto 0);
 			  makeSoundMove : IN STD_LOGIC_VECTOR(2 downto 0);
+           winSound: in std_logic;
 			  TESTOUT : OUT STD_LOGIC_VECTOR(7 downto 0);
-           --NoiseON: IN STD_LOGIC; --now a signal rather than port
            NoiseOut : OUT  STD_LOGIC);
 end Noises;
 
@@ -51,7 +50,7 @@ END COMPONENT;
 signal freqout: std_logic_vector(16 downto 0);
 signal NoiseON : std_logic := '0';
 signal makeSound : std_logic_vector(2 downto 0) := "000";
-signal NoiseType : std_logic_vector(2 downto 0) := "000";
+signal NoiseType : std_logic_vector(3 downto 0) := "0000";
 
 
 --Timer signals for death siren
@@ -86,8 +85,34 @@ signal startSHBeepTimer : std_logic := '0';
 signal shbeepTimer : unsigned(NCLKDIV_SHBEEP-1 downto 0) := (others=>'0');
 signal shbeepDone : std_logic := '0';
 
+
+--FOR MUSIC: 
+constant d6: std_logic_vector(16 downto 0):=      "00101001100100010"; --21282 = 1174.66hz
+constant g6: std_logic_vector(16 downto 0):=      "00011111001001000"; --15944 = 1567.98hz
+constant d7: std_logic_vector(16 downto 0):=      "00010100110010001";-- 10641 = 2349.32hz
+constant c7: std_logic_vector(16 downto 0):=      "00010111010101000";-- 11944 = 2093.00hz
+constant b7: std_logic_vector(16 downto 0):=      "00011000101101110";-- 12654 = 1975.53hz
+constant a7: std_logic_vector(16 downto 0):=      "00011011101111100";-- 14204 = 1760.00hz
+constant fsharp7: std_logic_vector(16 downto 0):= "00010000011111110";-- 8446 = 2959.96hz
+constant g7: std_logic_vector(16 downto 0):=      "00001111100100100";--7972 3135hz
+
+--Timer signals beep times
+constant NCLKDIV_EIGHTH: integer := 22; 					--assuming clock freq of 50 MHz
+constant MAX_EIGHTH_CNT: integer := 2**NCLKDIV_EIGHTH-1; -- max count of clock divider, 1...11
+signal enableEIGHTHNote : std_logic := '0';
+signal eighthnotecounter : unsigned(NCLKDIV_EIGHTH-1 downto 0) := (others=>'0');
+signal eighthnote : std_logic := '0';
+signal enableQUARTERNote : std_logic := '0';
+signal quarternotecounter : unsigned(3 downto 0) := (others=>'0');
+signal quarternote : std_logic := '0';
+signal enableHALFNote : std_logic := '0';
+signal halfnotecounter : unsigned(3 downto 0) := (others=>'0');
+signal halfnote : std_logic := '0';
+
+
+
 --State machine states, signals
-type stateType is (Quiet, GotPU, StuckandLostPU, DeathSiren1, DeathSiren2, Move);
+type stateType is (Quiet, GotPU, StuckandLostPU, DeathSiren1, DeathSiren2, Move, sw1,sw2,sw3,sw4,sw5,sw6,sw7,sw8,sw9,sw10,sw11,sw12,sw13,sw14,sw15,sw16,sw17,sw18,sw19);
 signal currState, nextState: stateType;
 
 signal soundsig: std_logic_vector(2 downto 0):="000";
@@ -103,14 +128,14 @@ noisemaker: Noise PORT MAP(
 		SIGOUT => NoiseOut
 	);
 
-
+--for testing only
 process(Clk)
    begin
       if rising_edge(Clk) then
          if makeSoundMove = soundsig and makeSOundMove /= "000" then
             soundsig <= soundsig;
          else
-            soundsig <= makeSOundMove;
+            soundsig <= makeSound;
          end if;
       end if;
 end process;
@@ -119,16 +144,34 @@ end process;
 process(NoiseType)
    begin
       case NoiseType is
-         when "001" =>  --125000,  200hz 
+         when "0001" =>  --125000,  200hz 
             FreqOut <= "11110100001001000";
-         when "010" => -- 25000,  1000hz
+         when "0010" => -- 25000,  1000hz
             FreqOUT <= "00110000110101000";
-         when "011" => -- 12207,  2048hz
+         when "0011" => -- 12207,  2048hz
             FreqOUT <= "00010111110101111";
-         when "100" => -- 6250,   4000hz
+         when "0100" => -- 6250,   4000hz
             FreqOUT <= "00001100001101010";
-         when "101" => -- 4166,   6000hz
+         when "0101" => -- 4166,   6000hz
             FreqOUT <= "00001000001000110";
+         when "0110" =>  --d6
+            FreqOUT <= d6;
+         when "0111" =>  --g6
+            FreqOUT <= g6;
+         when "1000" =>  --d7
+            FreqOUT <= d7;
+         when "1001" =>  --c7
+            FreqOUT <= c7;
+         when "1010" =>  --b7
+            FreqOUT <= b7;
+         when "1011" =>  --a7
+            FreqOUT <= a7;
+         when "1100" =>  --fsharp7
+            FreqOUT <= fsharp7;
+         when "1101" =>  --g7
+            FreqOUT <= g7;
+         --when "1110" =>  --
+         --when "1111" =>  --
          when others =>
             FreqOUT <= "11110100001001000";
       end case;
@@ -136,10 +179,12 @@ end process;
 
 
 --Chooses between sound type determined by GameLogic or by Display module
-chooseSound: process(soundSelect, makeSoundMove, makeSoundLogic)
+chooseSound: process(soundSelect, makeSoundMove, makeSoundLogic, winSound)
 begin
-	if soundSelect='1' then
+	if soundSelect='1' and winSound = '0' then
 		makeSound <= makeSoundLogic;
+   elsif winSound = '1' then
+      makeSound <= "110"; --hardcode the win sound --hack revisit
 	else
 		makeSound <= makeSoundMove;
 	end if;
@@ -162,18 +207,22 @@ begin
 end process stateTransition;
 
 
-soundFSM: process(currState, makeSound, sirenOscillate, sirenDone, beepDone, shbeepDone)
+soundFSM: process(currState, makeSound, sirenOscillate, sirenDone, beepDone, shbeepDone, eighthnote,halfnote,quarternote)
 begin
 	--Defaults
-	NoiseON <= '0';
-	NoiseType <= "000";
+	NoiseON <= '1';
+	NoiseType <= "0000";
 	startSirenTimer <= '0';
 	startOscillateTimer <= '0';
    startBeepTimer <= '0';
    startSHBeepTimer <= '0';
 	nextState <= Quiet;
+   enableHALFNote <= '0';
+   enableQuarterNote <='0';
+   enableEIGHTHNote <= '0';
 	case currState is
 		when Quiet =>
+         NoiseON <= '0';
 			if makeSound="001" then
 				nextState <= StuckandLostPU;
 			elsif makeSound="010" then
@@ -182,12 +231,13 @@ begin
 				nextState <= DeathSiren1;
 			elsif makeSound="101" then
 				nextState <= Move;
+         elsif makeSound="110" then
+            nextState <= sw1;
 			else
 				nextState <= Quiet;
 			end if;
 		when StuckandLostPU =>
-			NoiseON <= '1';
-			NoiseType <= "001";
+			NoiseType <= "0001";
          startBeepTimer <= '1';
          if beepDone = '1' then 
             nextState <= Quiet;
@@ -195,8 +245,7 @@ begin
             nextState <= StuckandLostPU;
          end if;		
       when Move =>
-			NoiseON <= '1';
-			NoiseType <= "101";
+			NoiseType <= "0101";
          startSHBeepTimer <= '1';
          if shbeepDone = '1' then 
             nextState <= Quiet;
@@ -210,8 +259,7 @@ begin
             nextState <= Move;
          end if;
 		when GotPU =>
-			NoiseON <= '1';
-			NoiseType <= "010";
+			NoiseType <= "0010";
          startBeepTimer <= '1';
          if beepDone = '1' then 
             nextState <= Quiet;
@@ -219,8 +267,7 @@ begin
             nextState <= GotPU;
          end if;
 		when DeathSiren1 =>
-			NoiseON <= '1';
-			NoiseType <= "011";
+			NoiseType <= "0011";
 			startSirenTimer <= '1';
 			startOscillateTimer <= '1';
 			if sirenOscillate='1' and sirenDone='0' then
@@ -231,21 +278,182 @@ begin
 				nextState <= DeathSiren1;
 			end if;
 		when DeathSiren2 =>
-			NoiseON <= '1';
-			NoiseType <= "010";
+			NoiseType <= "0010";
 			startSirenTimer <= '1';
 			startOscillateTimer <= '1';
 			if sirenOscillate='1' and sirenDone='0' then
 				nextState <= DeathSiren1;
 			elsif sirenOscillate='0' and sirenDone='0' then
 				nextState <= DeathSiren2;
-         else
-            nextState <= Quiet;
 			end if;
+      when sw1 =>
+         enableEighthNote <= '1';
+         NoiseType <= "0110";
+         if eighthnote = '1' then
+            nextState <= sw2;
+         end if;
+      when sw2 => 
+         enableEighthNote <= '1';
+         NoiseType <= "0110";
+         if eighthnote = '1' then
+            nextState <= sw3;
+         end if;
+      when sw3 => 
+         enableEighthNote <= '1';
+         NoiseType <= "0110";
+         if eighthnote = '1' then
+            nextState <= sw4;
+         end if;
+      when sw4 =>
+         enableEighthNote <= '1';
+         enableQuarterNote <= '1';
+         enableHalfNote <= '1';
+         NoiseType <= "0111";
+         if halfnote = '1' then
+            nextState <= sw5;
+         end if;
+      when sw5 =>
+         enableEighthNote <= '1';
+         enableQuarterNote <= '1';
+         enableHalfNote <= '1';
+         NoiseType <= "1000";
+         if halfnote = '1' then
+            nextState <= sw6;
+         end if;
+      when sw6 =>
+         enableEighthNote <='1';
+         NoiseType <= "1001";
+         if eighthnote = '1' then
+            nextState <= sw7;
+         end if;
+      when sw7 =>
+         enableEighthNote <='1';
+         NoiseType <= "1010";
+         if eighthnote = '1' then
+            nextState <= sw8;
+         end if;
+      when sw8 =>
+         enableEighthNote <='1';
+         NoiseType <= "1011";
+         if eighthnote = '1' then
+            nextState <= sw9;
+         end if;
+      when sw9 =>
+         enableEighthNote <= '1';
+         enableQuarterNote <= '1';
+         enableHalfNote <= '1';
+         NoiseType <= "1101";
+         if halfnote = '1' then
+            nextState <= sw10;
+         end if;
+      when sw10 =>
+         enableEighthNote <= '1';
+         enableQuarterNote <= '1';
+         NoiseType <= "1000";
+         if quarternote = '1' then
+            nextState <= sw11;
+         end if;
+      when sw11 =>
+         enableEighthNote <= '1';
+         NoiseType <= "1001";
+         if eighthnote = '1' then
+            nextState <= sw12;
+         end if;
+      when sw12 =>
+         enableEighthNote <= '1';
+         NoiseType <= "1010";
+         if eighthnote = '1' then
+            nextState <= sw13;
+         end if;
+      when sw13 =>
+         enableEighthNote <= '1';
+         NoiseType <= "1011";
+         if eighthnote = '1' then
+            nextState <= sw14;
+         end if;
+      when sw14  =>
+         enableEighthNote <= '1';
+         enableQuarterNote <= '1';
+         enableHalfNote <= '1';
+         NoiseType <= "1101";
+         if halfnote = '1' then
+            nextState <= sw15;
+         end if;
+      when sw15 =>
+         enableEighthNote <= '1';
+         enableQuarterNote <= '1';
+         NoiseType <= "1000";
+         if quarternote = '1' then
+            nextState <= sw16;
+         end if;
+      when sw16 =>
+         enableEighthNote <= '1';
+         NoiseType <= "1001";
+         if eighthnote = '1' then
+            nextState <= sw17;
+         end if;
+      when sw17 =>
+         enableEighthNote <= '1';
+         NoiseType <= "1010";
+         if eighthnote = '1' then
+            nextState <= sw18;
+         end if;
+      when sw18 =>
+         enableEighthNote <= '1';
+         NoiseType <= "1001";
+         if eighthnote = '1' then
+            nextState <= sw19;
+         end if;
+      when sw19 =>
+         enableEighthNote <= '1';
+         enableQuarterNote <= '1';
+         enableHalfNote <= '1';
+         NoiseType <= "1011";
+         if halfnote = '1' then
+            nextState <= Quiet;
+         end if;
 		when others =>
 			nextState <= Quiet;
 	end case;
 end process soundFSM;
+
+
+--Timer for eighth note
+eighthnotetimer: process(Clk, enableEighthNote)
+   begin 
+		if enableEighthNote='1' then
+			if rising_edge(Clk) then 
+				eighthnotecounter <= eighthnotecounter+1;
+			else
+				eighthnotecounter <= eighthnotecounter;
+			end if;
+		else 
+			eighthnotecounter <= (others=>'0');
+		end if;
+end process eighthnotetimer; 
+eighthnote <= '1' when eighthnotecounter = MAX_EIGHTH_CNT else '0';
+
+quarternotetimer: process(Clk, enableQuarterNote)
+   begin
+      if rising_edge(clk) then
+         if enableQuarterNote = '1' then
+            quarternotecounter <= quarternotecounter + 1;
+         end if;
+      end if;
+end process;
+quarternote <= '1' when quarternotecounter = "100" else '0';
+
+halfnotetimer: process(Clk, enableHalfNote)
+   begin
+      if rising_edge(clk) then
+         if enableHalfNote = '1' then
+            halfnotecounter <= halfnotecounter + 1;
+         end if;
+      end if;
+end process;
+halfnote <= '1' when halfnotecounter = "100" else '0';
+
+
 
 
 --Timer to end death siren sound

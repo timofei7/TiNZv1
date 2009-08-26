@@ -28,6 +28,8 @@ entity cellGame is
            SCLK : out  STD_LOGIC;
            CS : out  STD_LOGIC;
            TESTOUT: out std_logic_vector(7 downto 0);
+           Difficulty: in std_logic_vector(2 downto 0);
+           SoundON: in std_logic;
            Xin : IN std_logic;
            Yin : IN std_logic;
            XAnalogIn : IN std_logic;
@@ -55,12 +57,14 @@ COMPONENT MainController
       ResetALL: IN std_logic;
       GameOver: IN std_logic;
       Level : OUT std_logic_vector(1 downto 0);
+      LevelDifficulty: out STD_LOGIC_VECTOR(1 downto 0);
 		seqReset : OUT std_logic;
 		displaySelector : OUT std_logic_vector(1 downto 0);
 		sevenSegEN : OUT std_logic;
 		resetGameT : OUT std_logic;
 		resetPlayer : OUT std_logic;  
 		moveEN : OUT std_logic;
+      winSound: out std_logic;
       TESTOUT: out std_logic_vector(7 downto 0);
 	--	resetPU : OUT std_logic;		--This output directed through ~displayEN
 		displayEN : OUT std_logic;
@@ -113,6 +117,7 @@ PORT(
 	soundSelect : IN STD_LOGIC;  --chooses between sound cmd from GameLogic or Player
 	makeSoundLogic : IN STD_LOGIC_VECTOR(2 downto 0);
 	makeSoundMove : IN STD_LOGIC_VECTOR(2 downto 0); 
+   winSound: in std_logic;
    NoiseOut : OUT std_logic;
 	TESTOUT : OUT STD_LOGIC_VECTOR(7 downto 0)
    );
@@ -130,13 +135,13 @@ PORT(
    resetGameT : IN std_logic;
    TESTOUT: out std_logic_vector(7 downto 0);
    SpeedRate: IN std_logic_vector(1 downto 0);
+   LevelDifficulty: in STD_LOGIC_VECTOR(1 downto 0);
    sevenSegEN : IN std_logic;
    sevenSegSelector : IN std_logic;          
    XAnalogOut : OUT std_logic;
    YAnalogOut : OUT std_logic;
    playerX : OUT std_logic_vector(2 downto 0);
    playerY : OUT std_logic_vector(2 downto 0);
-   RandomizeDirection: in std_logic_vector(1 downto 0);
    gameOver : OUT std_logic;
    an : OUT std_logic_vector(3 downto 0);
    seg : OUT std_logic_vector(0 to 6);
@@ -275,7 +280,8 @@ signal resetPlayer : std_logic := '0';
 signal moveEN : std_logic := '0';
 
 --Sound signals
-signal soundEN : std_logic := '0'; --HARDCODING for TESTING
+signal soundEN : std_logic := '0';
+signal soundENSig : std_logic := '0'; 
 signal soundSelect : std_logic := '0';
 signal makeSoundLogic : std_logic_vector(2 downto 0) := "000";
 signal makeSoundMove : std_logic_vector(2 downto 0) := "000";
@@ -288,12 +294,17 @@ signal heatSeekerColor : std_logic_vector(7 downto 0) := "00000000";
 signal heatSeekerX : std_logic_vector(2 downto 0) := "000";
 signal heatSeekerY : std_logic_vector(2 downto 0) := "000";
 
-signal Level: std_logic_vector(1 downto 0):= "00"; --FOR TESTING -- connect to LOGIC
+signal LevelDifficulty: std_logic_vector(1 downto 0):= "00";
+signal LevelDifficultySig: std_logic_vector(1 downto 0):="00";
+signal winSound : std_logic; --this is hack rethink this
 
+signal Level: std_logic_vector(1 downto 0);
 
 begin
 
-
+--override difficulty counter with switches if switch 6 is enabled
+LevelDifficultySig <= LevelDifficulty when Difficulty(0) = '0' else Difficulty(2 downto 1);
+soundENSig <= soundEN when soundON = '1' else '0';
 
 deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
@@ -313,9 +324,11 @@ GameController: MainController PORT MAP(
       ResetALL => ResetALL,
       GameOver => GameOver,
       Level => Level,
+      LevelDifficulty => LevelDifficulty,
 		seqReset => OPEN,
 		displaySelector => selectBoard,
 		sevenSegEN => sevenSegEN,
+      winSound => winSound,
 		resetGameT => resetTimer,
 		resetPlayer => resetPlayer,
 		moveEN => moveEN,
@@ -346,7 +359,7 @@ thesequences: Sequences PORT MAP(
 		Clk => Clk,
 		row => row,
       col => col,
-      TESTOUT => TESTOUT,
+      TESTOUT => OPEN,
 		seqReset => ResetDisplay,
 		seqDone => seqDone,
 		deathColor => deathColor,
@@ -356,12 +369,13 @@ thesequences: Sequences PORT MAP(
    
 thenoises: Noises PORT MAP(
 		Clk => Clk,
-		soundEN => soundEN,
+		soundEN => soundENSig,
 		soundSelect => soundSelect,
 		makeSoundLogic => makeSoundLogic,
 		makeSoundMove => makeSoundMove,
 		NoiseOut => NoiseOut,
-		TESTOUT => OPEN
+      winSOund => winSound,
+		TESTOUT => TESTOUT
 	);
 
 
@@ -374,12 +388,12 @@ theplay: Play PORT MAP(
 		XAnalogOut => XAnalogOUt,
 		YAnalogOut => YAnalogOut,
       TESTOUT => OPEN,
-      SpeedRate => Level, --direct correspondence 
+      SpeedRate => Level, --direct correspondence
+      LevelDifficulty => LevelDifficultySig,      
 		resetPlayer => ResetPlayer,
 		moveEN => moveEN,
 		playerX => playerX,
 		playerY => playerY,
-      RandomizeDirection => Level, --randomize on win
 		resetGameT => resetTimer,
 		sevenSegEN => sevenSegEN,
 		sevenSegSelector => sevenSegSelector,

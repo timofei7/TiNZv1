@@ -132,10 +132,10 @@ NET "TESTOUT<7>" LOC = "R4"; # Bank = 3, Pin name = IO/VREF_3, Type = VREF, Sch 
 #NET "sevenSegSelector" LOC = "H18"; # Bank = 1, Pin name = IP/VREF_1, Type = VREF, Sch name = SW1
 #NET "Data<2>" LOC = "K18"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW2
 #NET "Data<3>" LOC = "K17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW3
-#NET "Data<4>" LOC = "L14"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW4
-#NET "NoiseType<0>" LOC = "L13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW5
-#NET "NoiseType<1>" LOC = "N17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW6
-#NET "NoiseType<2>" LOC = "R17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW7
+NET "SoundON" LOC = "L14"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW4
+NET "Difficulty<0>" LOC = "L13"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW5
+NET "Difficulty<1>" LOC = "N17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW6
+NET "Difficulty<2>" LOC = "R17"; # Bank = 1, Pin name = IP, Type = INPUT, Sch name = SW7
 #
 ## Buttons
 #

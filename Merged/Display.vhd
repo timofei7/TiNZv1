@@ -169,7 +169,7 @@ getRow <= std_logic_vector(row);
 getColumn <= std_logic_vector(col);
 
 
-DisplaySelector: process(selectDisplay, playerX, playerY, row, col, playerColor, colorByte, introByte, deathByte, winByte, activeSeeker, heatSeekerX, heatSeekerY)
+DisplaySelector: process(selectDisplay, playerX, playerY, row, col, playerColor, colorByte, introByte, deathByte, winByte, activeSeeker, heatSeekerX, heatSeekerY, heatSeekerColor)
 begin
 	if selectDisplay="00" then
 		if row=unsigned(playerX) and col=unsigned(playerY) then

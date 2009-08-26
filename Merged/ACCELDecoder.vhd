@@ -27,7 +27,7 @@ entity ACCELDecoder is
            Clk : in  STD_LOGIC; 
            TESTOUT: out std_logic_vector(7 downto 0);
            SpeedRate: in std_logic_vector(1 downto 0);
-           Randomize: in std_logic_vector(1 downto 0);
+           LevelDifficulty: in std_logic_vector(1 downto 0);
            Xin : in  STD_LOGIC;
            Yin : in  STD_LOGIC;
 			  XAnalogIn : in  STD_LOGIC;
@@ -114,9 +114,9 @@ architecture Behavioral of ACCELDecoder is
 begin
 
 --randomize haha the directions of the accelerometer
-process(xminusswap, yminusswap, xplusswap, yplusswap, Randomize)
+process(xminusswap, yminusswap, xplusswap, yplusswap, LevelDifficulty)
    begin
-      case Randomize is
+      case LevelDifficulty is
          when "00" =>  --normal
             xminus <= xminusswap;
             yminus <= yminusswap;
