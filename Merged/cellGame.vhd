@@ -82,6 +82,9 @@ PORT(
    disablePU : OUT std_logic;
    death : OUT std_logic;
    --shieldSet : OUT std_logic;
+	activeSeeker : in STD_LOGIC; --from HeatSeeker Module
+   seekerHit : IN STD_LOGIC; --from HeatSeeker Module
+   initHeatSeeker : OUT STD_LOGIC; --to HeatSeeker Module
 	makeSoundLogic : OUT std_logic_vector(2 downto 0);
 	soundSelect : OUT std_logic;
    playerColor : OUT std_logic_vector(1 downto 0)
@@ -165,6 +168,10 @@ COMPONENT Display
       winByte   : IN std_logic_vector(7 downto 0);
 		playerColor : IN std_logic_vector(7 downto 0);
 		selectDisplay : IN std_logic_vector(1 downto 0);
+		heatSeekerColor : IN STD_LOGIC_VECTOR(7 downto 0); --from Heatseeker Module
+	   heatSeekerX : IN STD_LOGIC_VECTOR(2 downto 0);
+	   heatSeekerY : IN STD_LOGIC_VECTOR(2 downto 0);
+	   activeSeeker : IN STD_LOGIC;
 	--	colorReady : IN std_logic;      
       displayDone : IN std_logic;
 		getRow : OUT std_logic_vector(2 downto 0);
@@ -206,6 +213,21 @@ COMPONENT GameBoard
 		ColorOUT : OUT std_logic_vector(7 downto 0);
 		ColorDONE : OUT std_logic;
 		CollisionData : OUT std_logic_vector(1 downto 0)
+		);
+END COMPONENT;
+
+COMPONENT HeatSeeker
+	PORT(
+		Clk : IN std_logic;
+		reset : IN std_logic;
+		playerX : IN std_logic_vector(2 downto 0);
+		playerY : IN std_logic_vector(2 downto 0);
+		initHeatSeeker : IN std_logic;          
+		heatSeekerColor : OUT std_logic_vector(7 downto 0);
+		activeSeeker : OUT std_logic;
+		heatSeekerXOut : OUT std_logic_vector(2 downto 0);
+		heatSeekerYOut : OUT std_logic_vector(2 downto 0);
+		seekerHit : OUT std_logic
 		);
 END COMPONENT;
    
@@ -258,6 +280,14 @@ signal soundSelect : std_logic := '0';
 signal makeSoundLogic : std_logic_vector(2 downto 0) := "000";
 signal makeSoundMove : std_logic_vector(2 downto 0) := "000";
 
+--Heat seeking powerup signals
+signal initHeatSeeker : std_logic := '0';
+signal activeSeeker : std_logic := '0';
+signal seekerHit : std_logic := '0';
+signal heatSeekerColor : std_logic_vector(7 downto 0) := "00000000";
+signal heatSeekerX : std_logic_vector(2 downto 0) := "000";
+signal heatSeekerY : std_logic_vector(2 downto 0) := "000";
+
 signal Level: std_logic_vector(1 downto 0):= "00"; --FOR TESTING -- connect to LOGIC
 
 
@@ -306,6 +336,9 @@ thegamelogic: GameLogicFSM PORT MAP(
 		death => death,
 		makeSoundLogic => makeSoundLogic,
 		soundSelect => soundSelect,
+		activeSeeker => activeSeeker,
+		initHeatSeeker => initHeatSeeker,
+		seekerHit => seekerHit,
 		playerColor => playerSelector
 	);
    
@@ -375,6 +408,10 @@ thedisplay: Display PORT MAP(
       winByte   => winColor,
 		playerColor => playerColorColor,
 		selectDisplay => selectBoard,
+		heatSeekerColor => heatSeekerColor,
+		activeSeeker => activeSeeker,
+		heatSeekerX => heatSeekerX,
+		heatSeekerY => heatSeekerY,
 	--	colorReady => ColorReady,
       displayDone => displayDone,
 		getRow => row,
@@ -411,6 +448,20 @@ thegameboard: GameBoard PORT MAP(
       Level => Level,
 		CollisionData => collisiondata
 	);
+
+VengefulPUGhost: HeatSeeker PORT MAP(
+		Clk => Clk,
+		reset => not(displayEN),
+		playerX => playerX,
+		playerY => playerY,
+		initHeatSeeker => initHeatSeeker,
+		heatSeekerColor => heatSeekerColor,
+		activeSeeker => activeSeeker,
+		heatSeekerXOut => heatSeekerX,
+		heatSeekerYOut => heatSeekerY,
+		seekerHit => seekerHit
+	);
+
 
 
 end Behavioral;
