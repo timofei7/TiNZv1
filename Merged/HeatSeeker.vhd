@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Company:    DARTMOUTH COLLEGE - ENGS31
+-- Engineer:   Divya Gunasekaran and Tim Tregubov
 -- 
 -- Create Date:    18:48:03 08/25/2009 
 -- Design Name: 
@@ -21,10 +21,6 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
----- Uncomment the following library declaration if instantiating
----- any Xilinx primitives in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
 entity HeatSeeker is
     Port ( Clk : in STD_LOGIC;
@@ -101,7 +97,7 @@ type stateType is (Start, Init, Waiting, Seek);
 begin
 
 activeSeeker <= activeSeekerSig;
-heatSeekerColor <= "01101110";
+heatSeekerColor <= "11100011";
 seekerHitSig <= equalX and equalY;
 heatSeekerXOut <= heatSeekerXSig;
 heatSeekerYOut <= heatSeekerYSig;

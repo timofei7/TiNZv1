@@ -97,7 +97,7 @@ constant fsharp7: std_logic_vector(16 downto 0):= "00010000011111110";-- 8446 = 
 constant g7: std_logic_vector(16 downto 0):=      "00001111100100100";--7972 3135hz
 
 --Timer signals beep times
-constant NCLKDIV_EIGHTH: integer := 22; 					--assuming clock freq of 50 MHz
+constant NCLKDIV_EIGHTH: integer := 24; 					--assuming clock freq of 50 MHz
 constant MAX_EIGHTH_CNT: integer := 2**NCLKDIV_EIGHTH-1; -- max count of clock divider, 1...11
 signal enableEIGHTHNote : std_logic := '0';
 signal eighthnotecounter : unsigned(NCLKDIV_EIGHTH-1 downto 0) := (others=>'0');
@@ -119,7 +119,7 @@ signal soundsig: std_logic_vector(2 downto 0):="000";
 
 begin
 
-TESTOUT <= soundSelect & NoiseON & makeSoundLogic & soundsig;
+TESTOUT <= '0' & std_logic_vector(quarternotecounter) & soundsig;
 
 noisemaker: Noise PORT MAP(
 		Clk => Clk,
@@ -291,18 +291,24 @@ begin
          NoiseType <= "0110";
          if eighthnote = '1' then
             nextState <= sw2;
+         else
+            nextState <= sw1;
          end if;
       when sw2 => 
          enableEighthNote <= '1';
          NoiseType <= "0110";
          if eighthnote = '1' then
             nextState <= sw3;
+         else
+            nextState <= sw2;
          end if;
       when sw3 => 
          enableEighthNote <= '1';
          NoiseType <= "0110";
          if eighthnote = '1' then
             nextState <= sw4;
+         else
+            nextState <= sw3;
          end if;
       when sw4 =>
          enableEighthNote <= '1';
@@ -311,6 +317,8 @@ begin
          NoiseType <= "0111";
          if halfnote = '1' then
             nextState <= sw5;
+         else
+            nextState <= sw4;
          end if;
       when sw5 =>
          enableEighthNote <= '1';
@@ -319,24 +327,32 @@ begin
          NoiseType <= "1000";
          if halfnote = '1' then
             nextState <= sw6;
+         else
+            nextState <= sw5;
          end if;
       when sw6 =>
          enableEighthNote <='1';
          NoiseType <= "1001";
          if eighthnote = '1' then
             nextState <= sw7;
+         else
+            nextState <= sw6;
          end if;
       when sw7 =>
          enableEighthNote <='1';
          NoiseType <= "1010";
          if eighthnote = '1' then
             nextState <= sw8;
+         else
+            nextState <= sw7;
          end if;
       when sw8 =>
          enableEighthNote <='1';
          NoiseType <= "1011";
          if eighthnote = '1' then
             nextState <= sw9;
+         else
+            nextState <= sw8;
          end if;
       when sw9 =>
          enableEighthNote <= '1';
@@ -345,6 +361,8 @@ begin
          NoiseType <= "1101";
          if halfnote = '1' then
             nextState <= sw10;
+         else
+            nextState <= sw9;
          end if;
       when sw10 =>
          enableEighthNote <= '1';
@@ -352,24 +370,32 @@ begin
          NoiseType <= "1000";
          if quarternote = '1' then
             nextState <= sw11;
+         else
+            nextState <= sw10;
          end if;
       when sw11 =>
          enableEighthNote <= '1';
          NoiseType <= "1001";
          if eighthnote = '1' then
             nextState <= sw12;
+         else
+            nextState <= sw11;
          end if;
       when sw12 =>
          enableEighthNote <= '1';
          NoiseType <= "1010";
          if eighthnote = '1' then
             nextState <= sw13;
+         else
+            nextState <= sw12;
          end if;
       when sw13 =>
          enableEighthNote <= '1';
          NoiseType <= "1011";
          if eighthnote = '1' then
             nextState <= sw14;
+         else
+            nextState <= sw13;
          end if;
       when sw14  =>
          enableEighthNote <= '1';
@@ -378,6 +404,8 @@ begin
          NoiseType <= "1101";
          if halfnote = '1' then
             nextState <= sw15;
+         else
+            nextState <= sw14;
          end if;
       when sw15 =>
          enableEighthNote <= '1';
@@ -385,24 +413,32 @@ begin
          NoiseType <= "1000";
          if quarternote = '1' then
             nextState <= sw16;
+         else
+            nextState <= sw15;
          end if;
       when sw16 =>
          enableEighthNote <= '1';
          NoiseType <= "1001";
          if eighthnote = '1' then
             nextState <= sw17;
+         else
+            nextState <= sw16;
          end if;
       when sw17 =>
          enableEighthNote <= '1';
          NoiseType <= "1010";
          if eighthnote = '1' then
             nextState <= sw18;
+         else
+            nextState <= sw17;
          end if;
       when sw18 =>
          enableEighthNote <= '1';
          NoiseType <= "1001";
          if eighthnote = '1' then
             nextState <= sw19;
+         else
+            nextState <= sw18;
          end if;
       when sw19 =>
          enableEighthNote <= '1';
@@ -411,6 +447,8 @@ begin
          NoiseType <= "1011";
          if halfnote = '1' then
             nextState <= Quiet;
+         else
+            nextState <= sw19;
          end if;
 		when others =>
 			nextState <= Quiet;

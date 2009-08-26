@@ -25,6 +25,8 @@ use IEEE.NUMERIC_STD.ALL;
 entity positionCounter is
 	 Port ( UP : in  STD_LOGIC;
 			  DOWN: in STD_LOGIC;
+			  initValue: IN STD_LOGIC_VECTOR(2 downto 0);
+			  set : IN STD_LOGIC;
 			  rst : 	in   STD_LOGIC;
 			  Clk : in STD_LOGIC;
 			  count : out STD_LOGIC_VECTOR(2 downto 0);
@@ -47,6 +49,8 @@ begin
 		if rst = '1' then
 			D <= "000";
          soundMove <= "000";
+		elsif set='1' then
+			D <= unsigned(initValue);
 		else
 			if UP='1' and DOWN='0' then
 				if D="111" then
