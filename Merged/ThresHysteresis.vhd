@@ -73,11 +73,11 @@ begin
       when "00" =>
          waitcountfinal <= waitcountfinal1;
       when "01" =>
-         waitcountfinal <= waitcountfinal2;
+         waitcountfinal <= waitcountfinal1; --don't change speed
       when "10" =>
-         waitcountfinal <= waitcountfinal3;
+         waitcountfinal <= waitcountfinal1;
       when "11" =>
-         waitcountfinal <= waitcountfinal4;
+         waitcountfinal <= waitcountfinal1;
       when others =>
          waitcountfinal <= waitcountfinal1;
    end case;
