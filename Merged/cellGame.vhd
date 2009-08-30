@@ -1,21 +1,16 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    23:19:55 08/18/2009 
--- Design Name: 
 -- Module Name:    cellGame - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Project Name:  TINZ (This Is Not Zelda)
+
+
+-- Description: This is the top-level module for the entire design. Here, the 
+--	components for all the main modules are instantiated and wired together.
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -24,27 +19,29 @@ use IEEE.NUMERIC_STD.ALL;
 entity cellGame is
     Port ( Clk : in  STD_LOGIC;
            ResetALL : in  STD_LOGIC; --needs more work, do we need it?
-           MOSI : out  STD_LOGIC;  --out to display
-           SCLK : out  STD_LOGIC;  --''
-           CS : out  STD_LOGIC;    --''
            Difficulty: in std_logic_vector(2 downto 0); --cheat difficulty set
-           SoundON: in std_logic; --disalbe sound switch
+           SoundON: in std_logic; --disable sound switch
            Xin : IN std_logic;  --from accelerometer
-           Yin : IN std_logic;  -- ''
-           XAnalogIn : IN std_logic;  --this is to prevent rando signals
+           Yin : IN std_logic;  -- from accelerometer
+           XAnalogIn : IN std_logic;  --this is to prevent interference from unused signals
            YAnalogIn : IN std_logic;  --''
            XAnalogOut : OUT std_logic;--''
            YAnalogOut : OUT std_logic;--''
-           Xout: OUT std_logic_vector(2 downto 0);
-           Yout: OUT std_logic_vector(2 downto 0);
-           NoiseOut: out std_logic;   --to piezo
-           an : OUT std_logic_vector(3 downto 0);
-           seg : OUT std_logic_vector(0 to 6)
+           Xout: OUT std_logic_vector(2 downto 0); --to LED lights on FPGA for fun
+           Yout: OUT std_logic_vector(2 downto 0); --to LED lights on FPGA for fun
+           MOSI : out  STD_LOGIC;  --out to LED display
+           SCLK : out  STD_LOGIC;  --out to LED display
+           CS : out  STD_LOGIC;    --out to LED display
+			  NoiseOut: out std_logic;   --to piezo
+           an : OUT std_logic_vector(3 downto 0); --for seven segment display on FPGA
+           seg : OUT std_logic_vector(0 to 6)	--for seven segment display on FPGA
 ); 
 end cellGame;
 
 architecture Behavioral of cellGame is
 
+--Controller for entire game
+--Handles start, resetting and end
 COMPONENT MainController
 	PORT(
 		Clk : IN std_logic;
@@ -52,7 +49,6 @@ COMPONENT MainController
 		seqDone : IN std_logic;
 		WIN : IN std_logic;
       ResetALL: IN std_logic;
-      GameOver: IN std_logic;
       Level : OUT std_logic_vector(1 downto 0);
       LevelDifficulty: out STD_LOGIC_VECTOR(1 downto 0);
 		seqReset : OUT std_logic;
@@ -62,7 +58,6 @@ COMPONENT MainController
 		resetPlayer : OUT std_logic;  
 		moveEN : OUT std_logic;
       winSound: out std_logic;
-	--	resetPU : OUT std_logic;		--This output directed through ~displayEN
 		displayEN : OUT std_logic;
 		gameLogicEN : OUT std_logic;
 		soundEN : OUT std_logic;
@@ -70,6 +65,7 @@ COMPONENT MainController
 		);
 	END COMPONENT;
 
+--FSM to evaluate player positions and collisions 
 COMPONENT GameLogicFSM
 PORT(
    Clk : IN std_logic;
@@ -87,6 +83,7 @@ PORT(
    );
 END COMPONENT;
 
+--Holds ROMs containing color data for intro, death and win sequences 
 COMPONENT Sequences
 PORT(
    Clk : IN std_logic;
@@ -100,7 +97,7 @@ PORT(
    );
 END COMPONENT;
 
-
+--Outputs a level and frequencies to piezo to create sound when appropriate
 COMPONENT Noises
 PORT(
    Clk : IN std_logic;
@@ -113,6 +110,7 @@ PORT(
    );
 END COMPONENT;
 
+--Combines Accelerometer, Player and GameTimer modules
 COMPONENT Play
 PORT(
    Clk : IN std_logic;
@@ -138,7 +136,8 @@ PORT(
    );
 END COMPONENT;
 
-
+--Cycles through colors for to output as player color to Display
+--This module is responsible for giving the impression that the player is "breathing"
 COMPONENT PlayerColor
 PORT(
    Clk : IN std_logic;
@@ -147,12 +146,13 @@ PORT(
    );
 END COMPONENT;
 
-
+--Interacts with the LED driver, Player Module, Heatseeker Module
+--Cycles through each location on the LED matrix and 
+--selects the appropriate colors to send to the LED driver
 COMPONENT Display
 	PORT(
 		Clk : IN std_logic;
 		displayEN : IN std_logic;
-	--	resetDisplay : IN std_logic;
 		shiftToLED : IN std_logic;
 		playerX : IN std_logic_vector(2 downto 0);
 		playerY : IN std_logic_vector(2 downto 0);
@@ -165,18 +165,17 @@ COMPONENT Display
 		heatSeekerColor : IN STD_LOGIC_VECTOR(7 downto 0); --from Heatseeker Module
 	   heatSeekerX : IN STD_LOGIC_VECTOR(2 downto 0);
 	   heatSeekerY : IN STD_LOGIC_VECTOR(2 downto 0);
-	   activeSeeker : IN STD_LOGIC;
-	--	colorReady : IN std_logic;      
+	   activeSeeker : IN STD_LOGIC;    
       displayDone : IN std_logic;
 		getRow : OUT std_logic_vector(2 downto 0);
 		getColumn : OUT std_logic_vector(2 downto 0);
---		getColor : OUT std_logic;
 		displayReady : OUT std_logic;
 		displayBit : OUT std_logic
 		);
 END COMPONENT;
 
-
+--Interface between the Display module and LED matrix
+--Sends display data to LED matrix at appropriate rate
 COMPONENT LEDDriver
 	PORT(
 		Clk : IN std_logic;          
@@ -190,7 +189,8 @@ COMPONENT LEDDriver
 		);
 END COMPONENT;
    
-   
+--Interface between ROM and Display module and GameLogicFSM module
+--Given position row and column, looks up collision data for that position
 COMPONENT GameBoard
 	PORT(
 		Clk : IN std_logic;
@@ -210,6 +210,8 @@ COMPONENT GameBoard
 		);
 END COMPONENT;
 
+--When player gets power-up, converts used power-up into 
+--"heatseeking ghost" that follows player on the display
 COMPONENT HeatSeeker
 	PORT(
 		Clk : IN std_logic;
@@ -224,49 +226,54 @@ COMPONENT HeatSeeker
 		seekerHit : OUT std_logic
 		);
 END COMPONENT;
-   
+
+
+--GameController signals
 signal resetDisplay : std_logic := '0';
 signal resetTimer : std_logic := '0';
+signal logicEN : std_logic := '0';
+signal displayEN : std_logic := '0';
+signal sevenSegEN: std_logic:='0';
+signal sevenSegSelector : std_logic := '0'; 
+signal resetPlayer : std_logic := '0';
+signal moveEN : std_logic := '0';
+signal selectBoard : std_logic_vector(1 downto 0) := "00";
+signal endGame : std_logic := '0';
+signal LevelDifficulty: std_logic_vector(1 downto 0):= "00";
+signal LevelDifficultySig: std_logic_vector(1 downto 0):="00";
+signal Level: std_logic_vector(1 downto 0);
+
+--Display signals
+signal row : std_logic_vector(2 downto 0) := "000";
+signal col : std_logic_vector(2 downto 0) := "000";
 signal colorDisplay : std_logic_vector(7 downto 0) := "00000001";
-signal ColorReady : std_logic := '0';
-signal dataReady : std_logic := '0';
-signal shiftToDisplay : std_logic := '0';
-signal playerX : std_logic_vector(2 downto 0) := "000";
-signal playerY : std_logic_vector(2 downto 0) := "000";
-signal playerColorColor : std_logic_vector(7 downto 0) := "00001111";
+signal playerColorByte : std_logic_vector(7 downto 0) := "00001111"; 
 signal introColor : std_logic_vector(7 downto 0) := "00000000";
 signal deathColor : std_logic_vector(7 downto 0) := "00000000";
 signal winColor : std_logic_vector(7 downto 0) := "00000000";
-signal selectBoard : std_logic_vector(1 downto 0) := "00";
-signal row : std_logic_vector(2 downto 0) := "000";
-signal col : std_logic_vector(2 downto 0) := "000";
-signal memEN : std_logic := '1';
+signal shiftToDisplay : std_logic := '0';
+
+--Play signals
+signal playerX : std_logic_vector(2 downto 0) := "000";
+signal playerY : std_logic_vector(2 downto 0) := "000";
+signal gameOver: std_logic:='0';
+
+--LED Driver signals
 signal displayBit : std_logic := '0';
 signal startDisplay : std_logic := '0';
 signal displayDone : std_logic := '0';
 
+--GameLogicFSM signals
 signal disablePU : std_logic := '0';
 signal collisiondata : std_logic_vector(1 downto 0) := "00";
-
+signal death: std_logic;
 signal playerSelector: std_logic_vector(1 downto 0) := "00";
 
-signal resetGameT: std_logic:='0';
-signal sevenSegEN: std_logic:='1';
-signal gameOver: std_logic:='0';
-signal death: std_logic;
---signal logicen: std_logic:= '1';
-signal shieldstatus: std_logic:='0';
-signal shieldset: std_logic:='0';
+--Gameboard signals
 signal WIN: std_logic:='0';
+
+--Sequences signals
 signal seqDone: std_logic:='0';
-
-
-signal endGame : std_logic := '0';
-signal logicEN : std_logic := '0';
-signal displayEN : std_logic := '0';
-signal sevenSegSelector : std_logic := '0'; 
-signal resetPlayer : std_logic := '0';
-signal moveEN : std_logic := '0';
 
 --Sound signals
 signal soundEN : std_logic := '0';
@@ -274,6 +281,7 @@ signal soundENSig : std_logic := '0';
 signal soundSelect : std_logic := '0';
 signal makeSoundLogic : std_logic_vector(2 downto 0) := "000";
 signal makeSoundMove : std_logic_vector(2 downto 0) := "000";
+signal winSound : std_logic; --this is hack rethink this
 
 --Heat seeking powerup signals
 signal initHeatSeeker : std_logic := '0';
@@ -283,11 +291,6 @@ signal heatSeekerColor : std_logic_vector(7 downto 0) := "00000000";
 signal heatSeekerX : std_logic_vector(2 downto 0) := "000";
 signal heatSeekerY : std_logic_vector(2 downto 0) := "000";
 
-signal LevelDifficulty: std_logic_vector(1 downto 0):= "00";
-signal LevelDifficultySig: std_logic_vector(1 downto 0):="00";
-signal winSound : std_logic; --this is hack rethink this
-
-signal Level: std_logic_vector(1 downto 0);
 
 begin
 
@@ -295,13 +298,15 @@ begin
 LevelDifficultySig <= LevelDifficulty when Difficulty(0) = '0' else Difficulty(2 downto 1);
 soundENSig <= soundEN when soundON = '1' else '0';
 
+--resetDisplay when displayEN is low
 resetDisplay <= '1' when displayEN='0' else '0';
+
 Xout<=playerX;
 Yout<=playerY;
 
-
+--Controller gets gameOver signal from GameLogicFSM or Play
 endGame <= death or gameOver;
---resetDisplay <= not(displayEN); --there are 2 versions...
+
 
 GameController: MainController PORT MAP(
 		Clk => Clk,
@@ -309,7 +314,6 @@ GameController: MainController PORT MAP(
 		death => endGame,
 		WIN => WIN,
       ResetALL => ResetALL,
-      GameOver => GameOver,
       Level => Level,
       LevelDifficulty => LevelDifficulty,
 		seqReset => OPEN,
@@ -358,7 +362,7 @@ thenoises: Noises PORT MAP(
 		makeSoundLogic => makeSoundLogic,
 		makeSoundMove => makeSoundMove,
 		NoiseOut => NoiseOut,
-      winSOund => winSound
+      winSound => winSound
 	);
 
 
@@ -388,13 +392,12 @@ theplay: Play PORT MAP(
 theplayercolor: PlayerColor PORT MAP(
 		Clk => Clk,
 		Selector => playerSelector,
-		PlayerColor => PlayerColorColor
+		PlayerColor => PlayerColorByte
 	);
 
 thedisplay: Display PORT MAP(
 		Clk => Clk,
 		displayEN => displayEN,
-	--	resetDisplay => resetDisplay,
 		shiftToLED => shiftToDisplay,
 		playerX => playerX,
 		playerY => playerY,
@@ -402,17 +405,15 @@ thedisplay: Display PORT MAP(
 		introByte => introColor,
 		deathByte => deathColor,
       winByte   => winColor,
-		playerColor => playerColorColor,
+		playerColor => playerColorByte,
 		selectDisplay => selectBoard,
 		heatSeekerColor => heatSeekerColor,
 		activeSeeker => activeSeeker,
 		heatSeekerX => heatSeekerX,
 		heatSeekerY => heatSeekerY,
-	--	colorReady => ColorReady,
       displayDone => displayDone,
 		getRow => row,
 		getColumn => col,
-	--	getColor => memEN,
 		displayReady => startDisplay,
 		displayBit => displayBit
 	);
@@ -434,11 +435,9 @@ thegameboard: GameBoard PORT MAP(
 		SeqReset => resetDisplay,
 		ResetPUs => resetDisplay,
 		DisablePU => disablePU,
-		ReadENColor => memEN,
 		RowA => row,
 		ColA => col,
 		ColorOUT => colorDisplay,
-		ColorDONE => dataReady,
 		RowB => playerX,
 		ColB => playerY,
       Level => Level,
