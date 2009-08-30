@@ -73,7 +73,7 @@ begin
       when "00" =>
          waitcountfinal <= waitcountfinal1;
       when "01" =>
-         waitcountfinal <= waitcountfinal1; --don't change speed
+         waitcountfinal <= waitcountfinal1; --don't change speed turns out it is too hard otherwise
       when "10" =>
          waitcountfinal <= waitcountfinal1;
       when "11" =>

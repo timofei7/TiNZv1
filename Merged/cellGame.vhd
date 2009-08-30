@@ -24,23 +24,20 @@ use IEEE.NUMERIC_STD.ALL;
 entity cellGame is
     Port ( Clk : in  STD_LOGIC;
            ResetALL : in  STD_LOGIC; --needs more work, do we need it?
-           MOSI : out  STD_LOGIC;
-           SCLK : out  STD_LOGIC;
-           CS : out  STD_LOGIC;
-           TESTOUT: out std_logic_vector(7 downto 0);
-           Difficulty: in std_logic_vector(2 downto 0);
-           SoundON: in std_logic;
-           Xin : IN std_logic;
-           Yin : IN std_logic;
-           XAnalogIn : IN std_logic;
-           YAnalogIn : IN std_logic;
-           XAnalogOut : OUT std_logic;
-           YAnalogOut : OUT std_logic;
+           MOSI : out  STD_LOGIC;  --out to display
+           SCLK : out  STD_LOGIC;  --''
+           CS : out  STD_LOGIC;    --''
+           Difficulty: in std_logic_vector(2 downto 0); --cheat difficulty set
+           SoundON: in std_logic; --disalbe sound switch
+           Xin : IN std_logic;  --from accelerometer
+           Yin : IN std_logic;  -- ''
+           XAnalogIn : IN std_logic;  --this is to prevent rando signals
+           YAnalogIn : IN std_logic;  --''
+           XAnalogOut : OUT std_logic;--''
+           YAnalogOut : OUT std_logic;--''
            Xout: OUT std_logic_vector(2 downto 0);
            Yout: OUT std_logic_vector(2 downto 0);
-           deathout: out std_logic;
-           NoiseOut: out std_logic;
-           NoiseType: in std_logic_vector(2 downto 0);
+           NoiseOut: out std_logic;   --to piezo
            an : OUT std_logic_vector(3 downto 0);
            seg : OUT std_logic_vector(0 to 6)
 ); 
@@ -65,7 +62,6 @@ COMPONENT MainController
 		resetPlayer : OUT std_logic;  
 		moveEN : OUT std_logic;
       winSound: out std_logic;
-      TESTOUT: out std_logic_vector(7 downto 0);
 	--	resetPU : OUT std_logic;		--This output directed through ~displayEN
 		displayEN : OUT std_logic;
 		gameLogicEN : OUT std_logic;
@@ -78,14 +74,10 @@ COMPONENT GameLogicFSM
 PORT(
    Clk : IN std_logic;
    collisionData : IN std_logic_vector(1 downto 0);
-   --shieldStatus : IN std_logic;
    logicEN : IN std_logic;
    gameOver : IN std_logic;
-   --isEN : IN std_logic;  
-   TESTOUT: OUT std_logic_vector(7 downto 0);
    disablePU : OUT std_logic;
    death : OUT std_logic;
-   --shieldSet : OUT std_logic;
 	activeSeeker : in STD_LOGIC; --from HeatSeeker Module
    seekerHit : IN STD_LOGIC; --from HeatSeeker Module
    initHeatSeeker : OUT STD_LOGIC; --to HeatSeeker Module
@@ -102,7 +94,6 @@ PORT(
    col : IN std_logic_vector(2 downto 0);
    seqReset : IN std_logic;          
    seqDone : OUT std_logic;
-   TESTOUT: out std_logic_vector(7 downto 0);
    deathColor : OUT std_logic_vector(7 downto 0);
    introColor : OUT std_logic_vector(7 downto 0);
    winColor   : OUT std_logic_vector(7 downto 0)
@@ -118,8 +109,7 @@ PORT(
 	makeSoundLogic : IN STD_LOGIC_VECTOR(2 downto 0);
 	makeSoundMove : IN STD_LOGIC_VECTOR(2 downto 0); 
    winSound: in std_logic;
-   NoiseOut : OUT std_logic;
-	TESTOUT : OUT STD_LOGIC_VECTOR(7 downto 0)
+   NoiseOut : OUT std_logic
    );
 END COMPONENT;
 
@@ -133,7 +123,6 @@ PORT(
    resetPlayer : IN std_logic;
 	moveEN : IN std_logic;
    resetGameT : IN std_logic;
-   TESTOUT: out std_logic_vector(7 downto 0);
    SpeedRate: IN std_logic_vector(1 downto 0);
    LevelDifficulty: in STD_LOGIC_VECTOR(1 downto 0);
    sevenSegEN : IN std_logic;
@@ -306,12 +295,10 @@ begin
 LevelDifficultySig <= LevelDifficulty when Difficulty(0) = '0' else Difficulty(2 downto 1);
 soundENSig <= soundEN when soundON = '1' else '0';
 
-deathout<=death;
 resetDisplay <= '1' when displayEN='0' else '0';
 Xout<=playerX;
 Yout<=playerY;
 
---TESTOUT <= "000000" & gameOver & death;
 
 endGame <= death or gameOver;
 --resetDisplay <= not(displayEN); --there are 2 versions...
@@ -332,7 +319,6 @@ GameController: MainController PORT MAP(
 		resetGameT => resetTimer,
 		resetPlayer => resetPlayer,
 		moveEN => moveEN,
-      TESTOUT => OPEN,
 		displayEN => displayEN,
 		gameLogicEN => logicEN,
 		soundEN => soundEN,
@@ -344,7 +330,6 @@ thegamelogic: GameLogicFSM PORT MAP(
 		collisionData => collisionData,
 		logicEN => logicEN,
 		gameOver => gameOver,
-      TESTOUT => OPEN,
 		disablePU => disablePU,
 		death => death,
 		makeSoundLogic => makeSoundLogic,
@@ -359,7 +344,6 @@ thesequences: Sequences PORT MAP(
 		Clk => Clk,
 		row => row,
       col => col,
-      TESTOUT => OPEN,
 		seqReset => ResetDisplay,
 		seqDone => seqDone,
 		deathColor => deathColor,
@@ -374,8 +358,7 @@ thenoises: Noises PORT MAP(
 		makeSoundLogic => makeSoundLogic,
 		makeSoundMove => makeSoundMove,
 		NoiseOut => NoiseOut,
-      winSOund => winSound,
-		TESTOUT => TESTOUT
+      winSOund => winSound
 	);
 
 
@@ -387,7 +370,6 @@ theplay: Play PORT MAP(
 		YAnalogIn => YAnalogIn,
 		XAnalogOut => XAnalogOUt,
 		YAnalogOut => YAnalogOut,
-      TESTOUT => OPEN,
       SpeedRate => Level, --direct correspondence
       LevelDifficulty => LevelDifficultySig,      
 		resetPlayer => ResetPlayer,

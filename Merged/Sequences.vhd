@@ -26,7 +26,6 @@ entity Sequences is
            row : in  STD_LOGIC_VECTOR (2 downto 0);
            col : in  STD_LOGIC_VECTOR (2 downto 0);
            seqReset : in  STD_LOGIC;
-           TESTOUT: out std_logic_vector(7 downto 0);
            seqDone : out STD_LOGIC;
            deathColor : out  STD_LOGIC_VECTOR (7 downto 0);
            introColor : out  STD_LOGIC_VECTOR (7 downto 0);
@@ -76,12 +75,9 @@ architecture Behavioral of Sequences is
    signal framesm: unsigned(3 downto 0);
    signal seqDoneSig: std_logic:= '0';
    signal rowcol: std_logic_vector(5 downto 0):= "000000";
-   signal sigh: std_logic_vector(4 downto 0);
 
 begin
 
-sigh <= std_logic_vector(frame);
-TESTOUT <= sigh(1 downto 0) & row & col;
 rowcol <= row & col;
 framesm <= frame(3 downto 0);
 

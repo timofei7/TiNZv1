@@ -30,7 +30,6 @@ entity GameLogicFSM is
 			  activeSeeker : in STD_LOGIC; --from HeatSeeker Module
 			  seekerHit : IN STD_LOGIC; --from HeatSeeker Module
 			  initHeatSeeker : OUT STD_LOGIC; --to HeatSeeker Module
-           TESTOUT: out std_logic_vector(7 downto 0);
            disablePU : out  STD_LOGIC;
            death : out  STD_LOGIC;
 			  makeSoundLogic : out STD_LOGIC_VECTOR(2 downto 0); --for Noises module
@@ -64,7 +63,6 @@ architecture Behavioral of GameLogicFSM is
 
 begin
 
-TESTOUT <= deathTest & disableSig & unshieldedState & deathStateSig & GetShieldState & ShieldedState & LoseToPUState & LoseToEnemyState; --FOR TESTING
 
 --this is a monopulser for this signal
 process(Clk)

@@ -25,7 +25,6 @@ use ieee.numeric_std.all;
 entity ACCELDecoder is
     Port ( 
            Clk : in  STD_LOGIC; 
-           TESTOUT: out std_logic_vector(7 downto 0);
            SpeedRate: in std_logic_vector(1 downto 0);
            LevelDifficulty: in std_logic_vector(1 downto 0);
            Xin : in  STD_LOGIC;
@@ -160,7 +159,6 @@ yFilt: AccelFilter PORT MAP(
 	);
 
 
-TESTOUT <= X;
 
 XAnalogOut <= XAnalogIn;
 YAnalogOut <= YAnalogIn;

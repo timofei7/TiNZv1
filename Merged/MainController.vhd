@@ -32,7 +32,6 @@ entity MainController is
            Level    : out  STD_LOGIC_VECTOR(1 downto 0);
            LevelDifficulty: out STD_LOGIC_VECTOR(1 downto 0);
            seqReset : out  STD_LOGIC;
-           TESTOUT: out std_logic_vector(7 downto 0);
            displaySelector : out  STD_LOGIC_VECTOR(1 downto 0);
            sevenSegEN : out  STD_LOGIC;
            winSound : out std_logic;
@@ -64,7 +63,6 @@ architecture Behavioral of MainController is
 
 begin
 
-TESTOUT <= "0000" & death & teststate;
 
 Level <= std_logic_vector(LevelSig);
 

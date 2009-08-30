@@ -30,7 +30,6 @@ entity Noises is
 			  makeSoundLogic : IN STD_LOGIC_VECTOR(2 downto 0);
 			  makeSoundMove : IN STD_LOGIC_VECTOR(2 downto 0);
            winSound: in std_logic;
-			  TESTOUT : OUT STD_LOGIC_VECTOR(7 downto 0);
            NoiseOut : OUT  STD_LOGIC);
 end Noises;
 
@@ -119,7 +118,6 @@ signal soundsig: std_logic_vector(2 downto 0):="000";
 
 begin
 
-TESTOUT <= '0' & std_logic_vector(quarternotecounter) & soundsig;
 
 noisemaker: Noise PORT MAP(
 		Clk => Clk,

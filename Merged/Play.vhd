@@ -31,7 +31,6 @@ entity Play is
       XAnalogOut : OUT std_logic; --need to hook up to something to prevent errors
       YAnalogOut : OUT std_logic; --''
       
-      TESTOUT: out std_logic_vector(7 downto 0);
       SpeedRate: IN std_logic_vector(1 downto 0);
       LevelDifficulty: in STD_LOGIC_VECTOR(1 downto 0);
       
@@ -59,7 +58,6 @@ PORT(
    Clk : IN std_logic;
    Xin : IN std_logic;
    Yin : IN std_logic;
-   TESTOUT: out std_logic_vector(7 downto 0); --for testing
    SpeedRate: in std_logic_vector(1 downto 0);
    LevelDifficulty: in STD_LOGIC_VECTOR(1 downto 0);
    XAnalogIn : IN std_logic;
@@ -120,13 +118,11 @@ signal moveCountHundreds : std_logic_vector(3 downto 0) :=(others => '0');--''
 
 begin
 
-TESTOUT <= "000" & sevenSegSelector & moveCountOnes;
 
 theaccelerometer: ACCELDecoder PORT MAP(
 		Clk => Clk,
 		Xin => Xin,
 		Yin => Yin,
-      TESTOUT => OPEN,
       SpeedRate => SpeedRate,
       LevelDifficulty => LevelDifficulty,
 		XAnalogIn => XAnalogIn,
