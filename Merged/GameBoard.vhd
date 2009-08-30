@@ -29,11 +29,9 @@ entity GameBoard is
         ResetPUs : in  STD_LOGIC;  --reset the powerups to initial state, on
         DisablePU : in  STD_LOGIC;  --disable the current type per the row and col address
         --the following is to wire to display
-        ReadENColor: in STD_LOGIC; --a 1 clock cycle pulse to enable the read
         RowA : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check FOR DISPLAY
         ColA : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check FOR DISPLAY
         ColorOUT : out  STD_LOGIC_VECTOR (7 downto 0); --color from attribute by type
-        ColorDONE: out STD_LOGIC; --signal to send when the color is done
         --the following is to wire to game logic
         RowB : in  STD_LOGIC_VECTOR (2 downto 0); --the row to check FOR GAMELOGIC
         ColB : in  STD_LOGIC_VECTOR (2 downto 0); --the col to check FOR GAMELOGIC
@@ -90,12 +88,6 @@ signal enabled: std_logic := '0'; --for en data
 signal frameCount: unsigned(3 downto 0) := (others => '0'); --the count of the frame we are on
 signal frameDirection: std_logic := '1'; -- 1 means up 0 means down, for counting direction that is
 signal slowFrame: std_logic := '0'; --slow count enable for the frame counter
--- do we really need all this counter stuff?
--- this is so we can send after some preset number of cycles to make sure the memory ops are all done
-signal rcoloren: std_logic := '0'; --internal enable for the color done counter
-signal rcolorcount: unsigned(3 downto 0) := (others => '0'); --counter for color done
-signal rcolortc: std_logic := '0'; --terminal count signal for counter
-constant donecount: unsigned(3 downto 0) := x"2"; --this is how many clock cycles to wait for (minus 1) so 2 really means 1 cycle
 
 begin
       
@@ -167,26 +159,7 @@ process(Clk)
          end if;
       end if;
 end process direction;
-      
-
-colorDoneProcess: --this counter sets color done after some number of clock cycles
-process(Clk)
-   begin
-      if rising_edge(Clk) then
-         if ReadENColor = '1' or rcoloren = '1' then
-            if rcolortc = '1' then
-               rcoloren <= '0';
-               rcolorcount <= x"0";
-            else 
-               rcoloren <= '1';
-               rcolorcount <= rcolorcount+1;
-            end if;
-         end if;
-      end if;
-end process colorDoneProcess;
-rcolortc <= '1' when rcolorcount = donecount else '0'; -- terminal count for counter
-ColorDone <= rcolortc;
-    
+          
       
 end Behavioral;
 
