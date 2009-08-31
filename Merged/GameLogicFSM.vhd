@@ -184,15 +184,16 @@ begin
       when LoseToEnemy =>	
          currPlayerColor <= "10";	--set player color to losing shield color
          disableSig <= '1';			--disable enemy
-         startShieldTimer <= '1';	--enable shield depletion timer, give grace period as player loses shield
-			soundSig <= "001";	--sound for losing power-up
-			soundSelect <= '1'; --for Noises module
+         startShieldTimer <= '1';	--enable shield depletion timer, player invincible until shield depleted
+			soundSig <= "001";			--sound for losing power-up
+			soundSelect <= '1'; 			--for Noises module
          if shieldDepleted='0' then	
             nextState <= LoseToEnemy;
          else 
-            nextState <= Unshielded;
+            nextState <= Unshielded; --transition to Unshielded when shieldDepleted asserted
          end if;
-      when LoseToPU =>		--lose shield by hitting powerup while shielded; also disables powerup 
+		--Lose shield by hitting powerup while shielded; also disables powerup 
+      when LoseToPU =>		
          currPlayerColor <= "00";	--set player color to Unshielded
          disableSig <= '1';			--disable power-up
 			soundSig <= "001"; 			--sound for losing power-up

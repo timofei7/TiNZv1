@@ -1,23 +1,18 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
--- 
--- Create Date:    16:16:00 08/22/2009 
--- Design Name: 
--- Module Name:    Noises - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 
---ADJUST CLKDIVIDERS!
+-- Create Date:    16:16:00 08/22/2009 
+
+-- Module Name:    Noises - Behavioral 
+-- Project Name: 	TINZ (This Is Not Zelda)
+
+
+-- Description: This module outputs different frequences to the piezo when given the
+-- appropriate signals from the Controller, GameLogicFSM and Player modules.
+
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -27,10 +22,10 @@ entity Noises is
     Port ( Clk : IN  STD_LOGIC;
 			  soundEN : IN STD_LOGIC;		 --enables sound, sent from Controller
 			  soundSelect : IN STD_LOGIC;  --chooses between sound cmd from GameLogic or Player
-			  makeSoundLogic : IN STD_LOGIC_VECTOR(2 downto 0);
-			  makeSoundMove : IN STD_LOGIC_VECTOR(2 downto 0);
-           winSound: in std_logic;
-           NoiseOut : OUT  STD_LOGIC);
+			  makeSoundLogic : IN STD_LOGIC_VECTOR(2 downto 0); --sound freq from GameLogicFSM
+			  makeSoundMove : IN STD_LOGIC_VECTOR(2 downto 0);	--sound freq from Player
+           winSound: in std_logic;									--sound freq from Controller
+           NoiseOut : OUT  STD_LOGIC);		--out to piezo
 end Noises;
 
 architecture Behavioral of Noises is
@@ -68,7 +63,7 @@ signal startOscillateTimer : std_logic := '0';
 signal sirenOscillateTimer : unsigned(NCLKDIV_OSC-1 downto 0) := (others=>'0');
 signal sirenOscillate : std_logic := '0';
 
---Timer signals beep times
+--Timer signals for short sounds
 constant NCLKDIV_BEEP: integer := 24; 					--assuming clock freq of 50 MHz
 constant MAX_BEEP_CNT: integer := 2**NCLKDIV_BEEP-1; -- max count of clock divider, 1...11
 	
@@ -95,7 +90,7 @@ constant a7: std_logic_vector(16 downto 0):=      "00011011101111100";-- 14204 =
 constant fsharp7: std_logic_vector(16 downto 0):= "00010000011111110";-- 8446 = 2959.96hz
 constant g7: std_logic_vector(16 downto 0):=      "00001111100100100";--7972 3135hz
 
---Timer signals beep times
+--Timer signals for different note lengths of the win sequence song
 constant NCLKDIV_EIGHTH: integer := 24; 					--assuming clock freq of 50 MHz
 constant MAX_EIGHTH_CNT: integer := 2**NCLKDIV_EIGHTH-1; -- max count of clock divider, 1...11
 signal enableEIGHTHNote : std_logic := '0';
@@ -109,12 +104,10 @@ signal halfnotecounter : unsigned(3 downto 0) := (others=>'0');
 signal halfnote : std_logic := '0';
 
 
-
 --State machine states, signals
 type stateType is (Quiet, GotPU, StuckandLostPU, DeathSiren1, DeathSiren2, Move, sw1,sw2,sw3,sw4,sw5,sw6,sw7,sw8,sw9,sw10,sw11,sw12,sw13,sw14,sw15,sw16,sw17,sw18,sw19);
 signal currState, nextState: stateType;
 
-signal soundsig: std_logic_vector(2 downto 0):="000";
 
 begin
 
@@ -126,19 +119,8 @@ noisemaker: Noise PORT MAP(
 		SIGOUT => NoiseOut
 	);
 
---for testing only
-process(Clk)
-   begin
-      if rising_edge(Clk) then
-         if makeSoundMove = soundsig and makeSOundMove /= "000" then
-            soundsig <= soundsig;
-         else
-            soundsig <= makeSound;
-         end if;
-      end if;
-end process;
 
-
+--Coding for different frequencies
 process(NoiseType)
    begin
       case NoiseType is
@@ -177,12 +159,13 @@ end process;
 
 
 --Chooses between sound type determined by GameLogic or by Display module
+--winSound overrides both makeSoundLogic and makeSoundMove
 chooseSound: process(soundSelect, makeSoundMove, makeSoundLogic, winSound)
 begin
 	if soundSelect='1' and winSound = '0' then
 		makeSound <= makeSoundLogic;
    elsif winSound = '1' then
-      makeSound <= "110"; --hardcode the win sound --hack revisit
+      makeSound <= "110"; --hardcode the win sound 
 	else
 		makeSound <= makeSoundMove;
 	end if;
@@ -204,7 +187,7 @@ begin
    end if;
 end process stateTransition;
 
-
+--Finite state machine for emitting sounds
 soundFSM: process(currState, makeSound, sirenOscillate, sirenDone, beepDone, shbeepDone, eighthnote,halfnote,quarternote)
 begin
 	--Defaults
@@ -219,6 +202,7 @@ begin
    enableQuarterNote <='0';
    enableEIGHTHNote <= '0';
 	case currState is
+		--No sound emitted
 		when Quiet =>
          NoiseON <= '0';
 			if makeSound="001" then
@@ -234,6 +218,7 @@ begin
 			else
 				nextState <= Quiet;
 			end if;
+		--Sound for losing power-up and being unable to move player
 		when StuckandLostPU =>
 			NoiseType <= "0001";
          startBeepTimer <= '1';
@@ -241,7 +226,8 @@ begin
             nextState <= Quiet;
          else
             nextState <= StuckandLostPU;
-         end if;		
+         end if;	
+		--Sound for moving player freely
       when Move =>
 			NoiseType <= "0101";
          startSHBeepTimer <= '1';
@@ -256,6 +242,7 @@ begin
 			else
             nextState <= Move;
          end if;
+		--Sound for obtaining power-up
 		when GotPU =>
 			NoiseType <= "0010";
          startBeepTimer <= '1';
@@ -264,6 +251,7 @@ begin
          else
             nextState <= GotPU;
          end if;
+		--Sound for losing; oscillates between this state and DeathSiren2 to create siren wail
 		when DeathSiren1 =>
 			NoiseType <= "0011";
 			startSirenTimer <= '1';
@@ -275,6 +263,7 @@ begin
 			else
 				nextState <= DeathSiren1;
 			end if;
+		--Sound for losing; oscillates between this state and DeathSiren1 to create siren wail
 		when DeathSiren2 =>
 			NoiseType <= "0010";
 			startSirenTimer <= '1';
@@ -284,6 +273,7 @@ begin
 			elsif sirenOscillate='0' and sirenDone='0' then
 				nextState <= DeathSiren2;
 			end if;
+		--Next 19 states produce the song played during the win sequence
       when sw1 =>
          enableEighthNote <= '1';
          NoiseType <= "0110";
@@ -469,6 +459,7 @@ eighthnotetimer: process(Clk, enableEighthNote)
 end process eighthnotetimer; 
 eighthnote <= '1' when eighthnotecounter = MAX_EIGHTH_CNT else '0';
 
+--Timer for quarter note
 quarternotetimer: process(Clk, enableQuarterNote)
    begin
       if rising_edge(clk) then
@@ -479,6 +470,7 @@ quarternotetimer: process(Clk, enableQuarterNote)
 end process;
 quarternote <= '1' when quarternotecounter = "100" else '0';
 
+--Timer for half note
 halfnotetimer: process(Clk, enableHalfNote)
    begin
       if rising_edge(clk) then
@@ -488,7 +480,6 @@ halfnotetimer: process(Clk, enableHalfNote)
       end if;
 end process;
 halfnote <= '1' when halfnotecounter = "100" else '0';
-
 
 
 
@@ -527,7 +518,7 @@ end process oscillatingSirenTimer;
 sirenOscillate <= '1' when sirenOscillateTimer = MAX_OSC_CNT else '0';
 
 
---Timer to time beeps
+--Timer so that normal sounds are only played for a short time
 beepTimerProcess: process(Clk, startBeepTimer)
    begin 
 		if startBeepTimer='1' then
