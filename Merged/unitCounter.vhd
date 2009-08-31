@@ -1,21 +1,18 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
--- 
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
+
 -- Create Date:    13:35:17 08/16/2009 
--- Design Name: 
 -- Module Name:    unitCounter - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Project Name:	TINZ (This Is Not Zelda)
+
+
+-- Description: This module is used to keep track of a single digit for the game 
+-- timer. When timer is enabled, the count decrements and asserts a DOUT signal when
+-- it rolls back from 0 to 9, indicating the next digit should decrement. Can be
+-- initialized to a certain value. Is instantiated in the GameTimer module.
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -29,16 +26,13 @@ use IEEE.NUMERIC_STD.ALL;
 entity unitCounter is
 GENERIC (START_VALUE : unsigned(3 downto 0) := "0000");
 Port ( 	  Clk : 	in   STD_LOGIC;
-			  timerEN : in STD_LOGIC;
-			  reset : in STD_LOGIC;
-			  currTime : out STD_LOGIC_VECTOR(3 downto 0);
-			  DOUT : out STD_LOGIC);
+			  timerEN : in STD_LOGIC;	--from MainController through GameTimer
+			  reset : in STD_LOGIC;		--from MainController through GameTimer
+			  currTime : out STD_LOGIC_VECTOR(3 downto 0);	--to GameTimer
+			  DOUT : out STD_LOGIC);	--to GameTimer
 end unitCounter;
 
 architecture Behavioral of unitCounter is
-	-- # bits in clock divider  
-	-- Output frequency = Input frequency / 2^NCLKDIV
-	-- NCLKDIV=25 with 50 MHz clock gives 50 MHz / 2^25 = 1.49 Hz
 	constant NCLKDIV:	integer := 26;	 --Change to 26 to get freq of 1 Hz
 	constant MAXCLKDIV: integer := 2**NCLKDIV-1;	-- max count of clock divider, 1...11
 
@@ -60,9 +54,10 @@ end process ClockDivider;
 -- Clock enable pulse, once per 2^NCLKDIV
 slowCE <= '1' when (clkdivcount = MAXCLKDIV) else '0';
 
+
 --4-bit up/down counter
---Represents ones digit
---Only counts to 9, but rolls over
+--Represents single digit
+--Counts down when enabled, and rolls over from 0 to 9
 CounterOnes: process(Clk, timerEN, DOnes)
 	begin
 	if rising_edge(Clk) then 
@@ -82,7 +77,7 @@ CounterOnes: process(Clk, timerEN, DOnes)
 end process CounterOnes;
 
 currTime <= std_logic_vector(DOnes);
---Ones counter rolling back from 0 to 9, need to decrement tens counter
+--Digit counter rolling back from 0 to 9, need to decrement next digit
 DOUT <= '1' when (Dones = "0000" and timerEN='1') else '0';
 
 

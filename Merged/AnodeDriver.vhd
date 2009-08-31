@@ -1,12 +1,11 @@
 ----------------------------------------------------------------------------------
--- Divya Gunasekaran
--- ENGS 31
--- Lab 3
--- July 22, 2009
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 
--- Module Name:    Counter2bitDecoder - Behavioral 
-
---	Problem 5: AnodeDriver
+-- Module Name:    AnodeDriver - Behavioral 
+--	Project Name: TINZ (This Is Not Zelda)
 
 -- Description: This is code to model a an anode driver consisting of a 2-bit 
 --	counter and a 2-to-4 decoder.
@@ -18,11 +17,11 @@ use IEEE.NUMERIC_STD.ALL;
 
 
 entity AnodeDriver is
-Port ( reset : in STD_LOGIC; 
+Port ( reset : in STD_LOGIC; --from MainController through GameTimer
 		 Clk50 : in STD_LOGIC;
-		 displayEN : in STD_LOGIC;
-		 count : out  STD_LOGIC_VECTOR(1 downto 0);						--passed to mux
-		 an : out STD_LOGIC_VECTOR (3 downto 0));				--4-bit value passed to anodes
+		 displayEN : in STD_LOGIC;	--from MainController through GameTimer
+		 count : out  STD_LOGIC_VECTOR(1 downto 0);			--passed to mux in GameTimer
+		 an : out STD_LOGIC_VECTOR (3 downto 0));				--4-bit value passed to anodes out of GameTimer
 end AnodeDriver;
 
 

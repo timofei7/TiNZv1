@@ -1,21 +1,20 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
--- 
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
+
 -- Create Date:    18:48:03 08/25/2009 
--- Design Name: 
 -- Module Name:    HeatSeeker - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Project Name: 	 TINZ (This Is Not Zelda)
+
+-- Description: This module converts disabled power-ups into "heatseeking ghosts"
+-- that follow the player on the board and can kill the player. There can only be
+-- one active heatseeker on the board at any given time. This module includes 
+-- instantiations of positionCounter and clockDivider to keep track of the 
+-- heatseeker's location and regular the speed of the heatseeker's movement,
+-- respectively. 
+
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -24,15 +23,15 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity HeatSeeker is
     Port ( Clk : in STD_LOGIC;
-			  reset : in STD_LOGIC;
-			  playerX : in  STD_LOGIC_VECTOR (2 downto 0);
-           playerY : in  STD_LOGIC_VECTOR (2 downto 0);
-           initHeatSeeker : in  STD_LOGIC;
-           heatSeekerColor : out  STD_LOGIC_VECTOR(7 downto 0);
-           activeSeeker : out  STD_LOGIC;
-           heatSeekerXOut : out  STD_LOGIC_VECTOR (2 downto 0);
-           heatSeekerYOut : out  STD_LOGIC_VECTOR (2 downto 0);
-           seekerHit : out  STD_LOGIC);
+			  reset : in STD_LOGIC;	--from MainController
+			  playerX : in  STD_LOGIC_VECTOR (2 downto 0);	--from Player
+           playerY : in  STD_LOGIC_VECTOR (2 downto 0);	--from Player
+           initHeatSeeker : in  STD_LOGIC;					--from GameLogicFSM
+           heatSeekerColor : out  STD_LOGIC_VECTOR(7 downto 0);	--to Display
+           activeSeeker : out  STD_LOGIC;									--to GameLogicFSM
+           heatSeekerXOut : out  STD_LOGIC_VECTOR (2 downto 0);	--to Display
+           heatSeekerYOut : out  STD_LOGIC_VECTOR (2 downto 0);	--to Display
+           seekerHit : out  STD_LOGIC);									--to GameLogic FSM
 end HeatSeeker;
 
 architecture Behavioral of HeatSeeker is
@@ -59,13 +58,11 @@ GENERIC (DIV : integer);
 		);
 	END COMPONENT;
 
-
+--Heatseeker location
 signal heatSeekerXSig : std_logic_vector(2 downto 0) := "000";
 signal heatSeekerYSig : std_logic_vector(2 downto 0) := "000";
 
---signal playerStartX : std_logic_vector := "000";
---signal playerStartY : std_logic_vector := "000";
-
+--Constants and signals to regulate speed of heatseeker's activation and movement
 constant NCLKDIV_INIT : integer := 18;
 constant MAX_INIT_CNT : integer := 2**NCLKDIV_INIT-1;
 
@@ -73,6 +70,7 @@ signal startInitTimer : std_logic := '0';
 signal initTimer : unsigned(NCLKDIV_INIT-1 downto 0) := (others=>'0');
 signal initDone : std_logic := '0';
 
+--Heatseeker hit
 signal seekerHitSig : std_logic := '0';
 signal countVamp : unsigned(1 downto 0) := "00";
 
@@ -90,18 +88,19 @@ signal equalY : std_logic := '0';
 
 signal moveEN : std_logic := '0';
 
+--Signals for finite state machine
 type stateType is (Start, Init, Waiting, Seek);
    signal currState, nextState: stateType;
-
 
 begin
 
 activeSeeker <= activeSeekerSig;
-heatSeekerColor <= "11100011";
-seekerHitSig <= equalX and equalY;
+heatSeekerColor <= "11100011";	--hardcoded color
+seekerHitSig <= equalX and equalY;	--heatseeker hit player when locations are equivalent
 heatSeekerXOut <= heatSeekerXSig;
 heatSeekerYOut <= heatSeekerYSig;
 
+--Heatseekers location on x-axis
 heatSeekerLocX: positionCounter PORT MAP(
 		UP => upX,
 		DOWN => downX,
@@ -113,6 +112,7 @@ heatSeekerLocX: positionCounter PORT MAP(
 		makeSoundMove => OPEN
 	);
 	
+--Heatseeker's location on y-axis
 heatSeekerLocY: positionCounter PORT MAP(
 		UP => upY,
 		DOWN => downY,
@@ -124,6 +124,7 @@ heatSeekerLocY: positionCounter PORT MAP(
 		makeSoundMove => OPEN
 	);
 
+--Regulate speed of heatseeker
 moveEnabler: ClockDivider 
 GENERIC MAP(Div => 28)
 PORT MAP(
@@ -132,7 +133,7 @@ PORT MAP(
 	);
 
 
---this is a monopulser for this signal
+--this is a monopulser for the seekerHit signal
 process(Clk)
 begin
    if rising_edge(Clk) then
@@ -174,13 +175,15 @@ begin
 			else
 				nextState <= Start;
 			end if;
+		--Initialize heatseeker
 		when Init =>
-			startInitTimer <= '1';
+			startInitTimer <= '1';	--delay activation of heatseeker for player's sake
 			if initDone='1' then
 				nextState <= Seek;
 			else
 				nextState <= Init;
 			end if;
+		--Let heatseeker follow player on board
 		when Seek =>
 			activeSeekerSig <= '1';
 			nextState <= Seek;
@@ -207,7 +210,7 @@ end process initTimerProcess;
 initDone <= '1' when initTimer = MAX_INIT_CNT else '0';
 
 
-
+--Directs movement of heatseeker on x-axis
 SeekerMoveX : process(Clk, moveEN, playerX, heatSeekerXSig)
 begin
 	if rising_edge(Clk) then
@@ -230,7 +233,7 @@ begin
 end process SeekerMoveX;
 equalX <= '1' when (playerX=heatSeekerXSig) else '0';
 
-
+--Directs movement of heatseeker on y-axis
 SeekerMoveY : process(Clk, moveEN, playerY, heatSeekerYSig)
 begin
 	if rising_edge(Clk) then

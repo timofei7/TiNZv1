@@ -1,21 +1,17 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
+
 -- Create Date:    04:57:53 08/17/2009 
--- Design Name: 
 -- Module Name:    moveCounter - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Project Name: 	TINZ (This Is Not Zelda)
+
+
+-- Description: This module keeps track of the number of moves made for a single digit.
+-- Counts from 0 to 9 and rolls over from 9 to 0. Sends out signal to increment the next
+-- digit when rolling over from 9 to 0. Is instantiated in the Player module. 
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -63,7 +59,7 @@ end if;
 end process CounterOnes;
 
 onesMove <= std_logic_vector(DOnes);
---Ones counter rolling over from 9 to 0, need to increment tens counter
+--Counter rolling over from 9 to 0, need to increment next digit
 DOUT <= '1' when (Dones = "1001" and move='1') else '0';
 
 

@@ -1,21 +1,17 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
--- 
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
+
 -- Create Date:    12:48:55 08/16/2009 
--- Design Name: 
 -- Module Name:    GameTimer - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Project Name: 	TINZ (This Is Not Zelda)
+
+
+-- Description: This module outputs either the game timer or the score to the
+-- seven segment display. Includes an anode driver to allow for a multiplexed
+-- display and has instantiations of unitCounter to handle the timer. 
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -24,15 +20,15 @@ use IEEE.NUMERIC_STD.ALL;
 
 entity GameTimer is
     Port ( Clk : in STD_LOGIC;
-			  resetGameT : in  STD_LOGIC;
-			  sevenSegEN : in STD_LOGIC;
-           numMovesOnes : in  std_logic_vector(3 downto 0);
-			  numMovesTens : in  std_logic_vector(3 downto 0);
-			  numMovesHundreds: in  std_logic_vector(3 downto 0);
-           sevenSegSelector : in  STD_LOGIC;
-           gameOver : out  STD_LOGIC;
-			  an : out STD_LOGIC_VECTOR(3 downto 0);
-           segDisplay : out  STD_LOGIC_VECTOR (0 to 6));
+			  resetGameT : in  STD_LOGIC;	--from MainController
+			  sevenSegEN : in STD_LOGIC;	--from MainController
+           numMovesOnes : in  std_logic_vector(3 downto 0);	--from Player
+			  numMovesTens : in  std_logic_vector(3 downto 0);	--from Player
+			  numMovesHundreds: in  std_logic_vector(3 downto 0);	--from Player
+           sevenSegSelector : in  STD_LOGIC;	--from MainController
+           gameOver : out  STD_LOGIC;			--to GameLogicFSM and MainController
+			  an : out STD_LOGIC_VECTOR(3 downto 0);	--to FPGA board
+           segDisplay : out  STD_LOGIC_VECTOR (0 to 6));	--to seven segment display on FPGA
 end GameTimer;
 
 architecture Behavioral of GameTimer is
@@ -58,15 +54,6 @@ COMPONENT AnodeDriver
 		);
 	END COMPONENT;
 	
-COMPONENT moveCounter
-	PORT(
-		Clk : IN std_logic;
-		move : IN std_logic;
-		reset : IN std_logic;          
-		onesMove : OUT std_logic_vector(3 downto 0);
-		DOUT : OUT std_logic
-		);
-	END COMPONENT;
 
 signal anodeCount : std_logic_vector(1 downto 0) := "00";
 signal Yh : std_logic_vector(0 to 6) := "0000000";
@@ -84,10 +71,14 @@ signal gameOverSig: std_logic:= '0';
 
 begin
 
+--Timer should run when seven segment display is enabled and timer is selected to be displayed
 runTimer <= '1' when (sevenSegEN='1' and sevenSegSelector='0') else '0';
+
+--Hundreds digit for timer should be decremented when the ones and tens digits 
+--are both rolling back from 0 to 9
 decrementHundreds <= '1' when (DOUT10='1' and decrementTens='1') else '0';
 
---monopulser to limit this signal to a one clock cycle pulse
+--monopulser to limit this gameOver signal to a one clock cycle pulse
 process(Clk)
 begin
    if rising_edge(Clk) then
@@ -100,7 +91,7 @@ begin
 end process;
 gameOver <= '1' when countvamp = "01" else '0';
 
-
+--Ones digit for timer
 OnesCounter: unitCounter 
 GENERIC MAP(START_VALUE => "0000")
 PORT MAP(
@@ -111,7 +102,7 @@ PORT MAP(
 		DOUT => decrementTens
 	);
 
-
+--Tens digit for timer
 TensCounter: unitCounter 
 GENERIC MAP(START_VALUE => "0010")
 PORT MAP(
@@ -122,6 +113,7 @@ PORT MAP(
 		DOUT => DOUT10
 	);
 
+--Hundreds digit for timer
 HundredsCounter: unitCounter 
 GENERIC MAP(START_VALUE => "0001")
 PORT MAP(
@@ -131,7 +123,8 @@ PORT MAP(
 		currTime => Hundreds,
 		DOUT => OPEN
 	);
-	
+
+--Anode driver for seven segment display
 AnodeDriverDevice: AnodeDriver PORT MAP(
 		displayEN => sevenSegEN,
 		reset => resetGameT,
@@ -141,7 +134,7 @@ AnodeDriverDevice: AnodeDriver PORT MAP(
 	);
 	
 	
-
+--Process to output gameOver signal to GameLogicFSM and MainController when timer reaches 0
 timeUp: process(Clk, Ones, Tens, Hundreds)
 begin
 	if rising_edge(Clk) then
@@ -153,6 +146,8 @@ begin
 	end if;
 end process timeUp;
 
+
+--Process to choose between displaying timer and displaying score on seven-segment display
 sevenSegDisplay: process(sevenSegSelector, Ones, Tens, Hundreds, numMovesHundreds, numMovesTens, numMovesOnes, anodeCount)
 begin
 	if sevenSegSelector='0' then	--display timer on seven seg display
