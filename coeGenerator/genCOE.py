@@ -1,4 +1,34 @@
 #!/usr/bin/python
+# ENGS 31 - DARTMOUTH COLLEGE
+# Divya Gunasekaran and Tim Tregubov
+# 
+# this script takes a file inputed thus:
+#positions:
+#frame:
+#O O O O O O O O 
+#O O O O O O O O
+#O O O O O O O O
+#O O O O O O O O
+#O O O O O O O O
+#O O O O O O O O
+#O O O O O O O O
+#O O O O O O O O
+# or thus:
+#colors:
+#frame:
+#X X X X X X X X
+#X X X X X X X X
+#X X X X X X X X
+#X X X X X X X X
+#X X X X X X X X
+#X X X X X X X R
+#X X X X X X R R
+#X X X X X R R R
+#
+# and generates a coefficient file for an IP Core ROM
+# the COLORMAP dict below maps letters to 8 bit colors
+# while the encodePositional function encodes the proper 8 bit entry for a positional gameboard file
+#
 import sys, re
 
 DEBUG=True
