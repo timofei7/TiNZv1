@@ -1,20 +1,15 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    00:39:52 08/18/2009 
 -- Design Name: 
--- Module Name:    AccelDetector - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
+-- Module Name:    AccelDetector - Behavioral
+-- Project Name: 	 TINZ (This Is Not Zelda)
+-- 
+-- Description:   this measures the t1 and t2 times of the PWM accelerometer signal
 --
 ----------------------------------------------------------------------------------
 library IEEE;
@@ -23,10 +18,10 @@ use ieee.numeric_std.all;
 
 entity AccelDetector is
     Port ( Clk : in  STD_LOGIC;
-           SigIn : in  STD_LOGIC;
-           Done: out STD_LOGIC;
-           T1out : out  STD_LOGIC_VECTOR (7 downto 0);
-           T2out : out  STD_LOGIC_VECTOR (7 downto 0));
+           SigIn : in  STD_LOGIC;  --from accelerometer
+           Done: out STD_LOGIC;  --done measuring one pulse width
+           T1out : out  STD_LOGIC_VECTOR (7 downto 0);  --up time of pulse
+           T2out : out  STD_LOGIC_VECTOR (7 downto 0));  --total time of pulse
 end AccelDetector;
 
 architecture Behavioral of AccelDetector is
@@ -53,7 +48,7 @@ architecture Behavioral of AccelDetector is
 begin
 
 clockdivs: ClockDivider
-   GENERIC MAP(Div => 12) -- the clock divider value CHECK THIS VALUE FIRST
+   GENERIC MAP(Div => 12) -- the clock divider value
    PORT MAP(Clk => Clk, slowCE => slowCE);
    
 

@@ -5,11 +5,9 @@
 -- September 1, 2009
 
 -- Create Date:    16:16:00 08/22/2009 
-
 -- Module Name:    Noises - Behavioral 
--- Project Name: 	TINZ (This Is Not Zelda)
-
-
+-- Project Name: 	 TINZ (This Is Not Zelda)
+--
 -- Description: This module outputs different frequences to the piezo when given the
 -- appropriate signals from the Controller, GameLogicFSM and Player modules.
 

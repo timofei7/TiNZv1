@@ -1,20 +1,14 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    03:08:36 08/22/2009 
--- Design Name: 
--- Module Name:    Noise - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
+-- Module Name:    Noise - Behavioral
+-- Project Name: 	 TINZ (This Is Not Zelda)
 --
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
+-- Description:   this generates a square wave output varied by the input frequence it is given
 --
 ----------------------------------------------------------------------------------
 library IEEE;
@@ -48,6 +42,7 @@ begin
 
 countfinal <= unsigned(FreqCount);
 
+--counter for square wave
 process(Clk)
    begin
       if rising_edge(Clk) then

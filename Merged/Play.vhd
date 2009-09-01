@@ -1,21 +1,15 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    08:51:16 08/19/2009 
 -- Design Name: 
 -- Module Name:    PlayerInput - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
+-- Project Name: 	 TINZ (This Is Not Zelda)
 --
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Description: This puts together the acclerometer and the player and the gametimer modules
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;

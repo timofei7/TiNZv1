@@ -158,12 +158,6 @@
       <association xil_pn:name="Implementation"/>
     </file>
     <file xil_pn:name="Display_TB.vhd" xil_pn:type="FILE_VHDL"/>
-    <file xil_pn:name="CellGame_TB.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation"/>
-      <association xil_pn:name="PostMapSimulation"/>
-      <association xil_pn:name="PostRouteSimulation"/>
-      <association xil_pn:name="PostTranslateSimulation"/>
-    </file>
     <file xil_pn:name="AccelFilter.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
@@ -224,6 +218,12 @@
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
     </file>
+    <file xil_pn:name="CellGame_TB.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
+      <association xil_pn:name="PostMapSimulation"/>
+      <association xil_pn:name="PostRouteSimulation"/>
+      <association xil_pn:name="PostTranslateSimulation"/>
+    </file>
     <file xil_pn:name="ipcore_dir/ACCELDivision.ise" xil_pn:type="FILE_COREGENISE">
       <association xil_pn:name="Implementation"/>
     </file>
@@ -247,14 +247,14 @@
     <property xil_pn:name="Fitter Report Format" xil_pn:value="HTML"/>
     <property xil_pn:name="Implementation Top" xil_pn:value="Architecture|cellGame|Behavioral"/>
     <property xil_pn:name="Implementation Top Instance Path" xil_pn:value="/cellGame"/>
-    <property xil_pn:name="PROP_BehavioralSimTop" xil_pn:value="Architecture|ControllerTB|behavior"/>
+    <property xil_pn:name="PROP_BehavioralSimTop" xil_pn:value="Architecture|CellGame_TB|behavior"/>
     <property xil_pn:name="PROP_DesignName" xil_pn:value="Merged"/>
     <property xil_pn:name="PROP_DevFamilyPMName" xil_pn:value="spartan3e"/>
     <property xil_pn:name="Package" xil_pn:value="fg320"/>
     <property xil_pn:name="Preferred Language" xil_pn:value="VHDL"/>
     <property xil_pn:name="Property Specification in Project File" xil_pn:value="Store non-default values only"/>
     <property xil_pn:name="Safe Implementation" xil_pn:value="Yes"/>
-    <property xil_pn:name="Selected Simulation Root Source Node Behavioral" xil_pn:value="Architecture|ControllerTB|behavior"/>
+    <property xil_pn:name="Selected Simulation Root Source Node Behavioral" xil_pn:value="Architecture|CellGame_TB|behavior"/>
     <property xil_pn:name="Simulator" xil_pn:value="ISim (VHDL/Verilog)"/>
     <property xil_pn:name="Speed Grade" xil_pn:value="-4"/>
     <property xil_pn:name="Synthesis Tool" xil_pn:value="XST (VHDL/Verilog)"/>

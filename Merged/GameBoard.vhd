@@ -1,21 +1,15 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    19:10:39 08/12/2009 
 -- Design Name: 
--- Module Name:    GameBoard - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
---
+-- Module Name:    GameBoard - Behavioral
+-- Project Name: 	 TINZ (This Is Not Zelda)
+-- 
+-- Description:   Does the gameboard, colors and collisions
 ----------------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -93,7 +87,7 @@ begin
       
 
 clockdivs: ClockDivider
-   GENERIC MAP(Div => 24) -- the clock divider value  DON"T FORGET TO SET THIS to something like 24!
+   GENERIC MAP(Div => 24) -- the clock divider value (set to 24)
    PORT MAP(Clk => Clk, slowCE => slowFrame);
 
 board : GameBoardROM
@@ -123,7 +117,7 @@ addra <= Level & std_logic_vector(frameCount) & RowA & ColA; -- this is for DISP
 addrb <= Level & std_logic_vector(frameCount) & RowB & ColB; -- this is for GAMELOGIC
 readcolor <= douta(3 downto 0); --gets the type address from the main rom for color read --we throw out a couple bits
 readenabled <= doutb(3 downto 0); --same but for enable read --we throw out a couple bits
-writeaddr <= readenabled; -- idiot tim poor taxonomy
+writeaddr <= readenabled; --poor taxonomy by tim --comment by tim
 colorOUT <= color;
 CollisionData <= enabled & doutb(6);  --grab the relevant collision bits the enable bit first and the enemy/pup bit second
 

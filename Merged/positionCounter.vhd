@@ -20,8 +20,8 @@ use IEEE.NUMERIC_STD.ALL;
 entity positionCounter is
 	 Port ( UP : in  STD_LOGIC;
 			  DOWN: in STD_LOGIC;
-			  initValue: IN STD_LOGIC_VECTOR(2 downto 0);
-			  set : IN STD_LOGIC;
+			  initValue: IN STD_LOGIC_VECTOR(2 downto 0) := "000";
+			  set : IN STD_LOGIC := '0';
 			  rst : 	in   STD_LOGIC;
 			  Clk : in STD_LOGIC;
 			  count : out STD_LOGIC_VECTOR(2 downto 0);

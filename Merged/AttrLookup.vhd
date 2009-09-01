@@ -1,20 +1,14 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS32
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    19:23:27 08/10/2009 
--- Design Name: 
--- Module Name:    AttrLookup - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
+-- Module Name:    AttrLookup - Behavioral
+-- Project Name: 	 TINZ (This Is Not Zelda)
+-- 
 -- Description:   is a lookup to match a color and an enable bit with a type of object on the board
---                
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
 library IEEE;
@@ -24,14 +18,14 @@ use ieee.numeric_std.all;
 
 entity AttrLookup is
     Port ( Clk : in STD_LOGIC;
-           WriteAddr : in  STD_LOGIC_VECTOR (3 downto 0);
-           ReadColor : in STD_LOGIC_VECTOR(3 downto 0);
-           ReadEnabled : in STD_LOGIC_VECTOR(3 downto 0);
-           RstPU : in  STD_LOGIC;
-           DisablePU : in  STD_LOGIC;
-           Color : out STD_LOGIC_VECTOR(7 downto 0);
-           WIN: out std_logic;
-           Enabled : out STD_LOGIC);
+           WriteAddr : in  STD_LOGIC_VECTOR (3 downto 0); --which type to disable
+           ReadColor : in STD_LOGIC_VECTOR(3 downto 0); --which type to read color data
+           ReadEnabled : in STD_LOGIC_VECTOR(3 downto 0);  --which type to read enabled data from
+           RstPU : in  STD_LOGIC; --reset all types now
+           DisablePU : in  STD_LOGIC;  --dispable this type now
+           Color : out STD_LOGIC_VECTOR(7 downto 0); --output color
+           WIN: out std_logic;  --we've got a winner!
+           Enabled : out STD_LOGIC); --is this type enabled or not
 end AttrLookup;
 
 architecture Behavioral of AttrLookup is
@@ -101,7 +95,7 @@ begin
             when x"1" => enemy1 <= '1';
             when x"2" => enemy2 <= '0';  --THIS IS ON PURPOSE these can get EATEN
             when x"3" => enemy3 <= '1';
-            when x"4" => pu1 <= '0'; -- we really only need these
+            when x"4" => pu1 <= '0'; -- these are the main ones
             when x"5" => pu2 <= '0';
             when x"6" => pu3 <= '0'; --
             when x"0" => empty <= '0';

@@ -4,8 +4,8 @@
 -- Final Project
 -- September 1, 2009
 -- 
--- Create Date:    23:19:55 08/18/2009 
--- Module Name:    cellGame - Behavioral 
+-- Create Date:    23:19:55 08/18/2009
+-- Module Name:    cellGame - Behavioral
 -- Project Name:  TINZ (This Is Not Zelda)
 
 
@@ -198,14 +198,12 @@ COMPONENT GameBoard
 		SeqReset : IN std_logic;
 		ResetPUs : IN std_logic;
 		DisablePU : IN std_logic;
-		ReadENColor : IN std_logic;
 		RowA : IN std_logic_vector(2 downto 0);
 		ColA : IN std_logic_vector(2 downto 0);
 		RowB : IN std_logic_vector(2 downto 0);
 		ColB : IN std_logic_vector(2 downto 0);
       Level: IN std_logic_vector(1 downto 0);
 		ColorOUT : OUT std_logic_vector(7 downto 0);
-		ColorDONE : OUT std_logic;
 		CollisionData : OUT std_logic_vector(1 downto 0)
 		);
 END COMPONENT;

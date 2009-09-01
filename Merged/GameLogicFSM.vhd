@@ -7,7 +7,7 @@
 -- Create Date:    19:54:44 08/08/2009 
 -- Module Name:    GameLogic - Behavioral 
 -- Project Name: 	 TINZ (This Is Not Zelda)
-
+--
 -- Description: Finite state machine that looks up the collision data for the player's
 -- current location and evaluates the player status (shielded, unshielded, death, etc.)
 -- based on the collision data and the player's current state.
@@ -125,12 +125,6 @@ begin
    deathSig <='0';
    currPlayerColor <= "00";
    startShieldTimer <= '0';
-   unshieldedState <= '0';
-   deathStateSig <= '0';
-   GetShieldState <= '0';
-   ShieldedState <= '0';
-   LoseToPUState <= '0';
-   LoseToEnemyState <= '0';
 	soundSig<= "000"; --for Noises module
 	soundSelect <= '0'; --for Noises module
 	initHeatSeeker <= '0'; --for HeatSeeker module

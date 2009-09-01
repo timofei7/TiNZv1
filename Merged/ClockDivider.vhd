@@ -1,20 +1,16 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    21:40:57 08/12/2009 
--- Design Name: 
 -- Module Name:    ClockDivider - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
+-- Project Name: 	 TINZ (This Is Not Zelda)
+--
 -- Description:    This is a nice generic clock divider, instantiate it, set div to your numeric divider val and off you go!
 --                 notice this does not work for a Div of 0 or 1. 
--- Dependencies: 
 --
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
 library IEEE;

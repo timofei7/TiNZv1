@@ -1,20 +1,16 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    15:55:06 08/18/2009 
 -- Design Name: 
--- Module Name:    ThresHysteresis - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
+-- Module Name:    ThresHysteresis - Behavioral
+-- Project Name: 	 TINZ (This Is Not Zelda)
+-- 
+-- Description:    This does hysteresis thresholding on the accelerometer
+--                 input and sends out an up or a down when it detects a valid movement
 --
 ----------------------------------------------------------------------------------
 library IEEE;
@@ -24,19 +20,19 @@ use ieee.numeric_std.all;
 entity ThresHysteresis is
     Port ( Clk : in  STD_LOGIC;
            SpeedRate : in STD_LOGIC_VECTOR(1 downto 0);
-           SIN : in  STD_LOGIC_VECTOR (7 downto 0);
-           UP : out  STD_LOGIC;
-           DOWN : out  STD_LOGIC);
+           SIN : in  STD_LOGIC_VECTOR (7 downto 0); --the signal input, post division, to theshold our moves on
+           UP : out  STD_LOGIC;  --we have go +
+           DOWN : out  STD_LOGIC); --we have go -
 end ThresHysteresis;
 
 architecture Behavioral of ThresHysteresis is
 
---constant upt: unsigned(7 downto 0)   := "10111111";
+--constant upt: unsigned(7 downto 0)   := "10111111"; -- first try -- more sensitive
 --constant uph: unsigned(7 downto 0)   := "10011111"; 
 --constant downh: unsigned(7 downto 0) := "01111111"; 
 --constant downt: unsigned(7 downto 0) := "01011111"; 
 
---constant upt: unsigned(7 downto 0)   := "11100110";  --THIS IS FUCKED UP!
+--constant upt: unsigned(7 downto 0)   := "11100110";  --this is for the messed up 75% skew. 
 --constant uph: unsigned(7 downto 0)   := "11011011"; 
 --constant downh: unsigned(7 downto 0) := "11000111"; 
 --constant downt: unsigned(7 downto 0) := "10110101"; 
@@ -47,7 +43,7 @@ architecture Behavioral of ThresHysteresis is
 --constant downt: unsigned(7 downto 0) := "01001110"; 
 
 constant upt: unsigned(7 downto 0)   := "10110000";  --this is in digilab with some by hand reduction of above
-constant uph: unsigned(7 downto 0)   := "10011100";  --and pretty heavy tilt
+constant uph: unsigned(7 downto 0)   := "10011100";  --and slightly less heavy tilt
 constant downh: unsigned(7 downto 0) := "01101100"; 
 constant downt: unsigned(7 downto 0) := "01011111"; 
 

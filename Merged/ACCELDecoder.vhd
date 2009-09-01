@@ -1,19 +1,15 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    23:08:00 08/09/2009 
 -- Design Name: 
--- Module Name:    ACCELDecoder - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
+-- Module Name:    ACCELDecoder - Behavioral
+-- Project Name: 	 TINZ (This Is Not Zelda)
+-- 
+-- Description:    all acclerometer action happens here + switching of axis based on level
 -- Additional Comments: 
 -- SEE the documention at: http://www.analog.com/en/sensors/inertial-sensors/adxl213/products/product.html
 ----------------------------------------------------------------------------------
@@ -25,18 +21,18 @@ use ieee.numeric_std.all;
 entity ACCELDecoder is
     Port ( 
            Clk : in  STD_LOGIC; 
-           SpeedRate: in std_logic_vector(1 downto 0);
-           LevelDifficulty: in std_logic_vector(1 downto 0);
-           Xin : in  STD_LOGIC;
-           Yin : in  STD_LOGIC;
-			  XAnalogIn : in  STD_LOGIC;
-           YAnalogIn : in  STD_LOGIC;
-			  XAnalogOut : out std_logic;
-			  YAnalogOut : out std_logic;
-			  XMinus : out  STD_LOGIC;
-			  XPlus : out  STD_LOGIC;
-			  YMinus : out  STD_LOGIC;
-			  YPlus : out  STD_LOGIC
+           SpeedRate: in std_logic_vector(1 downto 0);   --the repeat rate desired
+           LevelDifficulty: in std_logic_vector(1 downto 0); --the level difficulty for axis flipping
+           Xin : in  STD_LOGIC; --from accelerometr
+           Yin : in  STD_LOGIC; --''
+			  XAnalogIn : in  STD_LOGIC;  --bogus from/to accelerometr
+           YAnalogIn : in  STD_LOGIC; --''
+			  XAnalogOut : out std_logic; --''
+			  YAnalogOut : out std_logic; --''
+			  XMinus : out  STD_LOGIC; --we have a move in X -
+			  XPlus : out  STD_LOGIC;  --we have a move in x +
+			  YMinus : out  STD_LOGIC;  -- in y -
+			  YPlus : out  STD_LOGIC -- in y +
            );
 end ACCELDecoder;
 

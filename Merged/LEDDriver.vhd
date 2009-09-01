@@ -1,20 +1,15 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    13:17:46 08/15/2009 
 -- Design Name: 
--- Module Name:    LEDDriver - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
+-- Module Name:    LEDDriver - Behavioral
+-- Project Name: 	 TINZ (This Is Not Zelda)
+-- 
+-- Description:    the SPI driver for the LED display
 --
 ----------------------------------------------------------------------------------
 library IEEE;
@@ -23,14 +18,14 @@ use ieee.numeric_std.all;
 
 entity LEDDriver is
     Port ( Clk : in  STD_LOGIC;
-           Data: in STD_LOGIC;
-           GoDisplay : in  STD_LOGIC;
-           ShiftBitOut : out STD_LOGIC; 
-           displayDone : out STD_LOGIC;
+           Data: in STD_LOGIC; --the data in bit from the data shift register from Display
+           GoDisplay : in  STD_LOGIC;  --in from Display says data register is full up
+           ShiftBitOut : out STD_LOGIC; --tells display I'm ready for the next bit
+           displayDone : out STD_LOGIC; --tells display that we're done sending, do your thing. 
            --MISO : in  STD_LOGIC;
-           MOSI : out  STD_LOGIC;
-           SCLK : out  STD_LOGIC;
-           CS : out  STD_LOGIC);
+           MOSI : out  STD_LOGIC; --spi out to display
+           SCLK : out  STD_LOGIC; --spi clock
+           CS : out  STD_LOGIC);  --spi enable
 end LEDDriver;
 
 architecture Behavioral of LEDDriver is

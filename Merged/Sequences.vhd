@@ -1,20 +1,15 @@
 ----------------------------------------------------------------------------------
--- Company:    DARTMOUTH COLLEGE - ENGS31
--- Engineer:   Divya Gunasekaran and Tim Tregubov
+-- DARTMOUTH COLLEGE - ENGS31
+-- Divya Gunasekaran and Tim Tregubov
+-- Final Project
+-- September 1, 2009
 -- 
 -- Create Date:    21:31:12 08/10/2009 
--- Design Name: 
 -- Module Name:    Sequences - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
+-- Project Name: 	 TINZ (This Is Not Zelda)
+--
 -- Description:    death and intro display sequences are managed here
 --
--- Dependencies: 
---
--- Revision: 
--- Revision 0.01 - File Created
--- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
 library IEEE;
@@ -23,11 +18,11 @@ use ieee.numeric_std.all;
 
 entity Sequences is
     Port ( Clk : in STD_LOGIC;
-           row : in  STD_LOGIC_VECTOR (2 downto 0);
-           col : in  STD_LOGIC_VECTOR (2 downto 0);
-           seqReset : in  STD_LOGIC;
-           seqDone : out STD_LOGIC;
-           deathColor : out  STD_LOGIC_VECTOR (7 downto 0);
+           row : in  STD_LOGIC_VECTOR (2 downto 0);  --row to read
+           col : in  STD_LOGIC_VECTOR (2 downto 0);  --col to read
+           seqReset : in  STD_LOGIC;  --reset counter
+           seqDone : out STD_LOGIC;  --this sequence is done
+           deathColor : out  STD_LOGIC_VECTOR (7 downto 0); 
            introColor : out  STD_LOGIC_VECTOR (7 downto 0);
            winColor   : out  STD_LOGIC_VECTOR (7 downto 0));
 end Sequences;

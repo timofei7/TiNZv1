@@ -36,13 +36,13 @@ entity MainController is
            displaySelector : out  STD_LOGIC_VECTOR(1 downto 0);	--to Display
            displayEN : out  STD_LOGIC;	--to Display
 			  sevenSegEN : out  STD_LOGIC;	--to Play
-           sevenSegSelector : out  STD_LOGIC); --to Play
+           sevenSegSelector : out  STD_LOGIC; --to Play
 			  resetGameT : out  STD_LOGIC;	--to Play
            resetPlayer : out  STD_LOGIC;	--to Play
 			  moveEN : out STD_LOGIC;			--to Play
            gameLogicEN : out  STD_LOGIC;	--to GameLogicFSM
 			  winSound : out std_logic;		--to Noises
-			  soundEN : out STD_LOGIC; 	--for Noises module
+			  soundEN : out STD_LOGIC); 	--for Noises module
            
 end MainController;
 
